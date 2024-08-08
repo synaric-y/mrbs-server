@@ -1,0 +1,15 @@
+*~
+*.bak
+web/config.inc.php.*
+web/css/custom.css
+web/config.inc.php
+
+/.settings
+/.project
+/.buildpath
+/.idea
+/hg-code.iml
+/nbproject
+/.vs
+/doc
+/vendor
