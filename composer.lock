@@ -43,20 +43,24 @@
         },
         {
             "name": "garethp/php-ews",
-            "version": "v0.9.6",
+            "version": "v0.9.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Garethp/php-ews.git",
-                "reference": "2af8a7a294baaa576b3c4c80a15ffe0b8a9ddee2"
+                "reference": "3c44b6b13c56aa2ea244b9d77c2cedb641365d3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Garethp/php-ews/zipball/2af8a7a294baaa576b3c4c80a15ffe0b8a9ddee2",
-                "reference": "2af8a7a294baaa576b3c4c80a15ffe0b8a9ddee2",
+                "url": "https://api.github.com/repos/Garethp/php-ews/zipball/3c44b6b13c56aa2ea244b9d77c2cedb641365d3c",
+                "reference": "3c44b6b13c56aa2ea244b9d77c2cedb641365d3c",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "ext-simplexml": "*",
+                "ext-soap": "*",
                 "garethp/http-playback": "^1.0"
             },
             "require-dev": {
@@ -71,7 +75,8 @@
                 "files": [
                     "src/Utilities/ensureIsArray.php",
                     "src/Utilities/ensureIsDateTime.php",
-                    "src/Utilities/cloneValue.php"
+                    "src/Utilities/cloneValue.php",
+                    "src/Utilities/getFolderIds.php"
                 ],
                 "psr-4": {
                     "garethp\\ews\\": "src/",
@@ -79,11 +84,14 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
             "support": {
                 "issues": "https://github.com/Garethp/php-ews/issues",
-                "source": "https://github.com/Garethp/php-ews/tree/v0.9.6"
+                "source": "https://github.com/Garethp/php-ews/tree/v0.9.9"
             },
-            "time": "2018-01-26T11:23:48+00:00"
+            "time": "2020-09-15T18:06:44+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",

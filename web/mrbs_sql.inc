@@ -2392,7 +2392,6 @@ function mrbsAddArea($name, &$error)
   return $area_id;
 }
 
-
 // Adds a room, returning the new id, or FALSE on failure with the
 // error in $error
 function mrbsAddRoom($name, $area, &$error, $description='', $capacity='', $room_admin_email='')

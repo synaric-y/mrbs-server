@@ -441,7 +441,7 @@ if (is_admin() || !empty($enabled_areas))
         }
         // ignore these columns, either because we don't want to display them,
         // or because we have already displayed them in the header column
-        $ignore = array('icon', 'area_id', 'room_name', 'disabled', 'sort_key', 'custom_html');
+        $ignore = array('icon', 'area_id', 'room_name', 'disabled', 'sort_key', 'custom_html', 'exchange_username', 'exchange_password', 'exchange_sync_state');
         foreach($fields as $field)
         {
           if (!in_array($field['name'], $ignore))

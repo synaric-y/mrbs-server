@@ -13,6 +13,10 @@ $interval_start = strtotime("today");
 $interval_end = strtotime("tomorrow");
 
 $room = get_room_details($room_id);
+unset($room["exchange_server"]);
+unset($room["exchange_username"]);
+unset($room["exchange_password"]);
+
 $area = get_area_details($room["area_id"]);
 
 $entries = get_entries_by_room($room_id, $interval_start, $interval_end);
