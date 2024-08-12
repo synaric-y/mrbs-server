@@ -704,4 +704,5 @@ $vocab["back"]               = "Back";
 $vocab["ic_meeting_accept"]                   = "The meeting you initiated has been accepted by the administrator.";
 $vocab["ic_meeting_decline"]                  = "The meeting you initiated has been declined by the administrator， %s";
 $vocab["ic_meeting_decline_conflict"]         = "conflict with meeting %s";
+$vocab["ic_xs_meeting"]                       = "%s's Meeting";
 

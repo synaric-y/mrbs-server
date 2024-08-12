@@ -5,11 +5,9 @@ namespace MRBS\CalendarServer;
 use DateInterval;
 use DateTime;
 use DateTimeZone;
-use Exception;
 use garethp\ews\API;
 use garethp\ews\API\Message\SyncFolderItemsResponseMessageType;
 use garethp\ews\API\Type\CalendarItemType;
-use garethp\ews\API\Type\SyncFolderItemsCreateOrUpdateType;
 use MRBS\DBHelper;
 use MRBS\Intl\IntlDateFormatter;
 use function MRBS\_tbl;
@@ -142,6 +140,18 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
       return null;
     }
     try {
+      // handle delete
+      $delete = $changesSinceLsatCheck->getChanges()->getDelete();
+      if (!empty($delete)) {
+        if (!is_array($delete)) {
+          $delete = array($delete);
+        }
+        foreach ($delete as $deleteItem) {
+          $di = $deleteItem->getItemId()->getId();
+          $this->fmtChangeList["delete"][] = array("exchange_id" => $di);
+          DBHelper::delete(\MRBS\_tbl("entry"), array("exchange_id" => $di));
+        }
+      }
       // handle create
       $create = $changesSinceLsatCheck->getChanges()->getCreate();
       if (!empty($create)) {
@@ -149,10 +159,6 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
           $create = array($create);
         }
         foreach ($create as $createItem) {
-          $searchResult = DBHelper::one(_tbl("entry"), array("exchange_id" => $createItem->getCalendarItem()->getItemId()->getId()), "id");
-          if ($searchResult) {
-            continue;
-          }
           $ci = $createItem->getCalendarItem();
           $this->handleMeetingCreate($ci);
         }
@@ -163,16 +169,9 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
         if (!is_array($update)) {
           $update = array($update);
         }
-      }
-      // handle delete
-      $delete = $changesSinceLsatCheck->getChanges()->getDelete();
-      if (!empty($delete)) {
-        if (!is_array($delete)) {
-          $delete = array($delete);
-        }
-        foreach ($delete as $deleteItem) {
-          $di = $deleteItem->getItemId()->getId();
-          $this->fmtChangeList["delete"][] = array("exchange_id" => $di);
+        foreach ($update as $updateItem) {
+          $ui = $updateItem->getCalendarItem();
+          $this->handleMeetingUpdate($ui);
         }
       }
     } catch (\Exception $e) {
@@ -225,10 +224,7 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
       }
       $conflictId = $queryOne["id"];
       echo $this::$TAG, "conflict meeting: meeting request($startTime - $endTime) is conflict with $conflictId";
-//      try {
-//        $this->getCalendar()->deleteCalendarItem($ci->getItemId());
-//      } catch (Exception $e) {
-//      }
+
       return;
     }
 
@@ -236,6 +232,29 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
     $this->fmtChangeList["create"][] = $adapter->exchangeCalendarToCalendar($ci);
     try {
       $this->getCalendar()->acceptMeeting($ci->getItemId(), get_vocab("ic_meeting_accept"));
+    } catch (\Exception $e) {
+//      echo $this::$TAG, $e->getMessage();
+//      echo $this::$TAG, $e->getTraceAsString();
+    }
+  }
+
+  private function handleMeetingUpdate(CalendarItemType $ui)
+  {
+    //
+    if ($ui->getMyResponseType() != "Tentative") {
+      return;
+    }
+    $exchangeId = $ui->getItemId()->getId();
+    $queryOne = DBHelper::one(_tbl("entry"), "exchange_id = '$$exchangeId'");
+    if (empty($queryOne)) {
+      return;
+    }
+
+    $adapter = new CalendarAdapter($this->room, CalendarAdapter::$MODE_UPDATE);
+    $this->fmtChangeList["update"][] = $adapter->exchangeCalendarToCalendar($ui);
+
+    try {
+      $this->getCalendar()->acceptMeeting($ui->getItemId(), get_vocab("ic_meeting_accept"));
     } catch (\Exception $e) {
 //      echo $this::$TAG, $e->getMessage();
 //      echo $this::$TAG, $e->getTraceAsString();

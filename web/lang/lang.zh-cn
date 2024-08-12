@@ -616,3 +616,4 @@ $vocab["back"]               = "后退";
 $vocab["ic_meeting_accept"]                   = "您发起的会议已经被管理员通过。";
 $vocab["ic_meeting_decline"]                  = "您发起的会议已经被管理员拒绝， %s";
 $vocab["ic_meeting_decline_conflict"]         = "与会议（%s）冲突";
+$vocab["ic_xs_meeting"]                       = "%s的会议";

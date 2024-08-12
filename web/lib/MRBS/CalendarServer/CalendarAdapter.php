@@ -2,7 +2,9 @@
 namespace MRBS\CalendarServer;
 
 use DateTime;
+use garethp\ews\API\Type\CalendarItemType;
 use function MRBS\generate_global_uid;
+use function MRBS\get_vocab;
 
 class CalendarAdapter
 {
@@ -19,7 +21,7 @@ class CalendarAdapter
     $this->mode = $mode;
   }
 
-  public function exchangeCalendarToCalendar(\garethp\ews\API\Type\CalendarItemType $calendarItem)
+  public function exchangeCalendarToCalendar(CalendarItemType $calendarItem): array
   {
     global $allow_registration_default, $registrant_limit_default, $registrant_limit_enabled_default;
     global $registration_opens_default, $registration_opens_enabled_default, $registration_closes_default;
@@ -30,19 +32,16 @@ class CalendarAdapter
     $result["end_time"] = $this->iOSTimeToTimeStamp($calendarItem->getEnd());
     $result["entry_type"] = 0;
     $result["room_id"] = $this->room["id"];
-    $result["create_by"] = "admin";
     if ($this->mode == $this::$MODE_UPDATE) {
       $result["modified_by"] = "admin";
     }
-    $result["name"] = $calendarItem->getSubject() ?? "Unknown Meeting";
-    $result["book_by"] = $calendarItem->getOrganizer()->getMailbox()->getName();
-    $result["type"] = "I";
     if ($this->mode == $this::$MODE_ADD) {
+      $result["create_by"] = "admin";
+      $result["name"] = $calendarItem->getSubject() ? get_vocab("ic_xs_meeting", $calendarItem->getSubject()) : "Unknown Meeting";
+      $result["book_by"] = $calendarItem->getOrganizer()->getMailbox()->getName() ?? "Unknown";
+      $result["type"] = "I";
       $result["status"] = 0;
-    }
-    $result["ical_uid"] = generate_global_uid($result["name"]);
-    $result["ical_sequence"] = $this->mode == $this::$MODE_ADD ? 0 : $result["ical_sequence"] + 1;
-    if ($this->mode == $this::$MODE_ADD) {
+      $result["ical_uid"] = generate_global_uid($result["name"]);
       $result["allow_registration"] = $allow_registration_default ? 1 : 0;
       $result["registrant_limit"] = $registrant_limit_default;
       $result["registrant_limit_enabled"] = $registrant_limit_enabled_default  ? 1 : 0;
@@ -52,6 +51,8 @@ class CalendarAdapter
       $result["registration_closes_enabled"] = $registration_closes_enabled_default  ? 1 : 0;
       $result["exchange_id"] = $calendarItem->getItemId()->getId();
       $result["create_source"] = "exchange";
+    } elseif ($this->mode == $this::$MODE_UPDATE) {
+      $result["ical_sequence"] = $result["ical_sequence"] + 1;
     }
 
     return $result;

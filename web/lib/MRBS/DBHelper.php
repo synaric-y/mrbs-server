@@ -112,7 +112,7 @@ class DBHelper
     $values = '';
     foreach ($row as $key => $value) {
       $fields .= "`" . $key . "`,";
-      $values .= "'" . $value . "',";
+      $values .= "'" . addslashes($value) . "',";
     }
     $sql = "insert into `" . $table . "` (" . substr($fields, 0, -1) . ") values (" . substr($values, 0, -1) . ")";
     db()->command($sql);
