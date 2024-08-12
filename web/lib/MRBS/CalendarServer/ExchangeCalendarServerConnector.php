@@ -13,7 +13,8 @@ use MRBS\Intl\IntlDateFormatter;
 use function MRBS\_tbl;
 use function MRBS\get_vocab;
 
-class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
+// A Connector that synchronizes bidirectionally with MicroSoft Exchange.
+class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
 {
 
   static $TAG = "[ExchangeCalendarServerConnector] ";
@@ -47,7 +48,6 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
 
   public function pullCalendarUpdate()
   {
-    parent::pullCalendarUpdate();
     $now = new DateTime();
     $fmt = new IntlDateFormatter(
       'en_US',
@@ -240,7 +240,7 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
 
   private function handleMeetingUpdate(CalendarItemType $ui)
   {
-    //
+    // After the meeting is updated, it will revert back to the Tentative state
     if ($ui->getMyResponseType() != "Tentative") {
       return;
     }
@@ -259,5 +259,20 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
 //      echo $this::$TAG, $e->getMessage();
 //      echo $this::$TAG, $e->getTraceAsString();
     }
+  }
+
+  function createMeeting()
+  {
+    // TODO: Implement createMeeting() method.
+  }
+
+  function deleteMeeting()
+  {
+    // TODO: Implement deleteMeeting() method.
+  }
+
+  function updateMeeting()
+  {
+    // TODO: Implement updateMeeting() method.
   }
 }
