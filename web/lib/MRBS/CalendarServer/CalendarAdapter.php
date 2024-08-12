@@ -21,7 +21,7 @@ class CalendarAdapter
     $this->mode = $mode;
   }
 
-  public function exchangeCalendarToCalendar(CalendarItemType $calendarItem): array
+  public function exchangeCalendarToCalendar(CalendarItemType $calendarItem, $oldData): array
   {
     global $allow_registration_default, $registrant_limit_default, $registrant_limit_enabled_default;
     global $registration_opens_default, $registration_opens_enabled_default, $registration_closes_default;
@@ -52,7 +52,8 @@ class CalendarAdapter
       $result["exchange_id"] = $calendarItem->getItemId()->getId();
       $result["create_source"] = "exchange";
     } elseif ($this->mode == $this::$MODE_UPDATE) {
-      $result["ical_sequence"] = $result["ical_sequence"] + 1;
+      $result["id"] = $oldData["id"];
+      $result["ical_sequence"] = $oldData["ical_sequence"] + 1;
     }
 
     return $result;

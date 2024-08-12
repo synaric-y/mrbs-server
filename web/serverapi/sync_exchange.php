@@ -53,6 +53,9 @@ foreach ($areas as $id => $areaName) {
         DBHelper::insert(\MRBS\_tbl("entry"), $create);
       }
       foreach ($fmtChangeList["update"] as $update) {
+        $id = $update["id"];
+        unset($update["id"]);
+        DBHelper::update(\MRBS\_tbl("entry"), $update, array("id" => $id));
       }
       $roomId = $room["id"];
       $createCount = count($fmtChangeList["create"]);

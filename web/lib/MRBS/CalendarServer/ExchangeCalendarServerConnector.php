@@ -229,7 +229,7 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
     }
 
     $adapter = new CalendarAdapter($this->room, CalendarAdapter::$MODE_ADD);
-    $this->fmtChangeList["create"][] = $adapter->exchangeCalendarToCalendar($ci);
+    $this->fmtChangeList["create"][] = $adapter->exchangeCalendarToCalendar($ci, null);
     try {
       $this->getCalendar()->acceptMeeting($ci->getItemId(), get_vocab("ic_meeting_accept"));
     } catch (\Exception $e) {
@@ -251,7 +251,7 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
     }
 
     $adapter = new CalendarAdapter($this->room, CalendarAdapter::$MODE_UPDATE);
-    $this->fmtChangeList["update"][] = $adapter->exchangeCalendarToCalendar($ui);
+    $this->fmtChangeList["update"][] = $adapter->exchangeCalendarToCalendar($ui, $queryOne);
 
     try {
       $this->getCalendar()->acceptMeeting($ui->getItemId(), get_vocab("ic_meeting_accept"));
