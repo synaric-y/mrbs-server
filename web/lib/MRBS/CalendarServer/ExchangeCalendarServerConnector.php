@@ -189,7 +189,7 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
       return;
     }
     $exchangeId = $ci->getItemId()->getId();
-    $queryOne = DBHelper::one(_tbl("entry"), "exchange_id = '$$exchangeId'");
+    $queryOne = DBHelper::one(_tbl("entry"), "exchange_id = '$exchangeId'");
     if (!empty($queryOne)) {
       return;
     }
@@ -245,7 +245,7 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
       return;
     }
     $exchangeId = $ui->getItemId()->getId();
-    $queryOne = DBHelper::one(_tbl("entry"), "exchange_id = '$$exchangeId'");
+    $queryOne = DBHelper::one(_tbl("entry"), "exchange_id = '$exchangeId'");
     if (empty($queryOne)) {
       return;
     }
