@@ -700,3 +700,8 @@ $vocab["browser_not_supported"] = "Unfortunately your browser isn't supported by
                                   "recent version, or else use another browser.";
 $vocab["back"]               = "Back";
 
+// CalendarServer
+$vocab["ic_meeting_accept"]                   = "The meeting you initiated has been accepted by the administrator.";
+$vocab["ic_meeting_decline"]                  = "The meeting you initiated has been declined by the administrator， %s";
+$vocab["ic_meeting_decline_conflict"]         = "conflict with meeting %s";
+

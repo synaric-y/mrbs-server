@@ -30,12 +30,9 @@ class CalendarAdapter
     $result["end_time"] = $this->iOSTimeToTimeStamp($calendarItem->getEnd());
     $result["entry_type"] = 0;
     $result["room_id"] = $this->room["id"];
-    if ($this->mode == $this::$MODE_ADD) {
-      $result["timestamp"] = time();
-    }
     $result["create_by"] = "admin";
     if ($this->mode == $this::$MODE_UPDATE) {
-      $result["modified_by"] = time();
+      $result["modified_by"] = "admin";
     }
     $result["name"] = $calendarItem->getSubject() ?? "Unknown Meeting";
     $result["book_by"] = $calendarItem->getOrganizer()->getMailbox()->getName();
@@ -46,13 +43,13 @@ class CalendarAdapter
     $result["ical_uid"] = generate_global_uid($result["name"]);
     $result["ical_sequence"] = $this->mode == $this::$MODE_ADD ? 0 : $result["ical_sequence"] + 1;
     if ($this->mode == $this::$MODE_ADD) {
-      $result["allow_registration"] = $allow_registration_default;
+      $result["allow_registration"] = $allow_registration_default ? 1 : 0;
       $result["registrant_limit"] = $registrant_limit_default;
-      $result["registrant_limit_enabled"] = $registrant_limit_enabled_default;
+      $result["registrant_limit_enabled"] = $registrant_limit_enabled_default  ? 1 : 0;
       $result["registration_opens"] = $registration_opens_default;
-      $result["registration_opens_enabled"] = $registration_opens_enabled_default;
+      $result["registration_opens_enabled"] = $registration_opens_enabled_default  ? 1 : 0;
       $result["registration_closes"] = $registration_closes_default;
-      $result["registration_closes_enabled"] = $registration_closes_enabled_default;
+      $result["registration_closes_enabled"] = $registration_closes_enabled_default  ? 1 : 0;
       $result["exchange_id"] = $calendarItem->getItemId()->getId();
       $result["create_source"] = "exchange";
     }

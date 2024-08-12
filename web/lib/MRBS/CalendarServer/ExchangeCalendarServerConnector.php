@@ -5,11 +5,15 @@ namespace MRBS\CalendarServer;
 use DateInterval;
 use DateTime;
 use DateTimeZone;
+use Exception;
 use garethp\ews\API;
 use garethp\ews\API\Message\SyncFolderItemsResponseMessageType;
+use garethp\ews\API\Type\CalendarItemType;
+use garethp\ews\API\Type\SyncFolderItemsCreateOrUpdateType;
 use MRBS\DBHelper;
 use MRBS\Intl\IntlDateFormatter;
 use function MRBS\_tbl;
+use function MRBS\get_vocab;
 
 class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
 {
@@ -68,18 +72,16 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
 
     // get recent change list
     $changesSinceLsatCheck = $calendar->listChanges($this->room["exchange_sync_state"] ?? null);
-    if (empty($calendarItemList)) {
-      $this->updateSyncState($changesSinceLsatCheck);
-      return array();
-    }
-    if (!is_array($calendarItemList)) {
-      $calendarItemList = array($calendarItemList);
-    }
-    echo $this::$TAG, "-----------------------------", PHP_EOL;
-    echo $this::$TAG, "| print queried calendar", PHP_EOL;
-    echo $this::$TAG, "-----------------------------", PHP_EOL;
-    foreach ($calendarItemList as $ci) {
-      $this->printCalenderItem($ci);
+    if (!empty($calendarItemList)) {
+      if (!is_array($calendarItemList)) {
+        $calendarItemList = array($calendarItemList);
+      }
+      echo $this::$TAG, "-----------------------------", PHP_EOL;
+      echo $this::$TAG, "| print queried calendar", PHP_EOL;
+      echo $this::$TAG, "-----------------------------", PHP_EOL;
+      foreach ($calendarItemList as $ci) {
+        $this->printCalenderItem($ci);
+      }
     }
 
     return $this->handleChangeList($changesSinceLsatCheck);
@@ -128,9 +130,9 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
 
   private function updateSyncState(SyncFolderItemsResponseMessageType $changesSinceLsatCheck)
   {
-//    $syncState = $changesSinceLsatCheck->getSyncState();
-//    echo $this::$TAG, "new syncState = $syncState", PHP_EOL;
-//    DBHelper::update(_tbl("room"), array("exchange_sync_state" => $syncState), array("id" => $this->room["id"]));
+    $syncState = $changesSinceLsatCheck->getSyncState();
+    echo $this::$TAG, "new syncState = $syncState", PHP_EOL;
+    DBHelper::update(_tbl("room"), array("exchange_sync_state" => $syncState), array("id" => $this->room["id"]));
   }
 
   private function handleChangeList(SyncFolderItemsResponseMessageType $changesSinceLsatCheck)
@@ -152,14 +154,7 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
             continue;
           }
           $ci = $createItem->getCalendarItem();
-          $adapter = new CalendarAdapter($this->room, CalendarAdapter::$MODE_ADD);
-          $this->fmtChangeList["create"][] = $adapter->exchangeCalendarToCalendar($ci);
-//          try {
-//            $this->getCalendar()->acceptMeeting($ci->getCalendarItem()->getItemId(), "OK");
-//          } catch (\Exception $e) {
-//            echo $this::$TAG, $e->getMessage();
-//            echo $this::$TAG, $e->getTraceAsString();
-//          }
+          $this->handleMeetingCreate($ci);
         }
       }
       // handle update
@@ -175,6 +170,10 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
         if (!is_array($delete)) {
           $delete = array($delete);
         }
+        foreach ($delete as $deleteItem) {
+          $di = $deleteItem->getItemId()->getId();
+          $this->fmtChangeList["delete"][] = array("exchange_id" => $di);
+        }
       }
     } catch (\Exception $e) {
       echo $this::$TAG, $e->getMessage();
@@ -185,17 +184,61 @@ class ExchangeCalendarServerConnector extends AbstractCalendarServerConnector
     return $this->fmtChangeList;
   }
 
-//  function declineMeeting(\garethp\ews\CalendarAPI $calendar, $id, $calendarItemList): void
-//  {
-//    $itemId = findItemIdById($id, $calendarItemList);
-//    try {
-//      $calendar->declineMeeting($itemId, "此会议有冲突");
-//    } catch (Exception $e) {
-//    }
-//    echo "declineMeeting: ", "$id", PHP_EOL;
-//    try {
-//      $calendar->deleteCalendarItem($itemId);
-//    } catch (Exception $e) {
-//    }
-//  }
+  private function handleMeetingCreate(CalendarItemType $ci)
+  {
+    if ($ci->getMyResponseType() != "Tentative") {
+      return;
+    }
+    $exchangeId = $ci->getItemId()->getId();
+    $queryOne = DBHelper::one(_tbl("entry"), "exchange_id = '$$exchangeId'");
+    if (!empty($queryOne)) {
+      return;
+    }
+
+    // determine if there are conflicting meetings
+    $roomId = $this->room["id"];
+    $start = new DateTime($ci->getStart());
+    $start->setTimezone(new DateTimeZone($this->timezone));
+    $end = new DateTime($ci->getEnd());
+    $end->setTimezone(new DateTimeZone($this->timezone));
+    $startTime = $start->getTimestamp();
+    $endTime = $end->getTimestamp();
+    $qSQL = "room_id = $roomId and
+    ($startTime >= start_time and $startTime < end_time)
+    or ($endTime > start_time and $endTime <= end_time)
+    or ($startTime <= start_time and $endTime >= end_time)
+    ";
+
+    $queryOne = DBHelper::one(_tbl("entry"), $qSQL);
+    if (!empty($queryOne)) {
+      $start->setTimestamp($queryOne["start_time"]);
+      $end->setTimestamp($queryOne["end_time"]);
+      $startText = $start->format("Y-m-d H:i");
+      $endText = $end->format("Y-m-d H:i");
+      $conflictDetail = get_vocab("ic_meeting_decline_conflict", "$startText - $endText");
+      $declineReason = get_vocab("ic_meeting_decline", $conflictDetail);
+      try {
+        $this->getCalendar()->declineMeeting($ci->getItemId(), $declineReason);
+      } catch (\Exception $e) {
+        echo $this::$TAG, $e->getMessage();
+        echo $this::$TAG, $e->getTraceAsString();
+      }
+      $conflictId = $queryOne["id"];
+      echo $this::$TAG, "conflict meeting: meeting request($startTime - $endTime) is conflict with $conflictId";
+//      try {
+//        $this->getCalendar()->deleteCalendarItem($ci->getItemId());
+//      } catch (Exception $e) {
+//      }
+      return;
+    }
+
+    $adapter = new CalendarAdapter($this->room, CalendarAdapter::$MODE_ADD);
+    $this->fmtChangeList["create"][] = $adapter->exchangeCalendarToCalendar($ci);
+    try {
+      $this->getCalendar()->acceptMeeting($ci->getItemId(), get_vocab("ic_meeting_accept"));
+    } catch (\Exception $e) {
+//      echo $this::$TAG, $e->getMessage();
+//      echo $this::$TAG, $e->getTraceAsString();
+    }
+  }
 }
