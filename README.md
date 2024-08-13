@@ -2,6 +2,9 @@
 
 一款基于PHP开发的会议室预约系统，具有网页端管理后台与展示端Android平板。
 
+![](https://scrutinizer-ci.com/g/synaric-y/mrbs-server/badges/build.png?b=main)
+![](https://scrutinizer-ci.com/g/synaric-y/mrbs-server/badges/code-intelligence.svg?b=main)
+
 ![demo.png](doc/img/2.png?t=1723515608897)
 
 展示端项目详见[mrbs-app](https://github.com/synaric-y/mrbs-app)。
@@ -44,7 +47,7 @@ composer install
 
 MySQL或PostgreSQL创建数据库名为```mrbs```，并导入数据。
 
-导入SQL文件为```./tables.*.sql```。
+导入SQL文件为```./sql/tables.*.sql```。
 
 3.配置项目
 
