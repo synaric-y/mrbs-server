@@ -82,7 +82,13 @@ $db_tbl_prefix = "mrbs_";
 
 ## 部署
 
-将项目整体```web```、```wix```、```image```打包到Web服务器即可。
+将项目整体```web```、```wix```、```image```打包到Web服务器。
+
+（可选）启动第三方Calendar定时同步任务：
+
+```
+nohup php /path-to-your-project/web/serverapi/sync_tpcs.php > /dev/null 2>&1 &
+```
 
 # 其他
 
@@ -93,3 +99,4 @@ $db_tbl_prefix = "mrbs_";
 ## TODO
 
 - 更多第三方Calendar服务的支持
+- 临时预约
