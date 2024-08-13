@@ -1,6 +1,6 @@
 # 商霖会议室预约系统MRBS
 
-一款基于PHP开发的会议室预约系统，具有网页端管理后台与展示端Android平板。
+一款基于PHP开发的会议室预约系统，具有网页端管理后台与会议室平板展示端。
 
 ![](https://scrutinizer-ci.com/g/synaric-y/mrbs-server/badges/build.png?b=main)
 ![](https://scrutinizer-ci.com/g/synaric-y/mrbs-server/badges/code-intelligence.svg?b=main)
@@ -82,7 +82,7 @@ $db_tbl_prefix = "mrbs_";
 
 ## 部署
 
-将项目整体```web```、```wix```、```image```打包到Web服务器。
+将项目整体```web```、```image```目录打包到Web服务器。
 
 （可选）启动第三方Calendar定时同步任务：
 
