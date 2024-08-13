@@ -1964,3 +1964,17 @@ $del_entries_parallel_requests = 2;
 // full path to your "git" executable, e.g.:
 // "c:/Program Files/TortoiseGit/git.exe"
 $git_command = "git";
+
+/***********************
+ * Third-Party Calendar Service settings
+ ***********************/
+
+// Configure all third-party Calendar services
+// sync item configuration and synchronization mode with third-party services, with values of one-way/two-way
+$thirdCalendarService = array(
+  "exchange" => array(
+    "sync" => "one-way"
+  )
+);
+
+

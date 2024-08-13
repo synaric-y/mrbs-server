@@ -13,6 +13,7 @@ ini_set('display_errors', 1);            //错误信息
 ini_set('display_startup_errors', 1);    //php启动错误信息
 error_reporting(E_ALL);
 
+global $thirdCalendarService;
 $tag = "[sync_exchange] ";
 $areas = \MRBS\get_area_names();
 
@@ -31,6 +32,7 @@ foreach ($areas as $id => $areaName) {
         "delete" => array(),
       );
       if ($area["use_exchange"] == 1) {
+        $config = $thirdCalendarService["exchange"];
         $connector = new ExchangeCalendarServerConnector(
           $area["exchange_server"],
           $room["exchange_username"],
