@@ -6,6 +6,7 @@
 ![](https://scrutinizer-ci.com/g/synaric-y/mrbs-server/badges/code-intelligence.svg?b=main)
 
 ![demo.png](doc/img/2.png?t=1723515608897)
+![demo2.png](doc/img/3.png?t=1723515608897)
 
 展示端项目详见[mrbs-app](https://github.com/synaric-y/mrbs-app)。
 
