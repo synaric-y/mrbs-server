@@ -39,7 +39,8 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     $this->timezone = $timezone;
   }
 
-  private function getCalendar() {
+  private function getCalendar()
+  {
     if (empty($this->api)) {
       $this->api = API::withUsernameAndPassword($this->server, $this->account, $this->password);
     }
@@ -228,8 +229,8 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
       return;
     }
 
-    $adapter = new CalendarAdapter($this->room, CalendarAdapter::$MODE_ADD);
-    $this->fmtChangeList["create"][] = $adapter->exchangeCalendarToCalendar($ci, null);
+    $adapter = new CalendarAdapter(CalendarAdapter::$MODE_ADD);
+    $this->fmtChangeList["create"][] = $adapter->exchangeCalendarToEntry($ci, $this->room);
     try {
       $this->getCalendar()->acceptMeeting($ci->getItemId(), get_vocab("ic_meeting_accept"));
     } catch (\Exception $e) {
@@ -250,8 +251,8 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
       return;
     }
 
-    $adapter = new CalendarAdapter($this->room, CalendarAdapter::$MODE_UPDATE);
-    $this->fmtChangeList["update"][] = $adapter->exchangeCalendarToCalendar($ui, $queryOne);
+    $adapter = new CalendarAdapter(CalendarAdapter::$MODE_UPDATE);
+    $this->fmtChangeList["update"][] = $adapter->exchangeCalendarToEntry($ui, $this->room, $queryOne);
 
     try {
       $this->getCalendar()->acceptMeeting($ui->getItemId(), get_vocab("ic_meeting_accept"));
@@ -261,18 +262,62 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     }
   }
 
-  function createMeeting()
+  function createMeeting($entry)
   {
-    // TODO: Implement createMeeting() method.
+    $id = $entry["id"];
+    $adapter = new CalendarAdapter(CalendarAdapter::$MODE_ADD);
+    $exchangeCalendar = $adapter->entryToExchangeCalendar($entry);
+    try {
+      $createdItemIds = $this->getCalendar()->createCalendarItems($exchangeCalendar);
+
+      if ($createdItemIds) {
+        $exchange_id = $createdItemIds[0]->getId();
+        $exchange_key = $createdItemIds[0]->getChangeKey();
+        DBHelper::update(_tbl("entry"), array("exchange_id" => $exchange_id, "exchange_key" => $exchange_key), "id = $id");
+      }
+    } catch (\Exception $e) {
+
+    }
+    echo $this::$TAG, "createMeeting: $id", PHP_EOL;
   }
 
-  function deleteMeeting()
+  function deleteMeeting($entry)
   {
-    // TODO: Implement deleteMeeting() method.
+    if (empty($entry["exchange_id"]) || empty($entry["exchange_key"])) {
+      return;
+    }
+    $id = $entry["id"];
+    $itemId = new API\Type\ItemIdType();
+    $itemId->setId($entry["exchange_id"]);
+    $itemId->setChangeKey($entry["exchange_key"]);
+    try {
+      $this->getCalendar()->deleteCalendarItem($itemId);
+    } catch (\Exception $e) {
+
+    }
+    echo $this::$TAG, "deleteMeeting: $id", PHP_EOL;
   }
 
-  function updateMeeting()
+  function updateMeeting($entry)
   {
-    // TODO: Implement updateMeeting() method.
+    if (empty($entry["exchange_id"]) || empty($entry["exchange_key"])) {
+      return;
+    }
+    $id = $entry["id"];
+    $itemId = new API\Type\ItemIdType();
+    $itemId->setId($entry["exchange_id"]);
+    $itemId->setChangeKey($entry["exchange_key"]);
+
+    $adapter = new CalendarAdapter(CalendarAdapter::$MODE_UPDATE);
+    $exchangeCalendar = $adapter->entryToExchangeCalendar($entry);
+    try {
+      $updateItems = $this->getCalendar()->updateCalendarItem($itemId, $exchangeCalendar);
+      $newItemId = $updateItems[0]->getItemId();
+      $exchange_id = $newItemId->getId();
+      $exchange_key = $newItemId->getChangeKey();
+      DBHelper::update(_tbl("entry"), array("exchange_id" => $exchange_id, "exchange_key" => $exchange_key), "id = $id");
+    } catch (\Exception $e) {
+
+    }
   }
 }

@@ -1973,7 +1973,7 @@ $git_command = "git";
 // sync item configuration and synchronization mode with third-party services, with values of one-way/two-way
 $thirdCalendarService = array(
   "exchange" => array(
-    "sync" => "one-way"
+    "sync" => "two-way"
   )
 );
 

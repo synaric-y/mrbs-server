@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace MRBS;
 
+require_once dirname(__DIR__) . '/vendor/autoload.php';
+use MRBS\CalendarServer\CalendarServerManager;
 use MRBS\Form\Form;
 
 // Deletes an entry, or a series.    The $id is always the id of
@@ -74,6 +76,8 @@ if ($info = get_booking_info($id, FALSE, TRUE))
         $mail_previous['entry_type'] = ENTRY_RPT_CHANGED;
       }
     }
+
+    CalendarServerManager::deleteMeeting($id);
 
     $start_times = mrbsDelEntry($id, $series, true);
 

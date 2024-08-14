@@ -261,9 +261,13 @@ ALTER TABLE mrbs_area ADD COLUMN  `exchange_server` varchar(255)  NULL DEFAULT '
 
 ALTER TABLE mrbs_entry ADD COLUMN  `book_by` varchar(80)  NULL DEFAULT ''   COMMENT 'booker';
 ALTER TABLE mrbs_entry ADD COLUMN  `exchange_id` varchar(511)  NULL DEFAULT ''   COMMENT '';
+ALTER TABLE mrbs_entry ADD COLUMN  `exchange_key` varchar(511)  NULL DEFAULT ''   COMMENT '';
 ALTER TABLE mrbs_entry ADD COLUMN  `wxwork_id` varchar(511)  NULL DEFAULT ''   COMMENT '';
 ALTER TABLE mrbs_entry ADD COLUMN  `create_source` varchar(20)  NULL DEFAULT 'system'   COMMENT 'system/exchange/wxwork';
 ALTER TABLE mrbs_repeat ADD COLUMN  `book_by` varchar(80)  NULL DEFAULT ''   COMMENT 'booker';
 ALTER TABLE mrbs_repeat ADD COLUMN  `exchange_id` varchar(511)  NULL DEFAULT ''   COMMENT '';
+ALTER TABLE mrbs_repeat ADD COLUMN  `exchange_key` varchar(511)  NULL DEFAULT ''   COMMENT '';
 ALTER TABLE mrbs_repeat ADD COLUMN  `wxwork_id` varchar(511)  NULL DEFAULT ''   COMMENT '';
 ALTER TABLE mrbs_repeat ADD COLUMN  `create_source` varchar(20)  NULL DEFAULT 'system'   COMMENT 'system/exchange/wxwork';
+
+

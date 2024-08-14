@@ -13,11 +13,11 @@ interface AbstractCalendarServerConnector {
 
 
   // Notify third-party services to create meetings.
-  function createMeeting();
+  function createMeeting($entry);
 
   // Notify third-party services to decline meetings.
-  function deleteMeeting();
+  function deleteMeeting($entry);
 
   // Notify third-party services to update meetings.
-  function updateMeeting();
+  function updateMeeting($entry);
 }

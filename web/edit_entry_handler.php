@@ -2,11 +2,13 @@
 declare(strict_types=1);
 namespace MRBS;
 
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 require 'defaultincludes.inc';
 require_once 'mrbs_sql.inc';
 require_once 'functions_ical.inc';
 require_once 'functions_mail.inc';
 
+use MRBS\CalendarServer\CalendarServerManager;
 use MRBS\Form\ElementInputSubmit;
 use MRBS\Form\Form;
 
@@ -822,10 +824,24 @@ try
   $transaction_ok = true;
   $result = mrbsMakeBookings($bookings, $this_id, $just_check, $skip, $original_room_id, $send_mail, $edit_series);
 
+  // Notify the third-party Calendar service that a meeting has been created
+  if (!$just_check && $result['valid_booking'] && !isset($id)) {
+      if ($result["new_details"]) {
+          foreach ($result["new_details"] as $d) {
+              CalendarServerManager::createMeeting($d["id"]);
+          }
+      }
+  }
   // If we weren't just checking and this was a successful booking and
   // we were editing an existing booking, then delete the old booking
   if (!$just_check && $result['valid_booking'] && isset($id))
   {
+    // Notify the third-party Calendar service that a meeting has been updated
+      if ($result["new_details"]) {
+          foreach ($result["new_details"] as $d) {
+              CalendarServerManager::updateMeeting($d["id"]);
+          }
+      }
     $transaction_ok = mrbsDelEntry($id, $edit_series, true);
   }
 
