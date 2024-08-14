@@ -4,9 +4,9 @@ use MRBS\CalendarServer\ExchangeCalendarServerConnector;
 use MRBS\DBHelper;
 
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
-require_once "../defaultincludes.inc";
-require_once "../functions_table.inc";
-require_once "../mrbs_sql.inc";
+require_once dirname(__DIR__) . "/defaultincludes.inc";
+require_once dirname(__DIR__) . "/functions_table.inc";
+require_once dirname(__DIR__) . "/mrbs_sql.inc";
 
 
 ini_set('display_errors', 1);            //错误信息
