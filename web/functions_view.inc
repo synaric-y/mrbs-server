@@ -194,12 +194,22 @@ function create_details_body(array $data, bool $as_html=false, bool $keep_privat
       case 'registration_opens_enabled':
       case 'registration_closes':
       case 'registration_closes_enabled':
+      case 'exchange_id':
+      case 'exchange_key':
+      case 'wxwork_id':
+      case 'create_source':
         break;
 
       case 'description':
         // Description
         $class = ($keep_private & !empty($is_private_field['entry.description'])) ? "private" : "";
         $tbody .= create_details_row(get_vocab("description"), $data['description'], $as_html, $class);
+        break;
+
+      case 'book_by':
+        // Book by
+        $class = ($keep_private & !empty($is_private_field['entry.book_by'])) ? "private" : "";
+        $tbody .= create_details_row(get_vocab("bookedby"), $data['book_by'], $as_html, $class);
         break;
 
       case 'confirmation_status':
