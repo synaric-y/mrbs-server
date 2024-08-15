@@ -31,12 +31,13 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
   );
 
 
-  public function __construct($server, $account, $password, $timezone)
+  public function __construct($area, $room)
   {
-    $this->server = $server;
-    $this->account = $account;
-    $this->password = $password;
-    $this->timezone = $timezone;
+    $this->server = $area["exchange_server"];
+    $this->account = $room["exchange_username"];
+    $this->password = $room["exchange_password"];
+    $this->timezone = $area["timezone"];
+    $this->room = $room;
   }
 
   private function getCalendar()
@@ -84,11 +85,6 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     }
 
     return $this->handleChangeList($changesSinceLsatCheck);
-  }
-
-  public function setRoom($room)
-  {
-    $this->room = $room;
   }
 
   private function printCalenderItem(API\Type\CalendarItemType $ci)

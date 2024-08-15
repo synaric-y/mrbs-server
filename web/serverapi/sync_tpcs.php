@@ -1,6 +1,7 @@
 <?php
 
 use MRBS\CalendarServer\ExchangeCalendarServerConnector;
+use MRBS\CalendarServer\WxWorkCalendarServerConnector;
 use MRBS\DBHelper;
 
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
@@ -24,7 +25,6 @@ while (true) {
     $rooms = \MRBS\get_rooms($id);
 
     foreach ($rooms as $room) {
-
       try {
         echo $tag, "start handle room: " . json_encode($room), PHP_EOL;
         $fmtChangeList = array(
@@ -32,26 +32,26 @@ while (true) {
           "update" => array(),
           "delete" => array(),
         );
-        if ($area["use_exchange"] == 1) {
-          $config = $thirdCalendarService["exchange"];
-          $connector = new ExchangeCalendarServerConnector(
-            $area["exchange_server"],
-            $room["exchange_username"],
-            $room["exchange_password"],
-            $area["timezone"]
-          );
-          $connector->setRoom($room);
-          $changeList = $connector->pullCalendarUpdate();
-          if (!empty($changeList["create"])) {
-            $fmtChangeList["create"] = array_merge($fmtChangeList["create"], $changeList["create"]);
-          }
-          if (!empty($changeList["update"])) {
-            $fmtChangeList["update"] = array_merge($fmtChangeList["update"], $changeList["update"]);
-          }
-          if (!empty($changeList["delete"])) {
-            $fmtChangeList["delete"] = array_merge($fmtChangeList["delete"], $changeList["delete"]);
+        foreach ($thirdCalendarService as $serviceName => $config) {
+          if ($area[$config["switch"]] == 1) {
+            $connectorName = $config["connector"];
+            $connector = new $connectorName(
+              $area,
+              $room,
+            );
+            $changeList = $connector->pullCalendarUpdate();
+            if (!empty($changeList["create"])) {
+              $fmtChangeList["create"] = array_merge($fmtChangeList["create"], $changeList["create"]);
+            }
+            if (!empty($changeList["update"])) {
+              $fmtChangeList["update"] = array_merge($fmtChangeList["update"], $changeList["update"]);
+            }
+            if (!empty($changeList["delete"])) {
+              $fmtChangeList["delete"] = array_merge($fmtChangeList["delete"], $changeList["delete"]);
+            }
           }
         }
+
         foreach ($fmtChangeList["create"] as $create) {
           DBHelper::insert(\MRBS\_tbl("entry"), $create);
         }
