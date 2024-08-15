@@ -232,7 +232,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     $adapter = new CalendarAdapter(CalendarAdapter::$MODE_ADD);
     $this->fmtChangeList["create"][] = array(
       "from" => "exchange",
-      $adapter->exchangeCalendarToEntry($ci, $this->room)
+      "data" => $adapter->exchangeCalendarToEntry($ci, $this->room)
     );
     try {
       $this->getCalendar()->acceptMeeting($ci->getItemId(), "");
