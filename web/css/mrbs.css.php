@@ -545,7 +545,8 @@ nav.main_calendar {
   align-items: center;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
-  width: 100%;
+  /*width: 100%;*/
+  width: 50em;
   margin-top: 0.8rem;  <?php // same as padding-top on minicalendars ?>
 }
 
@@ -630,7 +631,7 @@ nav.view a:last-child, nav.arrow a:last-child {
 }
 
 nav.view a {
-  padding: 0.2em 0.5em;
+  padding: 0.2em 1.5em;
 }
 
 nav.arrow a {
@@ -644,7 +645,7 @@ nav.arrow a:hover,
 nav.arrow a:focus {
   background: <?php echo $banner_back_color ?>;
   box-shadow: inset 1px 1px <?php echo $button_inset_color ?>;
-  color: #ffffff;
+  /*color: #ffffff;*/
   text-decoration: none;
 }
 
@@ -675,7 +676,7 @@ nav a.next::after {
 /* ------------ ADMIN.PHP ---------------------------*/
 
 .form_admin fieldset {
-  border: 1px solid <?php echo $admin_table_border_color ?>;
+  /*border: 1px solid */<?php //echo $admin_table_border_color ?>/*;*/
 }
 
 .admin h2 {
@@ -931,7 +932,7 @@ table.dwm_main {
   vertical-align: top;
   padding: 0.2em;
   color: <?php echo $standard_font_color ?>;
-  background-color: #ffffff;
+  /*background-color: #ffffff;*/
   background-clip: padding-box; <?php // to keep Edge happy when using position: sticky ?>
 }
 
@@ -1022,6 +1023,7 @@ table.dwm_main {
 {
   .dwm_main .booking {
     position: relative;
+    background-color: red;
   }
 }
 
@@ -1029,6 +1031,7 @@ table.dwm_main {
   width: 100%;
   height: 100%; <?php // overridden if .booked.multiply ?>
   min-height: <?php echo $main_cell_height ?>;
+  background-color: orange;
 }
 
 .dwm_main .booked.multiply a,
@@ -1047,12 +1050,17 @@ table.dwm_main {
 .dwm_main .booked a,
 .all_rooms td a div:not(.free) {
   border-bottom: 1px solid <?php echo $main_table_body_v_border_color ?>;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 .dwm_main .booked a.saving {
   opacity: 0.4;
   color: transparent;
   pointer-events: none;
+  /*background-color:red;*/
 }
 
 .dwm_main .booked span.saving {
@@ -2127,32 +2135,61 @@ form#show_my_entries input.link[type="submit"] {
 ?>
 
 .color_key {
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
+  /*display: -ms-flexbox;*/
+  /*display: flex;*/
+  /*-ms-flex-wrap: wrap;*/
+  /*flex-wrap: wrap;*/
 }
 
 .color_key {
-  display: inline-grid;
+  /*display: inline-grid;*/
+  display: inline;
   grid-template-columns: repeat(auto-fill, minmax(20ch, 1fr));
-  width: 100%;
-  margin-top: 1em;
+  /*width: 100%;*/
+  width: auto;
+  justify-content: flex-end;
+  flex:1;
+  /*height:0.8em;*/
+  /*margin-top: 1em;*/
 }
 
-.color_key > div {
-  width: 12em;
-  color: <?php echo $color_key_font_color ?>;
+.color_key > text {
+  /*width: 12em;*/
+  /*color: */<?php //echo $color_key_font_color ?>/*;*/
   word-wrap: break-word;
   padding: 0.3em;
-  margin: -1px 0 0 -1px; <?php // to collapse the borders ?>
-  font-weight: bold;
-  border: <?php echo $main_table_cell_border_width ?>px solid <?php echo $main_table_body_h_border_color ?>
+  /*margin: -1px 0 0 -1px; */<?php //// to collapse the borders ?>
+  /*font-weight: bold;*/
+  /*border: */<?php //echo $main_table_cell_border_width ?>/*px solid */<?php //echo $main_table_body_h_border_color ?>
+}
+
+.color_key span:first-child{
+  display: inline-block;
+  width: 0.8em;
+  height:0.8em;
+  background-color:#08D50A;
+}
+
+.color_key span:last-child{
+  display: inline-block;
+  width: 0.8em;
+  height:0.8em;
+  background-color:#04C4FF;
+}
+
+
+.color_key_bg {
+  display: inline-block;
+  width: 0.8em;
+  height:0.8em;
+  background-color:#04C4FF;
 }
 
 @supports (display: grid) {
-  .color_key > div {
+  .color_key > text {
     width: auto;
+    padding-left: 0.5em;
+    line-height:0.8em;
   }
 }
 
@@ -2824,5 +2861,70 @@ nav.qr {
   transform: translateY(-50%);
 }
 
+.I:hover {
+  background-color: orange;
+}
+
+.E:hover {
+  background-color: orange;
+}
+
+tbody td:hover {
+  background-color:orange !important;
+  z-index:100;
+  .E {
+
+  }
+  .I {
+
+  }
+}
+
+.meet_head_key {
+  margin-left: 40em;
+}
+
+.external_key {
+  margin-left:1.5em;
+  width:0.8em;
+  height:0.8em;
+  background-color:#6dd9c4;
+}
+.external_text {
+  margin-left:0.6em;
+  line-height:1.2em;
+  height:1.2em;
+}
+.internal_key {
+  margin-left:1.5em;
+  width:0.8em;
+  height:0.8em;
+  background-color:#08D50A;
+}
+.internal_text {
+  margin-left:0.6em;
+  line-height:1.2em;
+  height:1.2em;
+}
+
+.room_header_title {
+  color:#3366CC;
+  font-size:1.5em;
+}
+
+.sure_button {
+  /*display:none;*/
+  margin-top:2em;
+  width: 8em;
+  height: 2em;
+}
+
+label {
+  color:#585757;
+}
+
+.field_set_title > legend {
+  font-size: 1em;
+}
 
 
