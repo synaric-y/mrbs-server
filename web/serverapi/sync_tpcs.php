@@ -51,14 +51,48 @@ while (true) {
             }
           }
         }
-
+        foreach ($fmtChangeList["delete"] as $delete) {
+          foreach ($thirdCalendarService as $serviceName => $config) {
+            if ($delete["from"] == $serviceName) {
+              continue;
+            }
+            $connectorName = $config["connector"];
+            $connector = new $connectorName(
+              $area,
+              $room,
+            );
+            $connector->deleteMeeting($delete["data"]);
+          }
+        }
         foreach ($fmtChangeList["create"] as $create) {
-          DBHelper::insert(\MRBS\_tbl("entry"), $create);
+          DBHelper::insert(\MRBS\_tbl("entry"), $create["data"]);
+          foreach ($thirdCalendarService as $serviceName => $config) {
+            if ($create["from"] == $serviceName) {
+              continue;
+            }
+            $connectorName = $config["connector"];
+            $connector = new $connectorName(
+              $area,
+              $room,
+            );
+            $connector->createMeeting($create["data"]);
+          }
         }
         foreach ($fmtChangeList["update"] as $update) {
-          $id = $update["id"];
-          unset($update["id"]);
-          DBHelper::update(\MRBS\_tbl("entry"), $update, array("id" => $id));
+          $id = $update["data"]["id"];
+          unset($update["data"]["id"]);
+          DBHelper::update(\MRBS\_tbl("entry"), $update["data"], array("id" => $id));
+          foreach ($thirdCalendarService as $serviceName => $config) {
+            if ($update["from"] == $serviceName) {
+              continue;
+            }
+            $connectorName = $config["connector"];
+            $connector = new $connectorName(
+              $area,
+              $room,
+            );
+            $connector->updateMeeting($update["data"]);
+          }
         }
         $roomId = $room["id"];
         $createCount = count($fmtChangeList["create"]);

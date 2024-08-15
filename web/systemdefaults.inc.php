@@ -1974,12 +1974,12 @@ $git_command = "git";
 $thirdCalendarService = array(
   "exchange" => array(
     "sync" => "two-way",
-    "connector" => "ExchangeCalendarServerConnector",
+    "connector" => "MRBS\CalendarServer\ExchangeCalendarServerConnector",
     "switch" => "use_exchange"
   ),
   "wxwork" => array(
     "sync" => "two-way",
-    "connector" => "WxWorkCalendarServerConnector",
+    "connector" => "MRBS\CalendarServer\WxWorkCalendarServerConnector",
     "switch" => "use_wxwork"
   )
 );

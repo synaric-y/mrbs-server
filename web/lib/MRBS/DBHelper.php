@@ -116,5 +116,7 @@ class DBHelper
     }
     $sql = "insert into `" . $table . "` (" . substr($fields, 0, -1) . ") values (" . substr($values, 0, -1) . ")";
     db()->command($sql);
+
+    return true;
   }
 }

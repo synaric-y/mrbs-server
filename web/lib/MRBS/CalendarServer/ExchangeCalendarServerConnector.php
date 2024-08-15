@@ -146,8 +146,11 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
         }
         foreach ($delete as $deleteItem) {
           $di = $deleteItem->getItemId()->getId();
-          $this->fmtChangeList["delete"][] = array("exchange_id" => $di);
-          DBHelper::delete(\MRBS\_tbl("entry"), array("exchange_id" => $di));
+          $entry = DBHelper::one(\MRBS\_tbl("entry"), array("exchange_id" => $di));
+          $this->fmtChangeList["delete"][] = array("data" => $entry, "from" => "exchange");
+          if (!empty($entry)) {
+            DBHelper::delete(\MRBS\_tbl("entry"), array("exchange_id" => $di));
+          }
         }
       }
       // handle create
@@ -183,7 +186,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
 
   private function handleMeetingCreate(CalendarItemType $ci)
   {
-    if ($ci->getMyResponseType() != "Tentative") {
+    if ($ci->getMyResponseType() != "Tentative" && $ci->getMyResponseType() != "NoResponseReceived") {
       return;
     }
     $exchangeId = $ci->getItemId()->getId();
@@ -227,7 +230,10 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     }
 
     $adapter = new CalendarAdapter(CalendarAdapter::$MODE_ADD);
-    $this->fmtChangeList["create"][] = $adapter->exchangeCalendarToEntry($ci, $this->room);
+    $this->fmtChangeList["create"][] = array(
+      "from" => "exchange",
+      $adapter->exchangeCalendarToEntry($ci, $this->room)
+    );
     try {
       $this->getCalendar()->acceptMeeting($ci->getItemId(), "");
     } catch (\Exception $e) {
@@ -239,7 +245,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
   private function handleMeetingUpdate(CalendarItemType $ui)
   {
     // After the meeting is updated, it will revert back to the Tentative state
-    if ($ui->getMyResponseType() != "Tentative") {
+    if ($ui->getMyResponseType() != "Tentative" && $ui->getMyResponseType() != "NoResponseReceived") {
       return;
     }
     $exchangeId = $ui->getItemId()->getId();
@@ -249,7 +255,10 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     }
 
     $adapter = new CalendarAdapter(CalendarAdapter::$MODE_UPDATE);
-    $this->fmtChangeList["update"][] = $adapter->exchangeCalendarToEntry($ui, $this->room, $queryOne);
+    $this->fmtChangeList["update"][] = array(
+      "from" => "exchange",
+      "data" => $adapter->exchangeCalendarToEntry($ui, $this->room, $queryOne)
+    );
 
     try {
       $this->getCalendar()->acceptMeeting($ui->getItemId(), "");
