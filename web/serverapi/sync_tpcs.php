@@ -67,6 +67,7 @@ while (true) {
         echo $tag, "end handle room:  $roomId. create: $createCount, update: $updateCount, delete: $deleteCount", PHP_EOL;
       } catch (Exception $e) {
         echo $tag, $e->getMessage(), PHP_EOL;
+        echo $tag, $e->getTraceAsString(), PHP_EOL;
       }
     }
   }

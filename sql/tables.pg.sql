@@ -258,6 +258,7 @@ INSERT INTO mrbs_variables (variable_name, variable_content)
 ALTER TABLE mrbs_room ADD COLUMN  `icon` varchar(255)  NULL DEFAULT ''   COMMENT 'room icon';
 ALTER TABLE mrbs_room ADD COLUMN  `exchange_username` varchar(80)  NULL DEFAULT ''   COMMENT 'exchange username';
 ALTER TABLE mrbs_room ADD COLUMN  `exchange_password` varchar(255)  NULL DEFAULT ''   COMMENT 'exchange password';
+ALTER TABLE mrbs_room ADD COLUMN  `exchange_sync_state` varchar(255)  NULL DEFAULT ''   COMMENT '';
 
 ALTER TABLE mrbs_area ADD COLUMN  `use_exchange` tinyint(4)  NULL DEFAULT 0   COMMENT '';
 ALTER TABLE mrbs_area ADD COLUMN  `use_wxwork` tinyint(4)  NULL DEFAULT 0   COMMENT '';

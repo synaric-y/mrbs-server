@@ -137,6 +137,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
   private function handleChangeList(SyncFolderItemsResponseMessageType $changesSinceLsatCheck)
   {
     if (empty($changesSinceLsatCheck->getChanges())) {
+
       $this->updateSyncState($changesSinceLsatCheck);
       return null;
     }
@@ -232,7 +233,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     $adapter = new CalendarAdapter(CalendarAdapter::$MODE_ADD);
     $this->fmtChangeList["create"][] = $adapter->exchangeCalendarToEntry($ci, $this->room);
     try {
-      $this->getCalendar()->acceptMeeting($ci->getItemId(), get_vocab("ic_meeting_accept"));
+      $this->getCalendar()->acceptMeeting($ci->getItemId(), "");
     } catch (\Exception $e) {
 //      echo $this::$TAG, $e->getMessage();
 //      echo $this::$TAG, $e->getTraceAsString();
@@ -255,7 +256,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     $this->fmtChangeList["update"][] = $adapter->exchangeCalendarToEntry($ui, $this->room, $queryOne);
 
     try {
-      $this->getCalendar()->acceptMeeting($ui->getItemId(), get_vocab("ic_meeting_accept"));
+      $this->getCalendar()->acceptMeeting($ui->getItemId(), "");
     } catch (\Exception $e) {
 //      echo $this::$TAG, $e->getMessage();
 //      echo $this::$TAG, $e->getTraceAsString();
