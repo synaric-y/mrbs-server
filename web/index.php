@@ -27,7 +27,9 @@ function get_color_key() : string
 
     foreach ($booking_types as $key)
     {
-      $html .= "<div class=\"$key\">" . get_type_vocab($key) . "</div>\n";
+//      $html .= "<div class=\"$key\">" . get_type_vocab($key) . "</div>\n";
+      $html.= "<span class=\"color_key_bg\"></span>\n";
+      $html .= "<text class=\"$key\">" . get_type_vocab($key) . "</text>\n";
     }
 
     $html .= "</div>\n";
@@ -300,9 +302,11 @@ function get_arrow_nav(string $view, int $view_all, int $year, int $month, int $
   $link_today = multisite($link_today);
   $link_next = multisite($link_next);
 
+  $week = get_day_date($view, $year, $month, $day);
+
   $html .= "<nav class=\"arrow\">\n";
   $html .= "<a class=\"prev\" title=\"$title_prev\" aria-label=\"$title_prev\" href=\"" . htmlspecialchars($link_prev) . "\"></a>";  // Content will be filled in by CSS
-  $html .= "<a title= \"$title_this\" aria-label=\"$title_this\" href=\"" . htmlspecialchars($link_today) . "\">" . get_vocab('today') . "</a>";
+  $html .= "<a title= \"$title_this\" aria-label=\"$title_this\" href=\"" . htmlspecialchars($link_today) . "\">" . $week . "</a>";
   $html .= "<a class=\"next\" title=\"$title_next\" aria-label=\"$title_next\" href=\"" . htmlspecialchars($link_next) . "\"></a>";  // Content will be filled in by CSS
   $html .= "</nav>";
 
@@ -314,19 +318,32 @@ function get_calendar_nav(string $view, int $view_all, int $year, int $month, in
 {
   $html = '';
 
-  $html .= "<nav class=\"main_calendar" .
+  $html .= "<nav class=\"main_calendar meet_head_key" .
            (($hidden) ? ' js_hidden' : '') .
            "\">\n";
 
   $html .= get_arrow_nav($view, $view_all, $year, $month, $day, $area, $room);
-  $html .= get_location_nav($view, $view_all, $year, $month, $day, $area, $room);
+//  $html .= get_location_nav($view, $view_all, $year, $month, $day, $area, $room);
   $html .= get_view_nav($view, $view_all, $year, $month, $day, $area, $room);
 
+  $html .= "<span class=\"internal_key\"></span><text class=\"internal_text\">内部使用</text>";
+  $html .= "<span class=\"external_key\"></span><text class=\"external_text\">外部使用</text>";
   $html .= "</nav>\n";
 
   return $html;
 }
 
+
+function get_day_date(string $view, int $year, int $month, int $day) : string
+{
+  global $datetime_formats, $display_timezone, $timezone,
+         $weekstarts, $view_week_number;
+
+  $dayweek = '';
+  $time = mktime(12, 0, 0, $month, $day, $year);
+  $dayweek .= datetime_format($datetime_formats['view_day'], $time);
+  return $dayweek;
+}
 
 function get_date_heading(string $view, int $year, int $month, int $day) : string
 {
@@ -458,7 +475,7 @@ $date_heading = get_date_heading($view, $year, $month, $day);
 if ($refresh)
 {
   echo json_encode(array(
-    'date_heading' => $date_heading,
+//    'date_heading' => $date_heading,
     'inner_html' => $inner_html
   ));
   exit;
@@ -482,7 +499,7 @@ echo "<div class=\"minicalendars\">\n";
 echo "</div>\n";
 
 echo "<div class=\"view_container js_hidden\">\n";
-echo "<div class=\"date_heading\">$date_heading</div>";
+//echo "<div class=\"date_heading\">$date_heading</div>";
 echo get_calendar_nav($view, $view_all, $year, $month, $day, $area, $room);
 
 echo message_html();
@@ -504,9 +521,9 @@ echo "</table>\n";
 echo "</div>\n";
 
 // The bottom navigation bar is controlled by JavaScript
-echo get_calendar_nav($view, $view_all, $year, $month, $day, $area, $room, true);
+//echo get_calendar_nav($view, $view_all, $year, $month, $day, $area, $room, true);
 
-echo get_color_key();
+//echo get_color_key();
 echo "</div>\n";
 
 print_footer();
