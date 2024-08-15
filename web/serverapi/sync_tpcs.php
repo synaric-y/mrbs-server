@@ -1,5 +1,6 @@
 <?php
 
+use MRBS\CalendarServer\CalendarServerManager;
 use MRBS\CalendarServer\ExchangeCalendarServerConnector;
 use MRBS\CalendarServer\WxWorkCalendarServerConnector;
 use MRBS\DBHelper;
@@ -34,11 +35,7 @@ while (true) {
         );
         foreach ($thirdCalendarService as $serviceName => $config) {
           if ($area[$config["switch"]] == 1) {
-            $connectorName = $config["connector"];
-            $connector = new $connectorName(
-              $area,
-              $room,
-            );
+            $connector = CalendarServerManager::getServer($config, $area, $room);
             $changeList = $connector->pullCalendarUpdate();
             if (!empty($changeList["create"])) {
               $fmtChangeList["create"] = array_merge($fmtChangeList["create"], $changeList["create"]);
@@ -56,11 +53,7 @@ while (true) {
             if ($delete["from"] == $serviceName) {
               continue;
             }
-            $connectorName = $config["connector"];
-            $connector = new $connectorName(
-              $area,
-              $room,
-            );
+            $connector = CalendarServerManager::getServer($config, $area, $room);
             $connector->deleteMeeting($delete["data"]);
           }
         }
@@ -70,11 +63,7 @@ while (true) {
             if ($create["from"] == $serviceName) {
               continue;
             }
-            $connectorName = $config["connector"];
-            $connector = new $connectorName(
-              $area,
-              $room,
-            );
+            $connector = CalendarServerManager::getServer($config, $area, $room);
             $connector->createMeeting($create["data"]);
           }
         }
@@ -86,11 +75,7 @@ while (true) {
             if ($update["from"] == $serviceName) {
               continue;
             }
-            $connectorName = $config["connector"];
-            $connector = new $connectorName(
-              $area,
-              $room,
-            );
+            $connector = CalendarServerManager::getServer($config, $area, $room);
             $connector->updateMeeting($update["data"]);
           }
         }

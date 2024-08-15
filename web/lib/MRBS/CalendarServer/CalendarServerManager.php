@@ -9,6 +9,15 @@ use function MRBS\get_room_details;
 class CalendarServerManager
 {
 
+  public static function getServer($config, $area, $room)
+  {
+    $connectorName = $config["connector"];
+    return new $connectorName(
+      $area,
+      $room,
+    );
+  }
+
   public static function createMeeting($id)
   {
     global $thirdCalendarService;
@@ -17,11 +26,7 @@ class CalendarServerManager
       if ($config["sync"] == "two-way") {
         $room = get_room_details($entry["room_id"]);
         $area = get_area_details($room["area_id"]);
-        $connectorName = $config["connector"];
-        $connector = new $connectorName(
-          $area,
-          $room,
-        );
+        $connector = CalendarServerManager::getServer($config, $area, $room);
         $connector->createMeeting($entry);
       }
     }
@@ -35,11 +40,7 @@ class CalendarServerManager
       if ($config["sync"] == "two-way") {
         $room = get_room_details($entry["room_id"]);
         $area = get_area_details($room["area_id"]);
-        $connectorName = $config["connector"];
-        $connector = new $connectorName(
-          $area,
-          $room,
-        );
+        $connector = CalendarServerManager::getServer($config, $area, $room);
         $connector->deleteMeeting($entry);
       }
     }
@@ -54,11 +55,7 @@ class CalendarServerManager
       if ($config["sync"] == "two-way") {
         $room = get_room_details($entry["room_id"]);
         $area = get_area_details($room["area_id"]);
-        $connectorName = $config["connector"];
-        $connector = new $connectorName(
-          $area,
-          $room,
-        );
+        $connector = CalendarServerManager::getServer($config, $area, $room);
         $connector->updateMeeting($entry);
       }
     }

@@ -98,5 +98,11 @@ nohup php /path-to-your-project/web/serverapi/sync_tpcs.php > /dev/null 2>&1 &
 
 ## TODO
 
+- 企业微信会议室API支持
+- 平板临时预约会议
+- 更多平板端模板
+- Area级多数据源管理
+- Room级可预约时间的管理
 - 更多第三方Calendar服务的支持
-- 临时预约
+- 平板端多语言混合展示
+- APP/小程序端
