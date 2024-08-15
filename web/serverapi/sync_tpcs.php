@@ -22,12 +22,12 @@ $areas = \MRBS\get_area_names();
 while (true) {
   foreach ($areas as $id => $areaName) {
     $area = \MRBS\get_area_details($id);
-    echo $tag, "start handle area: " . json_encode($area), PHP_EOL;
+    \MRBS\log_write($tag, "start handle area: " . json_encode($area));
     $rooms = \MRBS\get_rooms($id);
 
     foreach ($rooms as $room) {
       try {
-        echo $tag, "start handle room: " . json_encode($room), PHP_EOL;
+        \MRBS\log_write($tag, "start handle room: " . json_encode($room));
         $fmtChangeList = array(
           "create" => array(),
           "update" => array(),
@@ -83,15 +83,15 @@ while (true) {
         $createCount = count($fmtChangeList["create"]);
         $updateCount = count($fmtChangeList["update"]);
         $deleteCount = count($fmtChangeList["delete"]);
-        echo $tag, "end handle room:  $roomId. create: $createCount, update: $updateCount, delete: $deleteCount", PHP_EOL;
+        \MRBS\log_write($tag, "end handle room:  $roomId. create: $createCount, update: $updateCount, delete: $deleteCount");
       } catch (Exception $e) {
-        echo $tag, $e->getMessage(), PHP_EOL;
-        echo $tag, $e->getTraceAsString(), PHP_EOL;
+        \MRBS\log_write($tag, $e->getMessage());
+        \MRBS\log_write($tag, $e->getTraceAsString());
       }
     }
   }
 
-  echo $tag, "done!", PHP_EOL;
+  \MRBS\log_write($tag, "done!");
   sleep(10);
 }
 

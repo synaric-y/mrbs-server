@@ -64,7 +64,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     $oneWeekLater->add(new DateInterval('P7D'));
     $searchCalendarStart = $fmt->format($now);
     $searchCalendarEnd = $fmt->format($oneWeekLater);
-    echo $this::$TAG, "getCalendarItems: $searchCalendarStart ~ $searchCalendarEnd", PHP_EOL;
+    \MRBS\log_write($this::$TAG, "getCalendarItems: $searchCalendarStart ~ $searchCalendarEnd");
 
     $calendar = $this->getCalendar();
     $items = $calendar->getCalendarItems($searchCalendarStart, $searchCalendarEnd);
@@ -76,9 +76,9 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
       if (!is_array($calendarItemList)) {
         $calendarItemList = array($calendarItemList);
       }
-      echo $this::$TAG, "-----------------------------", PHP_EOL;
-      echo $this::$TAG, "| print queried calendar", PHP_EOL;
-      echo $this::$TAG, "-----------------------------", PHP_EOL;
+      \MRBS\log_write($this::$TAG, "-----------------------------");
+      \MRBS\log_write($this::$TAG, "| print queried calendar");
+      \MRBS\log_write($this::$TAG, "-----------------------------");
       foreach ($calendarItemList as $ci) {
         $this->printCalenderItem($ci);
       }
@@ -89,19 +89,19 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
 
   private function printCalenderItem(API\Type\CalendarItemType $ci)
   {
-    echo $this::$TAG, "-----------------------------", PHP_EOL;
-    echo $this::$TAG, "itemId:", $ci->getItemId()->getId(), PHP_EOL;
-    echo $this::$TAG, "organizer:", $ci->getOrganizer()->getMailbox()->getName(), PHP_EOL;
-    echo $this::$TAG, "start:", $this->formatIOSTime($ci->getStart()), PHP_EOL;
-    echo $this::$TAG, "end:", $this->formatIOSTime($ci->getEnd()), PHP_EOL;
-    echo $this::$TAG, "myResponseType:", $ci->getMyResponseType(), PHP_EOL;  // values: Tentative/Accept/Decline
-//    echo $this::$TAG, "dateTimestamp:", $this->formatIOSTime($ci->getDateTimeStamp()), PHP_EOL;
-//    echo $this::$TAG, "lastModifiedTime:", $this->formatIOSTime($ci->getLastModifiedTime()), PHP_EOL;
-//    echo $this::$TAG, "location:", $ci->getLocation(), PHP_EOL;
-//    echo $this::$TAG, "isMeeting:", $ci->isMeeting(), PHP_EOL;
-//    echo $this::$TAG, "isCancelled:", $ci->isCancelled(), PHP_EOL;
-//    echo $this::$TAG, "isRecurring:", $ci->isRecurring(), PHP_EOL;
-    echo $this::$TAG, "-----------------------------", PHP_EOL;
+    \MRBS\log_write($this::$TAG, "-----------------------------");
+    \MRBS\log_write($this::$TAG, "itemId:", $ci->getItemId()->getId());
+    \MRBS\log_write($this::$TAG, "organizer:", $ci->getOrganizer()->getMailbox()->getName());
+    \MRBS\log_write($this::$TAG, "start:", $this->formatIOSTime($ci->getStart()));
+    \MRBS\log_write($this::$TAG, "end:", $this->formatIOSTime($ci->getEnd()));
+    \MRBS\log_write($this::$TAG, "myResponseType:", $ci->getMyResponseType());  // values: Tentative/Accept/Decline
+//    \MRBS\log_write($this::$TAG, "dateTimestamp:", $this->formatIOSTime($ci->getDateTimeStamp()));
+//    \MRBS\log_write($this::$TAG, "lastModifiedTime:", $this->formatIOSTime($ci->getLastModifiedTime()));
+//    \MRBS\log_write($this::$TAG, "location:", $ci->getLocation());
+//    \MRBS\log_write($this::$TAG, "isMeeting:", $ci->isMeeting());
+//    \MRBS\log_write($this::$TAG, "isCancelled:", $ci->isCancelled());
+//    \MRBS\log_write($this::$TAG, "isRecurring:", $ci->isRecurring());
+    \MRBS\log_write($this::$TAG, "-----------------------------");
   }
 
   private function formatIOSTime($time)
@@ -126,7 +126,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
   private function updateSyncState(SyncFolderItemsResponseMessageType $changesSinceLsatCheck)
   {
     $syncState = $changesSinceLsatCheck->getSyncState();
-    echo $this::$TAG, "new syncState = $syncState", PHP_EOL;
+    \MRBS\log_write($this::$TAG, "new syncState = $syncState");
     DBHelper::update(_tbl("room"), array("exchange_sync_state" => $syncState), array("id" => $this->room["id"]));
   }
 
@@ -176,8 +176,8 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
         }
       }
     } catch (\Exception $e) {
-      echo $this::$TAG, $e->getMessage();
-      echo $this::$TAG, $e->getTraceAsString();
+      \MRBS\log_write($this::$TAG, $e->getMessage());
+      \MRBS\log_write($this::$TAG, $e->getTraceAsString());
     }
     $this->updateSyncState($changesSinceLsatCheck);
 
@@ -220,11 +220,11 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
       try {
         $this->getCalendar()->declineMeeting($ci->getItemId(), $declineReason);
       } catch (\Exception $e) {
-        echo $this::$TAG, $e->getMessage();
-        echo $this::$TAG, $e->getTraceAsString();
+        \MRBS\log_write($this::$TAG, $e->getMessage());
+        \MRBS\log_write($this::$TAG, $e->getTraceAsString());
       }
       $conflictId = $queryOne["id"];
-      echo $this::$TAG, "conflict meeting: meeting request($startTime - $endTime) is conflict with $conflictId";
+      \MRBS\log_write($this::$TAG, "conflict meeting: meeting request($startTime - $endTime) is conflict with $conflictId");
 
       return;
     }
@@ -237,8 +237,8 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     try {
       $this->getCalendar()->acceptMeeting($ci->getItemId(), "");
     } catch (\Exception $e) {
-//      echo $this::$TAG, $e->getMessage();
-//      echo $this::$TAG, $e->getTraceAsString();
+//      \MRBS\log_write($this::$TAG, $e->getMessage();
+//      \MRBS\log_write($this::$TAG, $e->getTraceAsString();
     }
   }
 
@@ -263,8 +263,8 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     try {
       $this->getCalendar()->acceptMeeting($ui->getItemId(), "");
     } catch (\Exception $e) {
-//      echo $this::$TAG, $e->getMessage();
-//      echo $this::$TAG, $e->getTraceAsString();
+//      \MRBS\log_write($this::$TAG, $e->getMessage();
+//      \MRBS\log_write($this::$TAG, $e->getTraceAsString();
     }
   }
 
@@ -284,7 +284,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     } catch (\Exception $e) {
 
     }
-    echo $this::$TAG, "createMeeting: $id", PHP_EOL;
+    \MRBS\log_write($this::$TAG, "createMeeting: $id");
   }
 
   function deleteMeeting($entry)
@@ -301,7 +301,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     } catch (\Exception $e) {
 
     }
-    echo $this::$TAG, "deleteMeeting: $id", PHP_EOL;
+    \MRBS\log_write($this::$TAG, "deleteMeeting: $id");
   }
 
   function updateMeeting($entry)

@@ -2715,3 +2715,29 @@ function get_user_field(array $params, bool $datalist=false)
   return $field;
 }
 
+function log_write()
+{
+  /*写日志*/
+  //时间   操作内容
+  $aglist = func_get_args();
+  $msg = implode('', $aglist);
+
+  $hopedir = dirname(__DIR__) . "/";
+  $nowdate = date('Y-m-d', time());
+  if (!file_exists($hopedir . 'log/' . $nowdate . '.php'))//创建文件
+  {
+    if (!is_dir($hopedir . 'log')) {
+      mkdir($hopedir . 'log', 0777);
+    }
+    $fp = @fopen($hopedir . 'log/' . $nowdate . '.php', 'w');
+    @fclose($fp);
+  }
+  $file = fopen($hopedir . 'log/' . $nowdate . '.php', "a+");
+  $content = date('Y-m-d H:i:s', time()) . ": " . $msg  . PHP_EOL;
+  echo $msg, PHP_EOL;
+  fwrite($file, $content);
+  fclose($file);
+
+
+}
+
