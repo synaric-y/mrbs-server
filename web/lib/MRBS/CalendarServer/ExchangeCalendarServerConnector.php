@@ -205,9 +205,9 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     $startTime = $start->getTimestamp();
     $endTime = $end->getTimestamp();
     $qSQL = "room_id = $roomId and
-    ($startTime >= start_time and $startTime < end_time)
+    (($startTime >= start_time and $startTime < end_time)
     or ($endTime > start_time and $endTime <= end_time)
-    or ($startTime <= start_time and $endTime >= end_time)
+    or ($startTime <= start_time and $endTime >= end_time))
     ";
 
     $queryOne = DBHelper::one(_tbl("entry"), $qSQL);
