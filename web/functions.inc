@@ -2715,13 +2715,18 @@ function get_user_field(array $params, bool $datalist=false)
   return $field;
 }
 
-function log_write()
+function log_i()
 {
   /*写日志*/
   //时间   操作内容
   $aglist = func_get_args();
-  $msg = implode('', $aglist);
+  log_by_name("", $aglist);
+}
 
+function log_by_name($file, $aglist)
+{
+  /*写日志*/
+  $msg = implode(' ', $aglist);
   $hopedir = dirname(__DIR__) . "/";
   $nowdate = date('Y-m-d', time());
   if (!file_exists($hopedir . 'log/' . $nowdate . '.php'))//创建文件
@@ -2732,12 +2737,12 @@ function log_write()
     $fp = @fopen($hopedir . 'log/' . $nowdate . '.php', 'w');
     @fclose($fp);
   }
-  $file = fopen($hopedir . 'log/' . $nowdate . '.php', "a+");
+  $file = fopen($hopedir . 'log/' . $file . $nowdate . '.php', "a+");
   $content = date('Y-m-d H:i:s', time()) . ": " . $msg  . PHP_EOL;
-  echo $msg, PHP_EOL;
+//  echo $msg, PHP_EOL;
   fwrite($file, $content);
   fclose($file);
-
-
 }
+
+
 

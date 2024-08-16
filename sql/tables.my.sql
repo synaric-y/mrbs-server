@@ -255,6 +255,7 @@ ALTER TABLE mrbs_room ADD COLUMN  `icon` varchar(255)  NULL DEFAULT ''   COMMENT
 ALTER TABLE mrbs_room ADD COLUMN  `exchange_username` varchar(80)  NULL DEFAULT ''   COMMENT 'exchange username';
 ALTER TABLE mrbs_room ADD COLUMN  `exchange_password` varchar(255)  NULL DEFAULT ''   COMMENT 'exchange password';
 ALTER TABLE mrbs_room ADD COLUMN  `exchange_sync_state` varchar(255)  NULL DEFAULT ''   COMMENT '';
+ALTER TABLE mrbs_room ADD COLUMN  `wxwork_mr_id` varchar(32)  NULL DEFAULT ''   COMMENT '';
 
 ALTER TABLE mrbs_area ADD COLUMN  `use_exchange` tinyint(4)  NULL DEFAULT 0   COMMENT '';
 ALTER TABLE mrbs_area ADD COLUMN  `use_wxwork` tinyint(4)  NULL DEFAULT 0   COMMENT '';
@@ -263,12 +264,16 @@ ALTER TABLE mrbs_area ADD COLUMN  `exchange_server` varchar(255)  NULL DEFAULT '
 ALTER TABLE mrbs_entry ADD COLUMN  `book_by` varchar(80)  NULL DEFAULT ''   COMMENT 'booker';
 ALTER TABLE mrbs_entry ADD COLUMN  `exchange_id` varchar(511)  NULL DEFAULT ''   COMMENT '';
 ALTER TABLE mrbs_entry ADD COLUMN  `exchange_key` varchar(511)  NULL DEFAULT ''   COMMENT '';
-ALTER TABLE mrbs_entry ADD COLUMN  `wxwork_id` varchar(511)  NULL DEFAULT ''   COMMENT '';
+ALTER TABLE mrbs_entry ADD COLUMN  `wxwork_bid` varchar(511)  NULL DEFAULT ''   COMMENT '';
+ALTER TABLE mrbs_entry ADD COLUMN  `wxwork_sid` varchar(511)  NULL DEFAULT ''   COMMENT '';
 ALTER TABLE mrbs_entry ADD COLUMN  `create_source` varchar(20)  NULL DEFAULT 'system'   COMMENT 'system/exchange/wxwork';
+
+
 ALTER TABLE mrbs_repeat ADD COLUMN  `book_by` varchar(80)  NULL DEFAULT ''   COMMENT 'booker';
 ALTER TABLE mrbs_repeat ADD COLUMN  `exchange_id` varchar(511)  NULL DEFAULT ''   COMMENT '';
 ALTER TABLE mrbs_repeat ADD COLUMN  `exchange_key` varchar(511)  NULL DEFAULT ''   COMMENT '';
-ALTER TABLE mrbs_repeat ADD COLUMN  `wxwork_id` varchar(511)  NULL DEFAULT ''   COMMENT '';
+ALTER TABLE mrbs_repeat ADD COLUMN  `wxwork_bid` varchar(511)  NULL DEFAULT ''   COMMENT '';
+ALTER TABLE mrbs_repeat ADD COLUMN  `wxwork_sid` varchar(511)  NULL DEFAULT ''   COMMENT '';
 ALTER TABLE mrbs_repeat ADD COLUMN  `create_source` varchar(20)  NULL DEFAULT 'system'   COMMENT 'system/exchange/wxwork';
 
 

@@ -75,6 +75,46 @@ class CalendarAdapter
       return $result;
   }
 
+  public function wxworkBookToCalendar($book, $room, $oldData = null) : array
+  {
+    global $allow_registration_default, $registrant_limit_default, $registrant_limit_enabled_default;
+    global $registration_opens_default, $registration_opens_enabled_default, $registration_closes_default;
+    global $registration_closes_enabled_default;
+
+    $book["booker"] = empty($book["booker"]) ? "Unknown" : str_replace("@bcc.global", "", $book["booker"]);
+
+    $result = array();
+    $result["start_time"] = $book["start_time"];
+    $result["end_time"] = $book["end_time"];
+    $result["entry_type"] = 0;
+    $result["room_id"] = $room["id"];
+    if ($this->mode == $this::$MODE_UPDATE) {
+      $result["modified_by"] = "admin";
+    }
+    if ($this->mode == $this::$MODE_ADD) {
+      $result["create_by"] = "admin";
+      $result["name"] = get_vocab("ic_xs_meeting", $book["booker"]);
+      $result["book_by"] = $book["booker"];
+      $result["type"] = "I";
+      $result["status"] = 0;
+      $result["ical_uid"] = generate_global_uid($result["name"]);
+      $result["allow_registration"] = $allow_registration_default ? 1 : 0;
+      $result["registrant_limit"] = $registrant_limit_default;
+      $result["registrant_limit_enabled"] = $registrant_limit_enabled_default  ? 1 : 0;
+      $result["registration_opens"] = $registration_opens_default;
+      $result["registration_opens_enabled"] = $registration_opens_enabled_default  ? 1 : 0;
+      $result["registration_closes"] = $registration_closes_default;
+      $result["registration_closes_enabled"] = $registration_closes_enabled_default  ? 1 : 0;
+      $result["wxwork_bid"] = $book["booking_id"];
+      $result["wxwork_sid"] = $book["schedule_id"];
+      $result["create_source"] = "wxwork";
+    } elseif ($this->mode == $this::$MODE_UPDATE) {
+      $result["id"] = $oldData["id"];
+      $result["ical_sequence"] = $oldData["ical_sequence"] + 1;
+    }
+    return $result;
+  }
+
   private function iOSTimeToTimeStamp($time)
   {
     $dateTime = new DateTime($time);

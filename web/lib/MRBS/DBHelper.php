@@ -7,6 +7,16 @@ class DBHelper
 
   public static $TAG = "[DBHelper] ";
 
+  static public function exec($sql)
+  {
+    try {
+      echo DBHelper::$TAG, $sql, PHP_EOL;
+      db()->command($sql);
+    } catch (\Exception $e) {
+      echo $e->getTraceAsString(), PHP_EOL;
+    }
+  }
+
   static public function update($table, $data, $where)
   {
     $tempWhere = '';

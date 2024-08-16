@@ -1,8 +1,6 @@
 <?php
 
 use MRBS\CalendarServer\CalendarServerManager;
-use MRBS\CalendarServer\ExchangeCalendarServerConnector;
-use MRBS\CalendarServer\WxWorkCalendarServerConnector;
 use MRBS\DBHelper;
 
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
@@ -19,15 +17,16 @@ global $thirdCalendarService;
 $tag = "[sync_exchange] ";
 $areas = \MRBS\get_area_names();
 
+
 while (true) {
   foreach ($areas as $id => $areaName) {
     $area = \MRBS\get_area_details($id);
-    \MRBS\log_write($tag, "start handle area: " . json_encode($area));
+    \MRBS\log_i($tag, "start handle area: " . json_encode($area));
     $rooms = \MRBS\get_rooms($id);
 
     foreach ($rooms as $room) {
       try {
-        \MRBS\log_write($tag, "start handle room: " . json_encode($room));
+        \MRBS\log_i($tag, "start handle room: " . json_encode($room));
         $fmtChangeList = array(
           "create" => array(),
           "update" => array(),
@@ -83,15 +82,15 @@ while (true) {
         $createCount = count($fmtChangeList["create"]);
         $updateCount = count($fmtChangeList["update"]);
         $deleteCount = count($fmtChangeList["delete"]);
-        \MRBS\log_write($tag, "end handle room:  $roomId. create: $createCount, update: $updateCount, delete: $deleteCount");
+        \MRBS\log_i($tag, "end handle room:  $roomId. create: $createCount, update: $updateCount, delete: $deleteCount");
       } catch (Exception $e) {
-        \MRBS\log_write($tag, $e->getMessage());
-        \MRBS\log_write($tag, $e->getTraceAsString());
+        \MRBS\log_i($tag, $e->getMessage());
+        \MRBS\log_i($tag, $e->getTraceAsString());
       }
     }
   }
 
-  \MRBS\log_write($tag, "done!");
+  \MRBS\log_i($tag, "done!");
   sleep(10);
 }
 
