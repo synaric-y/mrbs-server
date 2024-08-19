@@ -1,6 +1,7 @@
-# 商霖会议室预约系统MRBS
+BCC MRBS
 
-一款基于PHP开发的会议室预约系统，具有网页端管理后台与会议室平板展示端。
+
+A conference room reservation system developed based on PHP, with a web management backend and a conference room tablet display.
 
 ![](https://scrutinizer-ci.com/g/synaric-y/mrbs-server/badges/build.png?b=main)
 ![](https://scrutinizer-ci.com/g/synaric-y/mrbs-server/badges/code-intelligence.svg?b=main)
@@ -8,63 +9,63 @@
 ![demo.png](doc/img/2.png?t=1723515608897)
 ![demo2.png](doc/img/3.png?t=1723515608897)
 
-展示端项目详见[mrbs-app](https://github.com/synaric-y/mrbs-app)。
+For details on the display project, please see[mrbs-app](https://github.com/synaric-y/mrbs-app)。
 
-# 特性
+# Feature
 
-- 区域/会议/房间管理
-- 平板大屏展示会议室状态与预约信息
-- 与Microsoft Exchange同步Calendar，可扩展的第三方Calendar支持
-- 多语言支持，中文/英文/韩文...
-- 生成报表HTML/CSV/iCalendar
+- Area/Meeting/Room Management
+- Tablet screen displays conference room status and reservation information
+- Sync Calendar with Microsoft Exchange, extensible third-party Calendar support
+- I18n support, Chinese/English/Korean...
 
-# 安装
+# Install
 
-## 环境与依赖
+## Environment And Dependencies
 
-**环境**
+**Environment**
 
-- PHP 7.2以上，并支持MySQL或PostgreSQL
-- MySQL 5.5.3以上或PostgreSQL 8.2以上
-- Apache或其他Web服务器
+- PHP 7.2 above
+- MySQL 5.5.3 above or PostgreSQL 8.2 above
+- Apache or other web service
 
-**依赖**
+**Dependencies**
 
-以下依赖具有安装先后关系，请按顺序安装。
+Please install the following dependencies in order.
 
 - php-iconv
 - php-soap
-- [php-ews](https://github.com/Garethp/php-ews)(composer安装)
+- [php-ews](https://github.com/Garethp/php-ews)(composer)
 
-## 安装步骤
+## Steps
 
-1.安装composer依赖：
+1.Install composer dependencies：
 
 ```
 composer install
 ```
 
-2.导入初始化SQL
+2.Import initialization SQL
 
-MySQL或PostgreSQL创建数据库名为```mrbs```，并导入数据。
 
-导入SQL文件为```./sql/tables.*.sql```。
+MySQL or PostgreSQL creates a database named ```mrbs``` and imports the data.
 
-3.配置项目
+The imported SQL file is located in ```./sql/tables.*.sql```.
 
-需要在项目```/web```目录下创建配置文件```config.inc.php```，配置文件的模板可以从```./web/config.inc.php-sample```复制。
+3.Configuration
 
-必要的配置项：
+The configuration file ```config.inc.php``` needs to be created in the project ```/web``` directory. The template of the configuration file can be obtained from ```./web/config.inc.php-sample`` Copy.
+
+Necessary configuration items:
 
 ```php
-// 设置默认时区，支持的时区参考：
+// You must set the timezone to a valid value, a list of which can be found at
 // https://www.php.net/manual/zh/timezones.php
 $timezone = "Asia/Shanghai";
 
-// 设置所用数据库mysql/pgsql
+// Select your database system.
 $dbsys = "mysql";
 
-// 设置数据库host/database/password/表前缀
+// Then define your database connection parameters. Set the values for:
 $db_host = "your_host";
 $db_database = "mrbs";
 $db_login = "your_user";
@@ -72,37 +73,37 @@ $db_password = 'your_password';
 $db_tbl_prefix = "mrbs_";
 ```
 
-更多信息请参考[安装](doc/INSTALL)。
+For more information please refer to [INSTALL](doc/INSTALL)。
 
-更多的配置项，请参考```systemdefaults.inc.php```。
+For more configuration, please refer to```systemdefaults.inc.php```。
 
-> 注意：在熟悉项目前，请勿修改systemdefaults.inc.php，其可以作为默认配置的备份防止无法回退。
-> 如需修改配置，config.inc.php内的同名配置项的读取优先级是最高的，因此将需要修改的配置从
-> systemdefaults.inc.php复制到config.inc.php再修改即可。
+> Note: Do not modify systemdefaults.inc.php before you are familiar with the project. It can be used as a backup of the default configuration to prevent failure to roll back.
+> If you need to modify the configuration, the configuration item with the same name in config.inc.php has the highest reading priority, so change the configuration that needs to be modified from
+> Copy systemdefaults.inc.php to config.inc.php and then modify it.
 
-## 部署
 
-将项目整体```web```、```image```目录打包到Web服务器。
+## Deployment
 
-（可选）启动第三方Calendar定时同步任务：
+Package ```web``` and ```image``` directories to the Web server.
+
+(Optional) Start a third-party Calendar scheduled synchronization task:
 
 ```
 nohup php /path-to-your-project/web/serverapi/sync_tpcs.php > /dev/null 2>&1 &
 ```
 
-# 其他
+# Other
 
-## 支持单位
+## Support
 
 ![BCCGloballogo.jpg](doc/img/1.jpg?t=1723515608897)
 
 ## TODO
 
-- 企业微信会议室API支持
-- 平板临时预约会议
-- 更多平板端模板
-- Area级多数据源管理
-- Room级可预约时间的管理
-- 更多第三方Calendar服务的支持
-- 平板端多语言混合展示
-- APP/小程序端
+- Wxwork Meeting Room Management support
+- More templates
+- Temp meeting
+- Area-level multiple data source management
+- Room-level reservation time management
+- Multi-language mixed display on tablet
+- APP/mini program
