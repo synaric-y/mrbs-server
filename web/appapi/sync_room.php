@@ -8,6 +8,10 @@ global $datetime_formats;
 use DateTimeZone;
 
 $room_id = intval(ApiHelper::value("room_id"));
+$timezone = ApiHelper::value("timezone");
+if (!empty($timezone)) {
+  date_default_timezone_set($timezone);
+}
 
 $interval_start = strtotime("today");
 $interval_end = strtotime("tomorrow");
