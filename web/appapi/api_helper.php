@@ -22,4 +22,15 @@ class ApiHelper
     echo json_encode($rt);
     exit();
   }
+
+  static function fail($msg = "")
+  {
+    $rt = array(
+      "code" => -1,
+      "msg" => $msg,
+      "data" => null
+    );
+    echo json_encode($rt);
+    exit();
+  }
 }

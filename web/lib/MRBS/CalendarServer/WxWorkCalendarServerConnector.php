@@ -37,8 +37,8 @@ class  WxWorkCalendarServerConnector implements AbstractCalendarServerConnector
   {
     if (empty(WxWorkCalendarServerConnector::$API)) {
       WxWorkCalendarServerConnector::$API = new \CorpAPI(
-        'ww09d67060e82cbfa5',
-        '4kQjzoLSa1uBR5Ow5UWItaiI7CCSzjFYqzYTgKuR4IA'
+        $area["wxwork_corpid"],
+        $area["wxwork_secret"]
       );
     }
     $this->room = $room;

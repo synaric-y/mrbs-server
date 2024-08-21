@@ -10,7 +10,7 @@ class DBHelper
   static public function exec($sql)
   {
     try {
-      echo DBHelper::$TAG, $sql, PHP_EOL;
+//      echo DBHelper::$TAG, $sql, PHP_EOL;
       db()->command($sql);
     } catch (\Exception $e) {
       echo $e->getTraceAsString(), PHP_EOL;
@@ -56,7 +56,7 @@ class DBHelper
         }
       }
       $sql = "update `" . $table . "` set " . substr($sqlud, 0, -1) . " where " . $tempWhere;
-      echo DBHelper::$TAG, $sql, PHP_EOL;
+//      echo DBHelper::$TAG, $sql, PHP_EOL;
       db()->command($sql);
     } catch (Exception $e) {
       echo $e->getTraceAsString(), PHP_EOL;
@@ -84,7 +84,7 @@ class DBHelper
 
     try {
       $sql = "delete from `$table` where $tempWhere";
-      echo DBHelper::$TAG, $sql, PHP_EOL;
+//      echo DBHelper::$TAG, $sql, PHP_EOL;
       db()->command($sql);
     } catch (\Exception $e) {
       echo $e->getTraceAsString(), PHP_EOL;
@@ -111,7 +111,7 @@ class DBHelper
     }
 
     $sql = "select " . $select . " from `" . $table . "` where " . $tempWhere;
-    echo DBHelper::$TAG, $sql, PHP_EOL;
+//    echo DBHelper::$TAG, $sql, PHP_EOL;
     $res = db()->query($sql);
     return ($res->count() == 0) ? null : $res->next_row_keyed();
   }
