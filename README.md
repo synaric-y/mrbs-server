@@ -1,4 +1,4 @@
-BCC MRBS
+# BCC MRBS
 
 
 A conference room reservation system developed based on PHP, with a web management backend and a conference room tablet display.
@@ -11,7 +11,7 @@ A conference room reservation system developed based on PHP, with a web manageme
 
 For details on the display project, please see[mrbs-app](https://github.com/synaric-y/mrbs-app)。
 
-# Feature
+# Features
 
 - Area/Meeting/Room Management
 - Tablet screen displays conference room status and reservation information

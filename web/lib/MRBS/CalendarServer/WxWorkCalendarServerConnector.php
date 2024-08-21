@@ -22,7 +22,7 @@ class  WxWorkCalendarServerConnector implements AbstractCalendarServerConnector
   // 强制取消预定
   private static $CANCEL_BOOK = "/cgi-bin/oa/meetingroom/cancel_book?access_token=ACCESS_TOKEN";
   // 预约会议
-  private static $BOOK = "cgi-bin/oa/meetingroom/book?access_token=ACCESS_TOKEN";
+  private static $BOOK = "/cgi-bin/oa/meetingroom/book?access_token=ACCESS_TOKEN";
 
   private static $API;
   private $room;
