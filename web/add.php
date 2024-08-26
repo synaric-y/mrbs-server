@@ -8,21 +8,39 @@ require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
 
-// Check the CSRF token
-Form::checkToken();
-
-// Check the user is authorised for this page
-checkAuthorised(this_page());
+//// Check the CSRF token
+//Form::checkToken();
+//
+//// Check the user is authorised for this page
+//checkAuthorised(this_page());
 
 // Get non-standard form variables
-$name = get_form_var('name', 'string', null, INPUT_POST);
-$description = get_form_var('description', 'string', null, INPUT_POST);
-$capacity = get_form_var('capacity', 'int', null, INPUT_POST);
-$room_admin_email = get_form_var('room_admin_email', 'string', null, INPUT_POST);
-$type = get_form_var('type', 'string', null, INPUT_POST);
-
+//$name = get_form_var('name', 'string', null, INPUT_POST);
+//$description = get_form_var('description', 'string', null, INPUT_POST);
+//$capacity = get_form_var('capacity', 'int', null, INPUT_POST);
+//$room_admin_email = get_form_var('room_admin_email', 'string', null, INPUT_POST);
+//$type = get_form_var('type', 'string', null, INPUT_POST);
+//$area = get_form_var('area', 'int', null, INPUT_POST);
 // This file is for adding new areas/rooms
 $error = '';
+
+$json = file_get_contents('php://input');
+$data = json_decode($json, true);
+$name = $data['name'];
+$description = $data['description'];
+$capacity = $data['capacity'];
+$room_admin_email = $data['room_admin_email'];
+$type = $data['type'];
+$area = $data['area'];
+
+if ($type === 'area'){
+  $area = false;
+  $room = true;
+}else if ($type !== 'room'){
+  $error = "wrong_type";
+}else{
+  $room = false;
+}
 
 // First of all check that we've got an area or room name
 if (!isset($name) || ($name === ''))
@@ -42,5 +60,19 @@ elseif ($type == "room")
   $room = mrbsAddRoom($name, $area, $error, $description, $capacity, $room_admin_email);
 }
 
-$returl = "admin.php?area=$area" . (!empty($error) ? "&error=$error" : "");
-location_header($returl);
+//$returl = "admin.php?area=$area" . (!empty($error) ? "&error=$error" : "");
+//location_header($returl);
+
+if ($area && $room){
+  $response = array(
+    "code" => 200,
+    "message" => "success"
+  );
+  echo json_encode($response);
+}else{
+  $response = array(
+    "code" => 500,
+    "message" => $error
+  );
+  echo json_encode($response);
+}
