@@ -7,24 +7,8 @@ global $datetime_formats;
 
 use DateTimeZone;
 
-require_once "../defaultincludes.inc";
-require_once "api_helper.php";
-
-function getTimeZoneByRoom($roomId)
-{
-  $sql = "SELECT timezone FROM " .\MRBS\_tbl("room") . " E LEFT JOIN " . \MRBS\_tbl("area")
-    . " F ON E.area_id = F.id WHERE E.id = ?";
-  $result = db() -> query($sql, array($roomId));
-  $result = $result->next_row_keyed();
-  return $result['timezone'];
-}
-
-//$room_id = intval(ApiHelper::value("room_id"));
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-$roomId = intval($data['room_id']);
-$timezone = getTimeZoneByRoom($roomId);
-
+$room_id = intval(ApiHelper::value("room_id"));
+$timezone = ApiHelper::value("timezone");
 if (!empty($timezone)) {
   date_default_timezone_set($timezone);
 }
@@ -32,14 +16,14 @@ if (!empty($timezone)) {
 $interval_start = strtotime("today");
 $interval_end = strtotime("tomorrow");
 
-$room = get_room_details($roomId);
+$room = get_room_details($room_id);
 unset($room["exchange_server"]);
 unset($room["exchange_username"]);
 unset($room["exchange_password"]);
 
 $area = get_area_details($room["area_id"]);
 
-$entries = get_entries_by_room($roomId, $interval_start, $interval_end);
+$entries = get_entries_by_room($room_id, $interval_start, $interval_end);
 
 $now = time();
 $now_entry = null;

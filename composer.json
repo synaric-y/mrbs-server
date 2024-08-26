@@ -1,6 +1,5 @@
 {
     "require": {
-        "garethp/php-ews": "^0.9.6",
-      "ext-json": "*"
+        "garethp/php-ews": "^0.9.6"
     }
 }
