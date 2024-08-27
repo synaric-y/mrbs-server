@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace MRBS;
+use MRBS\CalendarServer\CalendarServerManager;
+
 require_once "../mrbs_sql.inc";
 require "../defaultincludes.inc";
 require_once "api_helper.php";
@@ -75,6 +77,10 @@ $result["registration_closes_enabled"] = $registration_closes_enabled_default  ?
 $result["create_source"] = "system";
 
 DBHelper::insert(\MRBS\_tbl("entry"), $result);
+$insertId = DBHelper::insert_id(_tbl("entry"), "id");
+if (!empty($insertId)) {
+  CalendarServerManager::createMeeting($insertId);
+}
 
 ApiHelper::success(array(
   "status" => 0
