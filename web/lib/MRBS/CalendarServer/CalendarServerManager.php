@@ -26,6 +26,9 @@ class CalendarServerManager
       if ($config["sync"] == "two-way") {
         $room = get_room_details($entry["room_id"]);
         $area = get_area_details($room["area_id"]);
+        if ($area[$config["switch"]] != 1) {
+          return;
+        }
         $connector = CalendarServerManager::getServer($config, $area, $room);
         $connector->createMeeting($entry);
       }
@@ -40,6 +43,9 @@ class CalendarServerManager
       if ($config["sync"] == "two-way") {
         $room = get_room_details($entry["room_id"]);
         $area = get_area_details($room["area_id"]);
+        if ($area[$config["switch"]] != 1) {
+          return;
+        }
         $connector = CalendarServerManager::getServer($config, $area, $room);
         $connector->deleteMeeting($entry);
       }
@@ -55,6 +61,9 @@ class CalendarServerManager
       if ($config["sync"] == "two-way") {
         $room = get_room_details($entry["room_id"]);
         $area = get_area_details($room["area_id"]);
+        if ($area[$config["switch"]] != 1) {
+          return;
+        }
         $connector = CalendarServerManager::getServer($config, $area, $room);
         $connector->updateMeeting($entry);
       }
