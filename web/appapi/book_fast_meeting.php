@@ -60,6 +60,7 @@ $result["entry_type"] = 0;
 $result["room_id"] = $roomId;
 $result["create_by"] = "admin";
 $result["name"] = get_vocab("ic_tp_meeting");
+$result["description"] = get_vocab("ic_tp_meeting");
 $result["book_by"] = "/";
 $result["type"] = "I";
 $result["status"] = 0;
