@@ -2736,6 +2736,9 @@ function log_by_name($file, $aglist)
       mkdir($hopedir . 'log', 0777);
     }
     $fp = @fopen($hopedir . 'log/' . $nowdate . '.php', 'w');
+    if($fp){
+      chmod($hopedir . 'log/' . $nowdate . '.php', 0777);
+    }
     @fclose($fp);
   }
   $file = fopen($hopedir . 'log/' . $file . $nowdate . '.php', "a+");
