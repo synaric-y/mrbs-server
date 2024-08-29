@@ -14,6 +14,7 @@ include_once "../defaultincludes.inc";
 include_once "../functions_table.inc";
 include_once "../mrbs_sql.inc";
 include_once "./api_helper.php";
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 function FD($key)
 {
