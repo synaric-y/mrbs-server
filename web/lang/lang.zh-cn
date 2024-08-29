@@ -618,3 +618,4 @@ $vocab["ic_meeting_decline"]                  = "您发起的会议已经被管�
 $vocab["ic_meeting_decline_conflict"]         = "与会议（%s）冲突";
 $vocab["ic_xs_meeting"]                       = "%s的会议";
 $vocab["ic_tp_meeting"]                       = "临时会议";
+$vocab["fast_meeting_time"]                   = "确定要预约 %s - %s的快速会议吗？";

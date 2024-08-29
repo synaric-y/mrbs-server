@@ -1,7 +1,7 @@
 <?php
 namespace MRBS;
 
-header("Content-Type:text/html;charset=utf-8"); //输出格式
+//header("Content-Type:text/html;charset=utf-8"); //输出格式
 header("Content-Type: application/json");
 header("Cache-Control: no-cache");
 header("Pragma: no-cache");

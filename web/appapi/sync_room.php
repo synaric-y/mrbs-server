@@ -24,6 +24,10 @@ $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 $roomId = intval($data['room_id']);
 $timezone = getTimeZoneByRoom($roomId);
+$device_info = $data["device_info"];
+$device_id = $data["device_id"];
+$battery_level = $data["battery_level"];
+$battery_charge = $data["battery_charge"];
 
 if (!empty($timezone)) {
   date_default_timezone_set($timezone);
@@ -50,6 +54,16 @@ foreach ($entries as $entry) {
     break;
   }
 }
+
+foreach ($entries as $entry){
+  if ($entry['entry_type'] == 99)
+    $entry['name'] = get_vocab('ic_tp_meeting');
+}
+if (isset($now_entry)) {
+  if ($now_entry['entry_type'] == 99)
+    $now_entry['name'] = get_vocab('ic_tp_meeting');
+}
+
 $display_day = datetime_format($datetime_formats['view_day'], $now);
 $now_time = date("h:iA");
 //$dateTime = new DateTime();
