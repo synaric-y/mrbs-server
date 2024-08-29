@@ -14,6 +14,7 @@ global $registration_closes_enabled_default;
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 $roomId = intval($data['room_id']);
+$confirm = intval($data['confirm']);
 //$roomId = intval(ApiHelper::value("room_id"));
 
 $now = time();
@@ -35,6 +36,21 @@ if (floor($now / 1800) * 1800 === floor(($now + 300) / 1800) * 1800){
 
 $endTime = $startTime + 1800;
 
+if ($confirm == 0){
+  $str1 = date("h:i A", intval($startTime));
+  $str2 = date("h:i A", intval($endTime));
+  $response = array(
+    "code" => 0,
+    "message" => "success",
+    "data" => array()
+  );
+  $response['data']['time'] = get_vocab("fast_meeting_time", $str1, $str2);
+  echo json_encode($response);
+  return;
+}else if (!isset($confirm) || $confirm != 1){
+  ApiHelper::fail("confirm should not be empty and confirm should be 1 or 0", -3);
+}
+
 $qSQL = "room_id = $roomId and
     (($startTime >= start_time and $startTime < end_time)
     or ($endTime > start_time and $endTime <= end_time)
@@ -43,20 +59,20 @@ $qSQL = "room_id = $roomId and
 
 $roomExist = DBHelper::one(_tbl("room"), "id = $roomId");
 if (empty($roomExist)){
-  ApiHelper::fail("room not found");
+  ApiHelper::fail("room not found" );
   return;
 }
 
 $queryOne = DBHelper::one(_tbl("entry"), $qSQL);
 if (!empty($queryOne)) {
-  ApiHelper::fail();
+  ApiHelper::fail("already exist entry" , -2);
   return;
 }
 
 $result = array();
 $result["start_time"] = $startTime;
 $result["end_time"] = $endTime;
-$result["entry_type"] = 0;
+$result["entry_type"] = 99;
 $result["room_id"] = $roomId;
 $result["create_by"] = "admin";
 $result["name"] = get_vocab("ic_tp_meeting");

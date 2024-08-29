@@ -49,6 +49,8 @@ while (true) {
         }
         foreach ($fmtChangeList["delete"] as $delete) {
           foreach ($thirdCalendarService as $serviceName => $config) {
+            if ($area[$config["switch"]] != 1)
+              continue;
             if ($delete["from"] == $serviceName) {
               continue;
             }
@@ -59,6 +61,8 @@ while (true) {
         foreach ($fmtChangeList["create"] as $create) {
           DBHelper::insert(\MRBS\_tbl("entry"), $create["data"]);
           foreach ($thirdCalendarService as $serviceName => $config) {
+            if ($area[$config["switch"]] != 1)
+              continue;
             if ($create["from"] == $serviceName) {
               continue;
             }
@@ -71,6 +75,8 @@ while (true) {
           unset($update["data"]["id"]);
           DBHelper::update(\MRBS\_tbl("entry"), $update["data"], array("id" => $id));
           foreach ($thirdCalendarService as $serviceName => $config) {
+            if ($area[$config["switch"]] != 1)
+              continue;
             if ($update["from"] == $serviceName) {
               continue;
             }

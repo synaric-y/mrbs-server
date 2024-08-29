@@ -19,7 +19,7 @@ if (empty($meeting)) {
   return;
 }
 
-if ($meeting["name"] != "Fast Meeting"){
+if ($meeting["entry_type"] != 99){
   ApiHelper::fail("only fast meeting can be canceled", -2);
 }
 

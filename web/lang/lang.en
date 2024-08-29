@@ -706,4 +706,6 @@ $vocab["ic_meeting_decline"]                  = "The meeting you initiated has b
 $vocab["ic_meeting_decline_conflict"]         = "conflict with meeting %s";
 $vocab["ic_xs_meeting"]                       = "%s's Meeting";
 $vocab["ic_tp_meeting"]                       = "Fast Meeting";
+$vocab["fast_meeting_time"]                   = "Are you sure you want to book a quick meeting between %s - %s？";
+
 
