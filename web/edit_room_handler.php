@@ -3,14 +3,15 @@ declare(strict_types=1);
 namespace MRBS;
 
 require "defaultincludes.inc";
+require_once "mrbs_sql.inc";
 
 use MRBS\Form\Form;
 
 // Check the CSRF token.
-Form::checkToken();
-
-// Check the user is authorised for this page
-checkAuthorised(this_page());
+//Form::checkToken();
+//
+//// Check the user is authorised for this page
+//checkAuthorised(this_page());
 
 // Get non-standard form variables
 $form_vars = array(
@@ -26,11 +27,14 @@ $form_vars = array(
   'invalid_types'    => 'array',
   'custom_html'      => 'string'
 );
+$json = file_get_contents('php://input');
+$data = json_decode($json, true);
+$room = $data['room'];
 
 foreach($form_vars as $var => $var_type)
 {
-  $$var = get_form_var($var, $var_type);
-
+//  $$var = get_form_var($var, $var_type);
+  $$var = $data[$var];
   // Trim the strings and truncate them to the maximum field length
   if (is_string($$var))
   {
@@ -46,6 +50,7 @@ $fields = db()->field_info(_tbl('room'));
 // Get any custom fields
 foreach($fields as $field)
 {
+
   switch($field['nature'])
   {
     case 'character':
@@ -61,7 +66,8 @@ foreach($fields as $field)
       break;
   }
   $var = VAR_PREFIX . $field['name'];
-  $$var = get_form_var($var, $type);
+//  $$var = get_form_var($var, $type);
+  $$var = $data[$var];
   if (($type == 'int') && ($$var === ''))
   {
     unset($$var);
@@ -232,16 +238,24 @@ if (empty($errors))
     db()->commit();
 
     // Go back to the admin page (for the new area)
-    location_header("admin.php?day=$day&month=$month&year=$year&area=$new_area&room=$room");
+    $response = array(
+      "code" => 0,
+      "message" => "success"
+    );
+    echo json_encode($response);
+    return;
   }
 
 }
 
 
 // Go back to the room form with errors
-$query_string = "area=$old_area&room=$room";
+$response = array(
+  "code" => -1,
+  "message" => array()
+);
 foreach ($errors as $error)
 {
-  $query_string .= "&errors[]=$error";
+  $response["message"][] = $error . "\n";
 }
-location_header("edit_room.php?$query_string");
+echo json_encode($response);

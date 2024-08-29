@@ -1,72 +1,102 @@
 <?php
 declare(strict_types=1);
+
 namespace MRBS;
 
 require "defaultincludes.inc";
-
+require_once "mrbs_sql.inc";
 use MRBS\Form\Form;
 
-// Check the CSRF token.
-Form::checkToken();
-
-// Check the user is authorised for this page
-checkAuthorised(this_page());
+//// Check the CSRF token.
+//Form::checkToken();
+//
+//// Check the user is authorised for this page
+//checkAuthorised(this_page());
 
 
 // Get non-standard form variables
 $form_vars = array(
-  'sort_key'                      => 'string',
-  'area_name'                     => 'string',
-  'area_disabled'                 => 'string',
-  'area_timezone'                 => 'string',
-  'area_admin_email'              => 'string',
-  'area_start_first_slot'         => 'string',
-  'area_start_last_slot'          => 'string',
-  'area_res_mins'                 => 'int',
-  'area_def_duration_mins'        => 'int',
-  'area_def_duration_all_day'     => 'string',
+  'sort_key' => 'string',
+  'area_name' => 'string',
+  'area_disabled' => 'string',
+  'area_timezone' => 'string',
+  'area_admin_email' => 'string',
+  'area_start_first_slot' => 'string',
+  'area_start_last_slot' => 'string',
+  'area_res_mins' => 'int',
+  'area_def_duration_mins' => 'int',
+  'area_def_duration_all_day' => 'string',
   'area_min_create_ahead_enabled' => 'string',
-  'area_min_create_ahead_value'   => 'int',
-  'area_min_create_ahead_units'   => 'string',
+  'area_min_create_ahead_value' => 'int',
+  'area_min_create_ahead_units' => 'string',
   'area_max_create_ahead_enabled' => 'string',
-  'area_max_create_ahead_value'   => 'int',
-  'area_max_create_ahead_units'   => 'string',
+  'area_max_create_ahead_value' => 'int',
+  'area_max_create_ahead_units' => 'string',
   'area_min_delete_ahead_enabled' => 'string',
-  'area_min_delete_ahead_value'   => 'int',
-  'area_min_delete_ahead_units'   => 'string',
+  'area_min_delete_ahead_value' => 'int',
+  'area_min_delete_ahead_units' => 'string',
   'area_max_delete_ahead_enabled' => 'string',
-  'area_max_delete_ahead_value'   => 'int',
-  'area_max_delete_ahead_units'   => 'string',
-  'area_max_duration_enabled'     => 'string',
-  'area_max_duration_periods'     => 'int',
-  'area_max_duration_value'       => 'int',
-  'area_max_duration_units'       => 'string',
-  'area_private_enabled'          => 'string',
-  'area_private_default'          => 'int',
-  'area_private_mandatory'        => 'string',
-  'area_private_override'         => 'string',
-  'area_approval_enabled'         => 'string',
-  'area_reminders_enabled'        => 'string',
-  'area_enable_periods'           => 'string',
-  'area_periods'                  => 'array',
-  'area_confirmation_enabled'     => 'string',
-  'area_confirmed_default'        => 'string',
-  'area_default_type'             => 'string',
-  'area_times_along_top'          => 'string',
-  'custom_html'                   => 'string'
+  'area_max_delete_ahead_value' => 'int',
+  'area_max_delete_ahead_units' => 'string',
+  'area_max_duration_enabled' => 'string',
+  'area_max_duration_periods' => 'int',
+  'area_max_duration_value' => 'int',
+  'area_max_duration_units' => 'string',
+  'area_private_enabled' => 'string',
+  'area_private_default' => 'int',
+  'area_private_mandatory' => 'string',
+  'area_private_override' => 'string',
+  'area_approval_enabled' => 'string',
+  'area_reminders_enabled' => 'string',
+  'area_enable_periods' => 'string',
+  'area_periods' => 'array',
+  'area_confirmation_enabled' => 'string',
+  'area_confirmed_default' => 'string',
+  'area_default_type' => 'string',
+  'area_times_along_top' => 'string',
+  'custom_html' => 'string'
 );
 
-foreach($form_vars as $var => $var_type)
-{
-  $$var = get_form_var($var, $var_type);
-
-  // Trim the strings and truncate them to the maximum field length
-  if (is_string($$var))
-  {
+$json = file_get_contents('php://input');
+$data = json_decode($json, true);
+$area = $data['area'];
+foreach ($form_vars as $var => $var_type) {
+//  $$var = get_form_var($var, $var_type);
+  $$var = $data[$var];
+  if (($var_type == 'bool') || ($$var !== null)) {
+    switch ($var_type) {
+      case 'array':
+        $$var = (array)$$var;
+        break;
+      case 'bool':
+        $$var = (bool)$$var;
+        break;
+      case 'decimal':
+        // This isn't a very good sanitisation as it will let through thousands separators and
+        // also multiple decimal points.  It needs to be improved, but care needs to be taken
+        // over, for example, whether a comma should be allowed for a decimal point.  So for
+        // the moment it errs on the side of letting through too much.
+        $value = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT,
+          FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND);
+        if ($value === '') {
+          $value = null;
+        }
+        break;
+      case 'int':
+        $$var = ($$var === '') ? null : intval($$var);
+        break;
+      case 'string':
+        $$var = (string) $$var;
+        break;
+      default:
+        break;
+    }
+  }
+//  // Trim the strings and truncate them to the maximum field length
+  if (is_string($$var)) {
     $$var = trim($$var);
     $$var = truncate($$var, "area.$var");
   }
-
 }
 
 if (!isset($area_default_type))
@@ -74,19 +104,26 @@ if (!isset($area_default_type))
   $area_default_type = $area_defaults['default_type'];
 }
 
+
+
 // Get the max_per_interval form variables
 foreach ($interval_types as $interval_type)
 {
   $var = "area_max_per_$interval_type";
-  $$var = get_form_var($var, 'int');
+//  $$var = get_form_var($var, 'int');
+  $$var = intval($data[$var]);
   $var = "area_max_per_{$interval_type}_enabled";
-  $$var = get_form_var($var, 'string');
+//  $$var = get_form_var($var, 'string');
+  $$var = (string) $data[$var];
   $var = "area_max_secs_per_$interval_type";
-  $$var = get_form_var($var, 'int');
+//  $$var = get_form_var($var, 'int');
+  $$var = intval($data[$var]);
   $var = "area_max_secs_per_{$interval_type}_units";
-  $$var = get_form_var($var, 'string');
+//  $$var = get_form_var($var, 'string');
+  $$var = (string) $data[$var];
   $var = "area_max_secs_per_{$interval_type}_enabled";
-  $$var = get_form_var($var, 'string');
+//  $$var = get_form_var($var, 'string');
+  $$var = (string) $data[$var];
 }
 
 // UPDATE THE DATABASE
@@ -184,7 +221,7 @@ else
 
   foreach ($vars as $var)
   {
-    $$var = (!empty($$var)) ? 1 : 0;
+    $$var = (!empty($$var) && $$var == '1') ? 1 : 0;
   }
 
 
@@ -226,7 +263,7 @@ if (!empty($errors))
   {
     $query_string .= "&errors[]=$error";
   }
-  location_header("edit_area.php?$query_string");
+//  location_header("edit_area.php?$query_string");
 }
 
 // Everything is OK, update the database
@@ -321,7 +358,7 @@ foreach($interval_types as $interval_type)
 {
   $var = "max_per_{$interval_type}_enabled";
   $area_var = "area_" . $var;
-  $assign_array[] = "$var=" . $$area_var;
+  $assign_array[] = "$var='" . $$area_var . "'";
 
   $var = "max_per_$interval_type";
   $area_var = "area_" . $var;
@@ -336,7 +373,7 @@ foreach($interval_types as $interval_type)
   // Now do the max_secs variables (limits on the total length of bookings)
   $var = "max_secs_per_{$interval_type}_enabled";
   $area_var = "area_" . $var;
-  $assign_array[] = "$var=" . $$area_var;
+  $assign_array[] = "$var='" . $$area_var . "'";
 
   $var = "max_secs_per_$interval_type";
   $area_var = "area_" . $var;
@@ -381,8 +418,26 @@ $sql_params[] = $area_times_along_top;
 $sql .= implode(",", $assign_array) . " WHERE id=?";
 $sql_params[] = $area;
 
-db()->command($sql, $sql_params);
+$areaExist = db() -> query1("SELECT COUNT(*) FROM " . _tbl("area") . " WHERE id = ?", array($area));
+if ($areaExist > 0) {
+  db()->command($sql, $sql_params);
+  $success = true;
+}else{
+  $success = false;
+}
+if ($success){
+  $response = array(
+    "code" => 0,
+    "message" => "success"
+  );
+  echo json_encode($response);
+}else{
+  $response = array(
+    "code" => -1,
+    "message" => "area not exist"
+  );
+  echo json_encode($response);
+}
 
-
-// Go back to the admin page
-location_header("admin.php?day=$day&month=$month&year=$year&area=$area");
+//// Go back to the admin page
+////location_header("admin.php?day=$day&month=$month&year=$year&area=$area");
