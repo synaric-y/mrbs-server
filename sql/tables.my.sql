@@ -277,3 +277,7 @@ ALTER TABLE mrbs_repeat ADD COLUMN  `wxwork_sid` varchar(511)  NULL DEFAULT ''  
 ALTER TABLE mrbs_repeat ADD COLUMN  `create_source` varchar(20)  NULL DEFAULT 'system'   COMMENT 'system/exchange/wxwork';
 
 
+ALTER TABLE mrbs_area ADD COLUMN  `wxwork_corpid` varchar(255)  NULL DEFAULT ''   COMMENT 'wxwork corpid';
+ALTER TABLE mrbs_area ADD COLUMN  `wxwork_secret` varchar(255)  NULL DEFAULT ''   COMMENT 'wxwork secret';
+ALTER TABLE mrbs_room ADD COLUMN  `wxwork_sync_state` varchar(255)  NULL DEFAULT ''   COMMENT '';
+

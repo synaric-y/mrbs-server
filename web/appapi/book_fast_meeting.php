@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace MRBS;
+use MRBS\CalendarServer\CalendarServerManager;
+
 require_once "../mrbs_sql.inc";
 require "../defaultincludes.inc";
 require_once "api_helper.php";
@@ -76,6 +78,7 @@ $result["entry_type"] = 99;
 $result["room_id"] = $roomId;
 $result["create_by"] = "admin";
 $result["name"] = get_vocab("ic_tp_meeting");
+$result["description"] = get_vocab("ic_tp_meeting");
 $result["book_by"] = "/";
 $result["type"] = "I";
 $result["status"] = 0;
@@ -90,6 +93,10 @@ $result["registration_closes_enabled"] = $registration_closes_enabled_default  ?
 $result["create_source"] = "system";
 
 DBHelper::insert(\MRBS\_tbl("entry"), $result);
+$insertId = DBHelper::insert_id(_tbl("entry"), "id");
+if (!empty($insertId)) {
+  CalendarServerManager::createMeeting($insertId);
+}
 
 ApiHelper::success(array(
   "status" => 0
