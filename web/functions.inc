@@ -411,7 +411,6 @@ function truncate(string $value, string $column) : string
 {
   if (null !== ($maxlength = maxlength($column)))
   {
-
     return utf8_substr($value, 0, $maxlength);
   }
 
