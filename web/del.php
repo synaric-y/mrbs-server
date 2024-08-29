@@ -116,7 +116,7 @@ if ($type == "room")
 
     // Go back to the admin page
     $response = array(
-      "code" => 200,
+      "code" => 0,
       "message" => "success"
     );
     echo json_encode($response);
@@ -125,7 +125,7 @@ if ($type == "room")
   else
   {
     $response = array(
-      "code" => 500,
+      "code" => -1,
       "message" => "Room already in use! Make sure no entry in the room"
     );
     echo json_encode($response);
@@ -152,7 +152,7 @@ if ($type == "area")
 
     // Redirect back to the admin page
     $response = array(
-      "code" => 200,
+      "code" => 0,
       "message" => "success"
     );
     echo json_encode($response);
@@ -162,7 +162,7 @@ if ($type == "area")
   {
     // There are rooms left in the area
     $response = array(
-      "code" => 500,
+      "code" => -1,
       "message" => "There are rooms in this area!"
     );
     echo json_encode($response);

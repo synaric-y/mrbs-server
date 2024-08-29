@@ -8,6 +8,7 @@ require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
 
+
 //// Check the CSRF token
 //Form::checkToken();
 //
@@ -65,13 +66,13 @@ elseif ($type == "room")
 
 if ($area && $room){
   $response = array(
-    "code" => 200,
+    "code" => 0,
     "message" => "success"
   );
   echo json_encode($response);
 }else{
   $response = array(
-    "code" => 500,
+    "code" => -1,
     "message" => $error
   );
   echo json_encode($response);
