@@ -4,6 +4,8 @@ header("Content-Type: application/json");
 header("Cache-Control: no-cache");
 header("Pragma: no-cache");
 header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+header('Access-Control-Allow-Methods: GET, POST, PUT, OPTION');
 ini_set('display_errors', 1);            //错误信息
 ini_set('display_startup_errors', 1);    //php启动错误信息
 error_reporting(E_ALL);
