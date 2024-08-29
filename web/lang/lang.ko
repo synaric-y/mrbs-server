@@ -208,3 +208,8 @@ $vocab["please_contact"]     = "자세한 사항은 다음 관리자에게 연�
 $vocab["type.I"]            = "내부회의";
 $vocab["type.E"]            = "외부회의";
 
+
+// CalendarServer
+$vocab["ic_tp_meeting"]                       = "빠른 회의";
+$vocab["fast_meeting_time"]                   = "오후 %s - %s 간단한 회의를 예약하시겠습니까?";
+

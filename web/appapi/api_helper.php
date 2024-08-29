@@ -23,10 +23,10 @@ class ApiHelper
     exit();
   }
 
-  static function fail($msg = "")
+  static function fail($msg = "", $code = -1)
   {
     $rt = array(
-      "code" => -1,
+      "code" => $code,
       "msg" => $msg,
       "data" => null
     );
