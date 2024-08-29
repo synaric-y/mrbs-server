@@ -129,4 +129,9 @@ class DBHelper
 
     return true;
   }
+
+  static public function insert_id($table, $col)
+  {
+    return db()->insert_id($table, $col);
+  }
 }
