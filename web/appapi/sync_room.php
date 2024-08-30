@@ -82,5 +82,7 @@ $result["entries"] = $entries;
 $result["room"] = $room;
 
 
+db() -> query("UPDATE " . _tbl("room") . " SET battery_level = ? WHERE id = ?", array($battery_level, $roomId));
+
 
 ApiHelper::success($result);
