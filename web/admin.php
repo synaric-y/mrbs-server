@@ -34,7 +34,7 @@ $type = $data['type'];
 $area = $data['area'];
 
 if ($type == 'area'){
-  $sql = "SELECT id, area_name FROM " . _tbl("area");
+  $sql = "SELECT * FROM " . _tbl("area");
   $result = db() -> query($sql);
   $response = array(
     "code" => 0,
@@ -44,10 +44,10 @@ if ($type == 'area'){
     )
   );
   while($row = $result -> next_row_keyed()){
-    $item = array();
-    $item['id'] = $row['id'];
-    $item['area_name'] = $row['area_name'];
-    $response["data"][] = $item;
+    unset($row['exchange_server']);
+    unset($row['wxwork_corpid']);
+    unset($row['wxwork_secret']);
+    $response["data"][] = $row;
   }
   echo json_encode($response);
 }else if ($type == 'room'){
@@ -60,7 +60,7 @@ if ($type == 'area'){
       );
       echo json_encode($response);
     }
-    $sql = "SELECT id, room_name FROM " . _tbl("room") . " WHERE area_id = ?";
+    $sql = "SELECT *  FROM " . _tbl("room") . " WHERE area_id = ?";
     $result = db() -> query($sql, array($area));
     if ($result -> count() === 0){
       $response = array(
@@ -75,10 +75,11 @@ if ($type == 'area'){
         "data" => array()
       );
       while($row = $result -> next_row_keyed()){
-        $item = array();
-        $item['id'] = $row['id'];
-        $item['room_name'] = $row['room_name'];
-        $response["data"][] = $item;
+        unset($row['exchange_username']);
+        unset($row['exchange_password']);
+        unset($row['wxwork_mr_id']);
+        unset($row['exchange_sync_state']);
+        $response["data"][] = $row;
       }
       echo json_encode($response);
     }
