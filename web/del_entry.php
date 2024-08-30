@@ -18,29 +18,34 @@ require_once "mrbs_sql.inc";
 require_once "functions_mail.inc";
 
 // Get non-standard form variables
-$id = get_form_var('id', 'int', null, INPUT_POST);
-$series = get_form_var('series', 'bool', null, INPUT_POST);
-$returl = get_form_var('returl', 'string', null, INPUT_POST);
-$action = get_form_var('action', 'string', null, INPUT_POST);
-$note = get_form_var('note', 'string', '', INPUT_POST);
+//$id = get_form_var('id', 'int', null, INPUT_POST);
+//$series = get_form_var('series', 'bool', null, INPUT_POST);
+//$returl = get_form_var('returl', 'string', null, INPUT_POST);
+//$action = get_form_var('action', 'string', null, INPUT_POST);
+//$note = get_form_var('note', 'string', '', INPUT_POST);
+
+$json = file_get_contents('php://input');
+$data = json_decode($json, true);
+$id = $data["entry_id"];
+$series = boolval($data["entry_series"]);
 
 // Check the CSRF token
-Form::checkToken();
+//Form::checkToken();
 
 // Check the user is authorised for this page
-checkAuthorised(this_page());
+//checkAuthorised(this_page());
 
-if (empty($returl))
-{
-  $vars = array('view'  => $default_view,
-                'year'  => $year,
-                'month' => $month,
-                'day'   => $day,
-                'area'  => $area,
-                'room'  => $room);
-
-  $returl .= 'index.php?' . http_build_query($vars, '', '&');
-}
+//if (empty($returl))
+//{
+//  $vars = array('view'  => $default_view,
+//                'year'  => $year,
+//                'month' => $month,
+//                'day'   => $day,
+//                'area'  => $area,
+//                'room'  => $room);
+//
+//  $returl .= 'index.php?' . http_build_query($vars, '', '&');
+//}
 
 if ($info = get_booking_info($id, FALSE, TRUE))
 {
@@ -110,10 +115,8 @@ if ($info = get_booking_info($id, FALSE, TRUE))
       }
 
     }
-    location_header($returl);
   }
 }
 
 // If you got this far then we got an access denied.
-showAccessDenied($view, $view_all, $year, $month, $day, $area);
 
