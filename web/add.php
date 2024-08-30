@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
+
 namespace MRBS;
 
 use MRBS\Form\Form;
 
 require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
-
 
 
 //// Check the CSRF token
@@ -33,78 +33,41 @@ $capacity = $data['capacity'];
 $room_admin_email = $data['room_admin_email'];
 $type = $data['type'];
 $area = $data['area'];
-if ($type === 'area'){
+if ($type === 'area') {
   $area = false;
   $room = true;
-}else if ($type !== 'room'){
+} else if ($type !== 'room') {
   $error = "wrong_type";
-}else{
+} else {
   $room = false;
 }
 
 // First of all check that we've got an area or room name
-if (!isset($name) || ($name === ''))
-{
+if (!isset($name) || ($name === '')) {
   $error = "empty_name";
 }
 
 // we need to do different things depending on if it's a room
 // or an area
-elseif ($type == "area")
-{
+elseif ($type == "area") {
   $area = mrbsAddArea($name, $error);
-}
-
-elseif ($type == "room")
-{
+} elseif ($type == "room") {
   $room = mrbsAddRoom($name, $area, $error, $description, $capacity, $room_admin_email);
 }
 
-//$returl = "admin.php?area=$area" . (!empty($error) ? "&error=$error" : "");
-//location_header($returl);
-
-if ($area && $room){
+if ($area && isset($room) && $room) {
   $response = array(
     "code" => 0,
     "message" => "success"
   );
   echo json_encode($response);
-}else{
+  return;
+} else {
   $response = array(
     "code" => -1,
     "message" => $error
   );
   echo json_encode($response);
-}
-
-
-
-// we need to do different things depending on if it's a room
-// or an area
-elseif ($type == "area")
-{
-  $area = mrbsAddArea($name, $error);
-}
-
-elseif ($type == "room")
-{
-  $room = mrbsAddRoom($name, $area, $error, $description, $capacity, $room_admin_email);
-}
-
-//$returl = "admin.php?area=$area" . (!empty($error) ? "&error=$error" : "");
-//location_header($returl);
-
-if ($area && $room){
-  $response = array(
-    "code" => 0,
-    "message" => "success"
-  );
-  echo json_encode($response);
-}else{
-  $response = array(
-    "code" => -1,
-    "message" => $error
-  );
-  echo json_encode($response);
+  return;
 }
 
