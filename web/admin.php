@@ -33,7 +33,9 @@ $data = json_decode($json, true);
 $type = $data['type'];
 $area = $data['area'];
 
-if ($type == 'area'){
+if ($type == 'all'){
+
+} else if ($type == 'area'){
   $sql = "SELECT * FROM " . _tbl("area");
   $result = db() -> query($sql);
   $response = array(
@@ -84,9 +86,27 @@ if ($type == 'area'){
       echo json_encode($response);
     }
   }else{
+    $result = db() -> query("SELECT * FROM " . _tbl("room"));
+    if ($result -> count() === 0){
+      $response = array(
+        "code" => -3,
+        "message" => "room not exist"
+      );
+      echo json_encode($response);
+      return;
+    }
+    $rows = $result -> all_rows_keyed();
+    foreach($rows as $row){
+      unset($row['exchange_username']);
+      unset($row['exchange_password']);
+      unset($row['wxwork_mr_id']);
+      unset($row['exchange_sync_state']);
+      $ans[] = $row;
+    }
     $response = array(
-      "code" => -2,
-      "message" => "area should not be empty",
+      "code" => 0,
+      "message" => "success",
+      "data" => $ans
     );
     echo json_encode($response);
     return;
