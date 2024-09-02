@@ -268,6 +268,10 @@ if (!empty($errors))
   {
     $query_string .= "&errors[]=$error";
   }
+  $response["code"] = -2;
+  $response["message"] = $errors;
+  echo json_encode($response);
+  return;
 //  location_header("edit_area.php?$query_string");
 }
 

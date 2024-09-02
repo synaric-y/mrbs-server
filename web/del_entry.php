@@ -17,6 +17,7 @@ require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 require_once "functions_mail.inc";
 
+
 // Get non-standard form variables
 //$id = get_form_var('id', 'int', null, INPUT_POST);
 //$series = get_form_var('series', 'bool', null, INPUT_POST);
@@ -29,6 +30,20 @@ $data = json_decode($json, true);
 $id = $data["entry_id"];
 $series = boolval($data["entry_series"]);
 
+$response = array(
+  "code" => 'int',
+  "message" => 'string'
+);
+session_start();
+if (!checkAuth()){
+  $response["code"] = -1;
+  $response["message"] = get_vocab("please_login");
+  echo json_encode($response);
+  return;
+}
+
+$user = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE name = ?", array($_SESSION['user']));
+$user = $user -> next_row_keyed();
 // Check the CSRF token
 //Form::checkToken();
 
@@ -50,14 +65,10 @@ $series = boolval($data["entry_series"]);
 if ($info = get_booking_info($id, FALSE, TRUE))
 {
   // check that the user is allowed to delete this entry
-  if (isset($action) && ($action == "reject"))
-  {
-    $authorised = is_book_admin($info['room_id']);
-  }
-  else
-  {
-    $authorised = getWritable($info['create_by'], $info['room_id']);
-  }
+  if ($user['level'] == 2 || $user['name'] == $info['create_by']){
+    $authorised = true;
+  }else
+    $authorised = false;
   if ($authorised)
   {
     $day   = (int) date('d', $info['start_time']);
@@ -115,8 +126,16 @@ if ($info = get_booking_info($id, FALSE, TRUE))
       }
 
     }
+    $response["code"] = 0;
+    $response["message"] = "success";
+    echo json_encode($response);
+    return;
   }
 }
+
+$response["code"] = -1;
+$response["message"] = "cannot delete entry";
+echo json_encode($response);
 
 // If you got this far then we got an access denied.
 
