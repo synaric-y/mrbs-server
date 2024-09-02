@@ -53,7 +53,7 @@ if ($type == 'all'){
   }
   echo json_encode($response);
 }else if ($type == 'room'){
-  if (isset($area)){
+  if (!empty($area)){
     $areaExist = db() -> query("SELECT id FROM " . _tbl("area") . " WHERE id = ?", array($area));
     if ($areaExist -> count() == 0){
       $response = array(
