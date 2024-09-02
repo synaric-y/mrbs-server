@@ -54,6 +54,11 @@ $form_vars = array(
   'area_confirmed_default' => 'string',
   'area_default_type' => 'string',
   'area_times_along_top' => 'string',
+  'area_use_exchange' => 'int',
+  'area_use_wxwork' => 'int',
+  'area_exchange_server' => 'string',
+  'area_wxwork_corpid' => 'string',
+  'area_wxwork_secret' => 'string',
   'custom_html' => 'string'
 );
 
@@ -414,6 +419,16 @@ $assign_array[] = "default_type=?";
 $sql_params[] = $area_default_type;
 $assign_array[] = "times_along_top=?";
 $sql_params[] = $area_times_along_top;
+$assign_array[] = 'use_exchange=?';
+$sql_params[] = $area_use_exchange;
+$assign_array[] = 'use_wxwork=?';
+$sql_params[] = $area_use_wxwork;
+$assign_array[] = 'exchange_sever=?';
+$sql_params[] = $area_exchange_server;
+$assign_array[] = 'wxwork_corpid=?';
+$sql_params[] = $area_wxwork_corpid;
+$assign_array[] = 'wxwork_secret=?';
+$sql_params[] = $area_wxwork_secret;
 
 $sql .= implode(",", $assign_array) . " WHERE id=?";
 $sql_params[] = $area;
