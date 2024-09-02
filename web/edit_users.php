@@ -51,7 +51,7 @@ require_once "mrbs_sql.inc";
 /*---------------------------------------------------------------------------*\
 |                         Authenticate the current user                         |
 \*---------------------------------------------------------------------------*/
-
+session_start();
 if (!checkAuth()){
   echo json_encode(array(
     "code" => -99,
@@ -69,11 +69,9 @@ if (!checkAuth()){
 
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
-
 $action = $data['action'];
 $id = $data['id'];
-//TODO check if user can edit others
-//TODO check if edit self
+
 $email = $data['email'];
 $name = $data['name'];
 $password0 = $data['password0'];
@@ -85,6 +83,14 @@ $response = array(
   "code" => 'int',
   "message" => 'string'
 );
+$isAdmin = getLevel($_SESSION['user']);
+if ($isAdmin != 2){
+  $response['code'] = -13;
+  $response['message'] = get_vocab("access_denied");
+  echo json_encode($response);
+  return;
+}
+
 if (!isset($action) || ($action != 'edit' && $action != 'add' && $action != 'delete')) {
   $response["code"] = -1;
   $response["message"] = "unexpected action";
@@ -106,12 +112,6 @@ if (isset($id)) {
   if (!$data) {
     $response['code'] = -2;
     $response['message'] = 'no user found';
-    echo json_encode($response);
-    return;
-  }
-  if ($data['level'] != 2){
-    $response['code'] = -11;
-    $response['message'] = 'user is not admin';
     echo json_encode($response);
     return;
   }
@@ -197,14 +197,15 @@ if (isset($action) && ($action == "edit")){
   $row = $isExist -> next_row_keyed();
   $isExist = db() -> query1("SELECT COUNT(*) FROM " . _tbl("users") . " WHERE name = ?", array($name));
   if ($_SESSION['user'] == $row['name']){
-    if (isExist > 1){
+    session_write_close();
+    if ($isExist > 1){
       $response['code'] = -11;
       $response['message'] = "name is already in use";
       echo json_encode($response);
       return;
     }
   }
-
+  session_write_close();
   $user["name"] = $name;
   $user["display_name"] = $display_name;
   $user["email"] = $email;
@@ -218,6 +219,7 @@ if (isset($action) && ($action == "edit")){
   echo json_encode($response);
   return;
 }else if (isset($action) && ($action == "add")){
+  session_write_close();
   $user = $result -> next_row_keyed();
   $user["name"] = $name;
   $user["display_name"] = $display_name;
@@ -240,11 +242,13 @@ if (isset($action) && ($action == "edit")){
 if (isset($action) && ($action == "delete")){
 
   if($_SESSION['user'] == $name){
+    session_write_close();
     $response["code"] = -8;
     $response["message"] = "you cannot delete your own account";
     echo json_encode($response);
     return;
   }
+  session_write_close();
 
   $result = db() -> query("DELETE FROM " . _tbl("users") . " WHERE name = ?", array($name));
   if (!$result) {
