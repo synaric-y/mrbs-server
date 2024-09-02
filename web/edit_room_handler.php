@@ -25,6 +25,9 @@ $form_vars = array(
   'capacity'         => 'int',
   'room_admin_email' => 'string',
   'invalid_types'    => 'array',
+  'exchange_username'=> 'string',
+  'exchange_password'=> 'string',
+  'wxwork_mr_id'     => 'string',
   'custom_html'      => 'string'
 );
 $json = file_get_contents('php://input');
@@ -204,6 +207,18 @@ if (empty($errors))
           case 'custom_html':
             $assign_array[] = "custom_html=?";
             $sql_params[] = $custom_html;
+            break;
+          case 'exchange_username':
+            $assign_array[] = "exchange_username=?";
+            $sql_params[] = $exchange_username;
+            break;
+          case 'exchange_password':
+            $assign_array[] = "exchange_password=?";
+            $sql_params[] = $exchange_password;
+            break;
+          case 'wxwork_mr_id':
+            $assign_array[] = "wxwork_mr_id=?";
+            $sql_params[] = $wxwork_mr_id;
             break;
           // then look at any user defined fields
           default:
