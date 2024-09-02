@@ -44,6 +44,7 @@ $_SESSION['user'] = $username;
 setcookie("session_id", session_id(), [
   "httponly" => true
 ]);
+setcookie("username", $username);
 $response = array(
   "code" => 0,
   "message" => "success"
