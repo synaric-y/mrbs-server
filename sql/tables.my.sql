@@ -280,4 +280,5 @@ ALTER TABLE mrbs_repeat ADD COLUMN  `create_source` varchar(20)  NULL DEFAULT 's
 ALTER TABLE mrbs_area ADD COLUMN  `wxwork_corpid` varchar(255)  NULL DEFAULT ''   COMMENT 'wxwork corpid';
 ALTER TABLE mrbs_area ADD COLUMN  `wxwork_secret` varchar(255)  NULL DEFAULT ''   COMMENT 'wxwork secret';
 ALTER TABLE mrbs_room ADD COLUMN  `wxwork_sync_state` varchar(255)  NULL DEFAULT ''   COMMENT '';
+ALTER TABLE mrbs_room ADD COLUMN  `battery_level` int NULL COMMENT '';
 
