@@ -423,7 +423,7 @@ $assign_array[] = 'use_exchange=?';
 $sql_params[] = $area_use_exchange;
 $assign_array[] = 'use_wxwork=?';
 $sql_params[] = $area_use_wxwork;
-$assign_array[] = 'exchange_sever=?';
+$assign_array[] = 'exchange_server=?';
 $sql_params[] = $area_exchange_server;
 $assign_array[] = 'wxwork_corpid=?';
 $sql_params[] = $area_wxwork_corpid;
