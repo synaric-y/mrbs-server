@@ -31,7 +31,7 @@ if ($type == 'area'){
   return;
 }
 if ($result -> count() < 1){
-  $response['code'] = -1;
+  $response['code'] = -2;
   $response['message'] = 'No ' . $type . ' found';
   echo json_encode($response);
   return;
