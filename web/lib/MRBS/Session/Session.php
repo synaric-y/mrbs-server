@@ -103,8 +103,6 @@ abstract class Session
         $handler = new SessionHandlerDb();
         session_set_save_handler($handler, true);
       }
-      ini_set('session.use_cookies', (string)0);
-      ini_set('session.use_only_cookies', (string)0);
       $session_started = session_start();
     }
     catch(SessionHandlerDbException $e)

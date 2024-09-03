@@ -15,6 +15,7 @@ $response = array(
   "code" => 'int',
   "message" => 'string',
 );
+
 session_start();
 if (!checkAuth()){
   $response['code'] = -99;
