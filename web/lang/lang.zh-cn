@@ -272,6 +272,7 @@ $vocab["users.password"]            = "密码";
 $vocab["users.level"]               = "权限";
 $vocab["users.timestamp"]           = "最近更新日期";
 $vocab["users.last_login"]          = "最近登录";
+$vocab["never_login"]               = "用户从未登录";
 $vocab["unknown_user"]              = "用户不存在或密码错误";
 $vocab["login"]                     = "登录";
 $vocab["logoff"]                    = "注销";

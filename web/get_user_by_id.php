@@ -49,8 +49,10 @@ unset($user['password_hash']);
 unset($user['timestamp']);
 unset($user['reset_key_hash']);
 unset($user['reset_key_expiry']);
-$user['last_login'] = date('Y-m-d h:i:s A', intval($user['last_login']));
-
+if (!empty($user['last_login']))
+  $user['last_login'] = date('Y-m-d h:i:s A', intval($user['last_login']));
+else
+  $user['last_login'] = get_vocab('never_login');
 $response['code'] = 0;
 $response['data'] = $user;
 $response['message'] = 'success';
