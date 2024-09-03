@@ -62,7 +62,6 @@ session_write_close();
 //
 //  $returl .= 'index.php?' . http_build_query($vars, '', '&');
 //}
-
 if ($info = get_booking_info($id, FALSE, TRUE))
 {
   // check that the user is allowed to delete this entry

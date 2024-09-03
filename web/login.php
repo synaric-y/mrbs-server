@@ -38,13 +38,10 @@ if (!$result) {
   echo json_encode($response);
   return;
 }
-
+session_start();
 session_regenerate_id(false);
 $_SESSION['user'] = $username;
 setcookie("session_id", session_id(), [
-  "httponly" => true
-]);
-setcookie("username", $username, [
   "httponly" => true
 ]);
 $response = array(
