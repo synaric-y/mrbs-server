@@ -13,22 +13,6 @@ $data = json_decode($json, true);
 $username = $data['username'];
 $password = $data['password'];
 
-//if (isset($_COOKIE)){
-//  $session_id = $_COOKIE['session_id'];
-//  $session = DBHelper::one(_tbl("sessions"), "id = '$session_id'");
-//  if ($session) {
-//    session_decode($session['data']);
-//    if ($_SESSION['user'] == $username) {
-//      $response = array(
-//        "code" => 1,
-//        "message" => "already login"
-//      );
-//      echo json_encode($response);
-//      return;
-//    }
-//  }
-//}
-
 if (!empty($_SESSION) && isset($_SESSION['user'])) {
   $response = array(
     "code" => 1,
@@ -51,9 +35,6 @@ if (!$result) {
 $_SESSION['user'] = $username;
 $result = db() -> query("SELECT level, display_name FROM " . _tbl("users") . " WHERE name = ?", array($username));
 $row = $result -> next_row_keyed();
-//setcookie("session_id", session_id(), [
-//  "httponly" => true
-//]);
 $response = array(
   "code" => 0,
   "message" => "success",
