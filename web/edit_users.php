@@ -130,7 +130,7 @@ if ($action == "edit") {
   $editing_last_admin = false;
 }
 $pattern = "/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/";
-if (isset($email) && !preg_match($pattern, $email)) {
+if (empty($email) && !preg_match($pattern, $email)) {
   $invalid_email = "true";
 }
 
