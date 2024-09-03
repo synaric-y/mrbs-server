@@ -1,9 +1,21 @@
 <?php
 namespace MRBS;
+
+$origin_arr = [
+  'https://meeting-manage-dev.businessconnectchina.com:11443',
+  'http://localhost:5173',
+];
+
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+if (in_array($origin, $origin_arr)) {
+  header('Access-Control-Allow-Origin:' . $origin);
+}
+
 header("Content-Type: application/json");
 header("Cache-Control: no-cache");
 header("Pragma: no-cache");
-header("Access-Control-Allow-Origin: *");
+//header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 header('Access-Control-Allow-Methods: GET, POST, PUT, OPTION');
 ini_set('display_errors', 1);            //错误信息
