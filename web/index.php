@@ -33,7 +33,7 @@ if ($type != 'all') {
   }
 }
 
-$sql = "SELECT E.id AS id, area_id, room_id, start_time, end_time, E.name AS name, book_by, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes  FROM " . _tbl("entry") . " E LEFT JOIN " . _tbl("room") .
+$sql = "SELECT E.id AS id, area_id, room_id, start_time, end_time, E.name AS name, book_by, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, R.room_name  FROM " . _tbl("entry") . " E LEFT JOIN " . _tbl("room") .
 " R ON E.room_id = R.id " . "LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id";
 if ($type == 'area'){
   $sql .= " WHERE A.id = ? AND start_time >= AND end_time <= ?";
@@ -115,7 +115,8 @@ foreach ($rows as $row) {
     "entry_name" => $row['name'],
     "book_by" => $row['book_by'],
     "status" => $status,
-    "duration" => date("h:i:s A", intval($row['start_time'])) . "-" . date("h:i:s A", intval($row['end_time']))
+    "duration" => date("h:i:s A", intval($row['start_time'])) . "-" . date("h:i:s A", intval($row['end_time'])),
+    "room_name" => $row['room_name']
   );
 }
 
