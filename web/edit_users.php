@@ -51,7 +51,6 @@ require_once "mrbs_sql.inc";
 /*---------------------------------------------------------------------------*\
 |                         Authenticate the current user                         |
 \*---------------------------------------------------------------------------*/
-session_start();
 if (!checkAuth()){
   echo json_encode(array(
     "code" => -99,

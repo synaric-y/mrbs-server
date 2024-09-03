@@ -35,7 +35,6 @@ $response = array(
   "message" => 'string'
 );
 
-session_start();
 if (!checkAuth()){
   $response["code"] = -99;
   $response["message"] = get_vocab("please_login");

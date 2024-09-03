@@ -5,7 +5,6 @@ namespace MRBS;
 
 require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
-use MRBS\Form\Form;
 
 //// Check the CSRF token.
 //Form::checkToken();

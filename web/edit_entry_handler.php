@@ -11,8 +11,6 @@ require_once 'functions_ical.inc';
 require_once 'functions_mail.inc';
 
 use MRBS\CalendarServer\CalendarServerManager;
-use MRBS\Form\ElementInputSubmit;
-use MRBS\Form\Form;
 
 
 //$is_ajax = is_ajax();
@@ -33,8 +31,8 @@ use MRBS\Form\Form;
 
 //$sessionData = "";
 //session_decode($sessionData);
-//$mrbs_username = $_SESSION['user'];
-$mrbs_username = "";
+$mrbs_username = $_SESSION['user'];
+//$mrbs_username = "";
 
 
 // (2) Get the form variables
