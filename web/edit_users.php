@@ -59,7 +59,8 @@ if (!checkAuth()){
   ));
   return;
 }
-
+$username = $_SESSION['user'];
+session_write_close();
 
 /*---------------------------------------------------------------------------*\
 |             Edit a given entry - 1st phase: Get the user input.             |
@@ -83,7 +84,7 @@ $response = array(
   "code" => 'int',
   "message" => 'string'
 );
-$isAdmin = getLevel($_SESSION['user']);
+$isAdmin = getLevel($username);
 if ($isAdmin != 2){
   $response['code'] = -13;
   $response['message'] = get_vocab("access_denied");
@@ -196,8 +197,7 @@ if (isset($action) && ($action == "edit")){
   $isExist = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE id = ?", array($id));
   $row = $isExist -> next_row_keyed();
   $isExist = db() -> query1("SELECT COUNT(*) FROM " . _tbl("users") . " WHERE name = ?", array($name));
-  if ($_SESSION['user'] == $row['name']){
-    session_write_close();
+  if ($username == $row['name']){
     if ($isExist > 1){
       $response['code'] = -11;
       $response['message'] = "name is already in use";
@@ -205,7 +205,6 @@ if (isset($action) && ($action == "edit")){
       return;
     }
   }
-  session_write_close();
   $user["name"] = $name;
   $user["display_name"] = $display_name;
   $user["email"] = $email;
@@ -219,7 +218,6 @@ if (isset($action) && ($action == "edit")){
   echo json_encode($response);
   return;
 }else if (isset($action) && ($action == "add")){
-  session_write_close();
   $user = $result -> next_row_keyed();
   $user["name"] = $name;
   $user["display_name"] = $display_name;
@@ -241,14 +239,12 @@ if (isset($action) && ($action == "edit")){
 //
 if (isset($action) && ($action == "delete")){
 
-  if($_SESSION['user'] == $name){
-    session_write_close();
+  if($username == $name){
     $response["code"] = -8;
     $response["message"] = "you cannot delete your own account";
     echo json_encode($response);
     return;
   }
-  session_write_close();
 
   $result = db() -> query("DELETE FROM " . _tbl("users") . " WHERE name = ?", array($name));
   if (!$result) {
