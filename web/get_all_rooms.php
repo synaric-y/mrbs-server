@@ -18,6 +18,17 @@ $response = array(
   "message" => 'string'
 );
 
+session_start();
+if (!checkAuth()){
+  $response['code'] = -99;
+  $response['message'] = get_vocab("please_login");
+  echo json_encode($response);
+  return;
+}
+$username = $_SESSION['user'];
+
+session_write_close();
+
 if ($type == 'all'){
   $result = db() -> query("SELECT R.id as room_id, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id");
   if ($result -> count() < 1){

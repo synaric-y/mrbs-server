@@ -34,16 +34,17 @@ $response = array(
   "code" => 'int',
   "message" => 'string'
 );
+
 session_start();
 if (!checkAuth()){
-  $response["code"] = -1;
+  $response["code"] = -99;
   $response["message"] = get_vocab("please_login");
   echo json_encode($response);
   return;
 }
-
 $user = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE name = ?", array($_SESSION['user']));
 $user = $user -> next_row_keyed();
+session_write_close();
 // Check the CSRF token
 //Form::checkToken();
 
@@ -61,7 +62,6 @@ $user = $user -> next_row_keyed();
 //
 //  $returl .= 'index.php?' . http_build_query($vars, '', '&');
 //}
-
 if ($info = get_booking_info($id, FALSE, TRUE))
 {
   // check that the user is allowed to delete this entry
@@ -71,9 +71,6 @@ if ($info = get_booking_info($id, FALSE, TRUE))
     $authorised = false;
   if ($authorised)
   {
-    $day   = (int) date('d', $info['start_time']);
-    $month = (int) date('m', $info['start_time']);
-    $year  = (int) date('Y', $info['start_time']);
     $area  = mrbsGetRoomArea($info["room_id"]);
     // Get the settings for this area (they will be needed for policy checking)
     get_area_settings($area);
