@@ -2654,7 +2654,17 @@ function mrbsMakeBookings(array $bookings, ?int $id=null, bool $just_check=false
   }
 
   // Tidy up the lists of conflicts and rules broken, getting rid of duplicates
-  $conflicts = array_values(array_unique($conflicts));
+//  $conflicts = array_values(array_unique($conflicts));
+  $tempArray = [];
+  $uniqueArray = [];
+  foreach ($conflicts as $conflict){
+    $serializedArray = serialize($conflict);
+    if (!in_array($serializedArray, $tempArray)){
+      $tempArray[] = $serializedArray;
+      $uniqueArray[] = $conflict;
+    }
+  }
+  $conflicts = $uniqueArray;
   foreach (array('notices', 'errors') as $key)
   {
    $violations[$key] = array_values(array_unique($violations[$key]));

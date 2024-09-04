@@ -825,13 +825,27 @@ catch (\Exception $e) {
 }
 
 if ($result['valid_booking']) {
-  $response["code"] = 0;
-  $response["message"] = "success";
-  if (!empty($result['conflicts']))
-    foreach ($result['conflicts'] as $conflict)
-      $response["conflicts"][] = $conflict;
-  echo json_encode($response);
-}else{
+  if ($result['new_details'][0]['id'] != 0) {
+    $response["code"] = 0;
+    $response["message"] = "success";
+    if (!empty($result['conflicts']))
+      foreach ($result['conflicts'] as $conflict)
+        $response["data"]["conflicts"] = $conflict;
+//    $response["data"]["entry"] = $result['new_details'];
+    $entries = array_column($result['new_details'], 'id');
+    if ($edit_series)
+      $result = db() -> query("SELECT id, start_time, end_time, entry_type, room_id, create_by, name, type, description, book_by FROM " . _tbl("entry") . " WHERE repeat_id = ?", $entries);
+    else
+      $result = db() -> query("SELECT id, start_time, end_time, entry_type, room_id, create_by, name, type, description, book_by FROM " . _tbl("entry") . " WHERE id = ?", $entries);
+    $response["data"]["entries"] = $result -> all_rows_keyed();
+    echo json_encode($response);
+  }else{
+    $response["code"] = -11;
+    $response["message"] = "all entries are conflict";
+    echo json_encode($response);
+    return;
+  }
+}else if ($result['new_details'][0]['id'] != 0){
   $response["code"] = -10;
   $response["message"] = "conflict with other entries";
   $response["data"] = $result['conflicts'];
