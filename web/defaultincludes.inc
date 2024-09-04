@@ -18,6 +18,7 @@ define('MRBS_ROOT',     __DIR__);                   // Root of MRBS installation
 // are assigned to variables will change depending on the context in which the file
 // is called.
 
+require_once 'options_handler.php';
 require_once 'lib/autoload.inc';
 require_once 'grab_globals.inc.php';   // this must be included before mrbs_auth.inc (due to WordPress - see comment in file)
 require_once 'systemdefaults.inc.php';

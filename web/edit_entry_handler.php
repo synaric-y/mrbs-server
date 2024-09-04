@@ -748,7 +748,6 @@ try {
   // Notify the third-party Calendar service that a meeting has been created
   if (!$just_check && $result['valid_booking'] && !isset($id)) {
     if ($result["new_details"]) {
-
       foreach ($result["new_details"] as $d) {
         if ($edit_series) {
           $fetch = db()->query("SELECT id FROM " . _tbl("entry") . " WHERE repeat_id = ?", array($d['id']));
@@ -825,9 +824,34 @@ catch (\Exception $e) {
 //  exception_handler($e);
 }
 
-$response["code"] = 0;
-$response["message"] = "success";
-echo json_encode($response);
+if ($result['valid_booking']) {
+  if ($result['new_details'][0]['id'] != 0) {
+    $response["code"] = 0;
+    $response["message"] = "success";
+    if (!empty($result['conflicts']))
+      foreach ($result['conflicts'] as $conflict)
+        $response["data"]["conflicts"] = $conflict;
+//    $response["data"]["entry"] = $result['new_details'];
+    $entries = array_column($result['new_details'], 'id');
+    if ($edit_series)
+      $result = db() -> query("SELECT id, start_time, end_time, entry_type, room_id, create_by, name, type, description, book_by FROM " . _tbl("entry") . " WHERE repeat_id = ?", $entries);
+    else
+      $result = db() -> query("SELECT id, start_time, end_time, entry_type, room_id, create_by, name, type, description, book_by FROM " . _tbl("entry") . " WHERE id = ?", $entries);
+    $response["data"]["entries"] = $result -> all_rows_keyed();
+    echo json_encode($response);
+  }else{
+    $response["code"] = -11;
+    $response["message"] = "all entries are conflict";
+    echo json_encode($response);
+    return;
+  }
+}else if ($result['new_details'][0]['id'] != 0){
+  $response["code"] = -10;
+  $response["message"] = "conflict with other entries";
+  $response["data"] = $result['conflicts'];
+  echo json_encode($response);
+  return;
+}
 
 // Everything was OK.   Go back to where we came from
 //if ($result['valid_booking'])

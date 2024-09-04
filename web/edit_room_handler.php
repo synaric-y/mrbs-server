@@ -37,6 +37,35 @@ foreach($form_vars as $var => $var_type)
 {
 //  $$var = get_form_var($var, $var_type);
   $$var = $data[$var];
+  if (($var_type == 'bool') || ($$var !== null))
+  {
+    switch ($var_type)
+    {
+      case 'array':
+        $$var = (array) $$var;
+        break;
+      case 'bool':
+        $$var = (bool) $$var;
+        break;
+      case 'decimal':
+        // This isn't a very good sanitisation as it will let through thousands separators and
+        // also multiple decimal points.  It needs to be improved, but care needs to be taken
+        // over, for example, whether a comma should be allowed for a decimal point.  So for
+        // the moment it errs on the side of letting through too much.
+        $$var = filter_var($$var, FILTER_SANITIZE_NUMBER_FLOAT,
+          FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND);
+        if ($value === '')
+        {
+          $$var = null;
+        }
+        break;
+      case 'int':
+        $$var = ($$var === '') ? null : intval($$var);
+        break;
+      default:
+        break;
+    }
+  }
   // Trim the strings and truncate them to the maximum field length
   if (is_string($$var))
   {

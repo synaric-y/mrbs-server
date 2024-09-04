@@ -134,36 +134,7 @@ function mrbsCheckFree(array $booking, ?int $ignore_entry_id=null, ?int $ignore_
 
   while (false !== ($row = $res->next_row_keyed()))
   {
-    unpack_status($row);
-    $existing_entry_interval = new EntryInterval($row['start_time'], $row['end_time'], $enable_periods);
-
-    $existing_start_date = new DateTime();
-    $existing_start_date->setTimestamp($row['start_time']);
-
-    $timestr = (string) $existing_entry_interval;
-
-    if (is_private_event($row['private']) &&
-        $is_private_field['entry.name'] &&
-        !getWritable($row['create_by'], $room_id))
-    {
-       $row['name'] = get_vocab("unavailable");
-    }
-
-    // enclose the viewday etc. links in a span to make it easier for JavaScript to strip them out
-    $vars = array('page_date' => $existing_start_date->format('Y-m-d'),
-                  'area'  => $area,
-                  'room'  => $room_id);
-
-    $query = http_build_query($vars, '', '&');
-
-    $err[] = '<a href="' . htmlspecialchars(multisite('view_entry.php?id=' . $row['id'])) . '">' .
-             htmlspecialchars($row['name']) . '</a>' .
-             ' (' . htmlspecialchars($timestr) . ', ' . htmlspecialchars($row['room_name']) . ') ' .
-             '<span>(' .
-             '<a href="' . htmlspecialchars(multisite("index.php?view=day&$query")) . '">' . get_vocab('viewday') . '</a> | ' .
-             '<a href="' . htmlspecialchars(multisite("index.php?view=week&$query")) . '">' . get_vocab('viewweek') . '</a> | ' .
-             '<a href="' . htmlspecialchars(multisite("index.php?view=month&$query")) . '">' . get_vocab('viewmonth') . '</a>' .
-             ')</span>';
+    $err[] = $row;
   }
 
   return $err;
@@ -2683,7 +2654,17 @@ function mrbsMakeBookings(array $bookings, ?int $id=null, bool $just_check=false
   }
 
   // Tidy up the lists of conflicts and rules broken, getting rid of duplicates
-  $conflicts = array_values(array_unique($conflicts));
+//  $conflicts = array_values(array_unique($conflicts));
+  $tempArray = [];
+  $uniqueArray = [];
+  foreach ($conflicts as $conflict){
+    $serializedArray = serialize($conflict);
+    if (!in_array($serializedArray, $tempArray)){
+      $tempArray[] = $serializedArray;
+      $uniqueArray[] = $conflict;
+    }
+  }
+  $conflicts = $uniqueArray;
   foreach (array('notices', 'errors') as $key)
   {
    $violations[$key] = array_values(array_unique($violations[$key]));

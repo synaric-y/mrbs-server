@@ -6,6 +6,13 @@ namespace MRBS;
 require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
+if (!checkAuth()){
+  $response['code'] = -99;
+  $response['message'] = get_vocab("please_login");
+  echo json_encode($response);
+  return;
+}
+
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
