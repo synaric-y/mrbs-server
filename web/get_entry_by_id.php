@@ -32,6 +32,8 @@ if ($result -> count() === 0){
 }
 
 $row = $result -> next_row_keyed();
+$row['start_time'] = intval($row['start_time']);
+$row['end_time'] = intval($row['end_time']);
 $response['code'] = 0;
 $response['message'] = "success";
 $response['data'] = $row;
