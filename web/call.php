@@ -4,6 +4,8 @@ namespace MRBS;
 $origin_arr = [
   'https://meeting-manage-dev.businessconnectchina.com:11443',
   'http://localhost:5173',
+  'http://172.16.89.161:83',
+  'http://172.16.89.91:83',
 ];
 
 $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
