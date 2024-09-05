@@ -31,9 +31,13 @@ if ($result -> count() === 0){
   return;
 }
 
+
+
 $row = $result -> next_row_keyed();
 $row['start_time'] = intval($row['start_time']);
 $row['end_time'] = intval($row['end_time']);
+$result = db() -> query("SELECT room_name FROM " . _tbl("room") . " WHERE id = ?", array($row['room_id']));
+$row['room_name'] = $result -> next_row_keyed()['room_name'];
 $response['code'] = 0;
 $response['message'] = "success";
 $response['data'] = $row;

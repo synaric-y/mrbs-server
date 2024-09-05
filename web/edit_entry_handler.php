@@ -56,7 +56,7 @@ $mrbs_username = $_SESSION['user'];
 
 function sanitize_room_id($id): int
 {
-  if (!isset($id)) {
+  if (empty($id)) {
     throw new Exception("Room id not set");
   }
 
@@ -120,9 +120,15 @@ $response = array(
   "code" => "int",
   "message" => "string"
 );
-$id = $data["id"];
+
 $just_check = false;
 
+if (!checkAuth()){
+  $response["code"] = -99;
+  $response["message"] = get_vocab("please_login");
+  echo json_encode($response);
+  return;
+}
 
 foreach ($form_vars as $var => $var_type) {
 //  $$var = get_form_var($var, $var_type);
@@ -135,7 +141,11 @@ foreach ($form_vars as $var => $var_type) {
   }
 
 }
-
+$id = intval($data["id"]);
+$midnight = strtotime("midnight", intval($start_seconds));
+$start_seconds -= $midnight;
+$midnight = strtotime("midnight", intval($end_seconds));
+$end_seconds -= $midnight;
 $confirmed = "";
 $skip = boolval($skip);
 $edit_series = boolval($edit_series);
@@ -259,7 +269,7 @@ if (!isset($create_by)) {
   // Shouldn't happen, unless something's gone wrong with the form or the POST request.
   throw new Exception('$create_by not set');
 }
-if (!is_book_admin($rooms) || (!isset($id) && $auth['admin_can_only_book_for_self'])) {
+if (!is_book_admin($rooms) || (empty($id) && $auth['admin_can_only_book_for_self'])) {
   if ($create_by !== $mrbs_username) {
     $message = "Attempt made by user '$mrbs_username' to make a booking in the name of '$create_by'";
     trigger_error($message, E_USER_NOTICE);
@@ -364,7 +374,7 @@ if ($no_mail) {
 // (2) we always get passed start_seconds and end_seconds in the Ajax data
 //if ($is_ajax && $commit)
 //{
-if (isset($id)) {
+if (!empty($id)) {
   $old_booking = get_booking_info($id, false);
 
   foreach ($form_vars as $var => $var_type) {
@@ -469,7 +479,7 @@ $target_rooms = $rooms;
 
 // Check that the user has permission to create/edit an entry for this room.
 // Get the id of the room that we are creating/editing
-if (isset($id)) {
+if (!empty($id)) {
   // Editing an existing booking: get the room_id from the database (you can't
   // get it from $rooms because they are the new rooms)
   $sql = "SELECT room_id
@@ -680,7 +690,7 @@ foreach ($rooms as $room_id) {
 
   $booking = array();
   $booking['create_by'] = $create_by;
-  $booking['modified_by'] = (isset($id)) ? $mrbs_username : '';
+  $booking['modified_by'] = (!empty($id)) ? $mrbs_username : '';
   $booking['name'] = $name;
   $booking['book_by'] = $book_by;
   $booking['type'] = $type;
@@ -688,7 +698,13 @@ foreach ($rooms as $room_id) {
   $booking['room_id'] = $room_id;
   $booking['start_time'] = $start_time;
   $booking['end_time'] = $end_time;
+  $ical_uid = generate_global_uid($name);
   $booking['ical_uid'] = $ical_uid;
+  if (!empty($id)){
+    $ical_sequence = db() -> query("SELECT ical_sequence FROM " . _tbl("entry") . " WHERE id = ?", array($id)) -> next_row_keyed()['ical_sequence'] + 1;
+  }else{
+    $ical_sequence = 1;
+  }
   $booking['ical_sequence'] = $ical_sequence;
   $booking['ical_recur_id'] = $ical_recur_id;
   $booking['allow_registration'] = $allow_registration;
@@ -725,7 +741,7 @@ foreach ($rooms as $room_id) {
 }
 
 //$just_check = $is_ajax && !$commit;
-$this_id = (isset($id)) ? $id : null;
+$this_id = (!empty($id)) ? $id : null;
 $send_mail = !$no_mail && need_to_send_mail();
 try {
   // Wrap the editing process in a transaction, because we'll want to roll back the edit if the
@@ -746,7 +762,7 @@ try {
   }
   $result = mrbsMakeBookings($bookings, $this_id, $just_check, $skip, $original_room_id, $send_mail, $edit_series);
   // Notify the third-party Calendar service that a meeting has been created
-  if (!$just_check && $result['valid_booking'] && !isset($id)) {
+  if (!$just_check && $result['valid_booking'] && empty($id)) {
     if ($result["new_details"]) {
       foreach ($result["new_details"] as $d) {
         if ($edit_series) {
@@ -761,7 +777,7 @@ try {
   }
   // If we weren't just checking and this was a successful booking and
   // we were editing an existing booking, then delete the old booking
-  if (!$just_check && $result['valid_booking'] && isset($id)) {
+  if (!$just_check && $result['valid_booking'] && !empty($id)) {
     // Notify the third-party Calendar service that a meeting has been updated
     if ($result["new_details"]) {
       foreach ($result["new_details"] as $d) {
@@ -847,6 +863,12 @@ if ($result['valid_booking']) {
   }
 }else if ($result['new_details'][0]['id'] != 0){
   $response["code"] = -10;
+  $response["message"] = "conflict with other entries";
+  $response["data"] = $result['conflicts'];
+  echo json_encode($response);
+  return;
+}else{
+  $response['code'] = -10;
   $response["message"] = "conflict with other entries";
   $response["data"] = $result['conflicts'];
   echo json_encode($response);

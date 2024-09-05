@@ -31,10 +31,10 @@ class SessionPhp extends SessionWithLogin
       }
       // Ajax requests don't count as activity, unless it's the special Ajax request used
       // to record client side activity.
-      $activity = get_form_var('activity', 'int');
-      if ($activity || !is_ajax() || !isset($_SESSION['LastActivity'])) {
-        $_SESSION['LastActivity'] = time();
-      }
+//      $activity = get_form_var('activity', 'int');
+//      if ($activity || !is_ajax() || !isset($_SESSION['LastActivity'])) {
+//        $_SESSION['LastActivity'] = time();
+//      }
     }
 
     // Move the current page to the last page, so it can be used as a referrer, and store the new current page -
@@ -44,7 +44,7 @@ class SessionPhp extends SessionWithLogin
     if (isset($server['SCRIPT_FILENAME']) && (MRBS_ROOT === dirname($server['SCRIPT_FILENAME'])) &&
         !(isset($server['HTTP_X_REQUESTED_WITH']) && ($server['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest')))
     {
-      $this->updatePage($server['REQUEST_URI'] ?? $server['PHP_SELF'] ?? null);
+//      $this->updatePage($server['REQUEST_URI'] ?? $server['PHP_SELF'] ?? null);
     }
   }
 
@@ -66,8 +66,8 @@ class SessionPhp extends SessionWithLogin
 
   public function updatePage(?string $url): void
   {
-    $_SESSION['last_page'] = $_SESSION['this_page'] ?? null;
-    $_SESSION['this_page'] = $url;
+//    $_SESSION['last_page'] = $_SESSION['this_page'] ?? null;
+//    $_SESSION['this_page'] = $url;
   }
 
 
