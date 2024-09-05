@@ -12,6 +12,8 @@ require "defaultincludes.inc";
 require_once "functions_table.inc";
 require_once "mrbs_sql.inc";
 
+global $datetime_formats;
+
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 $type = $data['type'];
@@ -77,7 +79,7 @@ if ($result -> count() < 1){
   $response["data"] = array();
   $response['data']['min_time'] = $min_time;
   $response['data']['max_time'] = $max_time;
-  $date = date("h:i A F d, Y", time());
+  $date = datetime_format($datetime_formats['view_day'], time());
   $response['data']['time'] = $date;
   echo json_encode($response);
   return;
@@ -151,7 +153,7 @@ if (empty($rows[count($rows) - 1]['eveningends_minutes']))
 $max_time = sprintf("%02d", $rows[count($rows) - 1]['eveningends'] > 12 ? $rows[count($rows) - 1]['eveningends'] - 12 : $rows[count($rows) - 1]['eveningends']) . ":" . sprintf("%02d", $rows[count($rows) - 1]['eveningends_minutes']) . ($rows[count($rows) - 1]['eveningends'] > 12 ? " PM" : " AM");
 
 
-$date = date("h:i A F d, Y", time());
+$date = datetime_format($datetime_formats['view_day'], time());
 
 $response['code'] = 0;
 $response['message'] = "success";

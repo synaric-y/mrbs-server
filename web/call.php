@@ -28,10 +28,7 @@ include_once "./defaultincludes.inc";
 include_once "./functions_table.inc";
 include_once "./mrbs_sql.inc";
 
-function FD($key)
-{
-  return $_POST[$key];
-}
+
 
 $act = $_GET["act"];
 
