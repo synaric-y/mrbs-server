@@ -146,7 +146,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
         }
         foreach ($delete as $deleteItem) {
           $di = $deleteItem->getItemId()->getId();
-          $entry = DBHelper::one(\MRBS\_tbl("entry"), array("exchange_id" => $di));
+          $entry = DBHelper::one(\MRBS\_tbl("entry"), "exchange_id = '$di' order by timestamp desc");
           $this->fmtChangeList["delete"][] = array("data" => $entry, "from" => "exchange");
           if (!empty($entry)) {
             DBHelper::delete(\MRBS\_tbl("entry"), array("exchange_id" => $di));
@@ -190,10 +190,12 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
       return;
     }
     $exchangeId = $ci->getItemId()->getId();
-    $queryOne = DBHelper::one(_tbl("entry"), "exchange_id = '$exchangeId'");
-    if (!empty($queryOne)) {
-      return;
-    }
+    // itemId maybe reused, so don't check itemId
+//    $queryOne = DBHelper::one(_tbl("entry"), "exchange_id = '$exchangeId'");
+//    if (!empty($queryOne)) {
+//      \MRBS\log_i($this::$TAG, "duplicate exchange_id: $exchangeId");
+//      return;
+//    }
 
     // determine if there are conflicting meetings
     $roomId = $this->room["id"];
@@ -249,7 +251,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
       return;
     }
     $exchangeId = $ui->getItemId()->getId();
-    $queryOne = DBHelper::one(_tbl("entry"), "exchange_id = '$exchangeId'");
+    $queryOne = DBHelper::one(_tbl("entry"), "exchange_id = '$exchangeId' order by timestamp desc ");
     if (empty($queryOne)) {
       return;
     }
