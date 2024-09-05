@@ -115,7 +115,7 @@ foreach ($rows as $row) {
     "entry_name" => $row['name'],
     "book_by" => $row['book_by'],
     "status" => $status,
-    "duration" => date("h:i:s A", intval($row['start_time'])) . "-" . date("h:i:s A", intval($row['end_time'])),
+    "duration" => date("h:i:sA", intval($row['start_time'])) . "-" . date("h:i:sA", intval($row['end_time'])),
     "room_name" => $row['room_name']
   );
 }

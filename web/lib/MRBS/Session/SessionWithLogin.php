@@ -32,20 +32,20 @@ abstract class SessionWithLogin extends Session
     parent::__construct();
 
     // Get non-standard form variables
-    foreach (array('action', 'username', 'password', 'returl') as $var)
-    {
-      $this->form[$var] = get_form_var($var, 'string', null, INPUT_POST);
-    }
+//    foreach (array('action', 'username', 'password', 'returl') as $var)
+//    {
+//      $this->form[$var] = get_form_var($var, 'string', null, INPUT_POST);
+//    }
 
     // Allow the target_url to be a GET or POST value to help password managers (the target_url can
     // be stored as a query string parameter in the password manager).
-    $this->form['target_url'] = get_form_var('target_url');
+//    $this->form['target_url'] = get_form_var('target_url');
 
-    if (isset($this->form['username']))
-    {
-      // It's easy for extra spaces to appear, especially on a mobile device
-      $this->form['username'] = trim($this->form['username']);
-    }
+//    if (isset($this->form['username']))
+//    {
+//       It's easy for extra spaces to appear, especially on a mobile device
+//      $this->form['username'] = trim($this->form['username']);
+//    }
   }
 
 
@@ -125,7 +125,7 @@ abstract class SessionWithLogin extends Session
           // expired due to inactivity, the token will be invalid, but that won't matter because
           // the result will be the same anyway - logging off the user - and we avoid
           // generating an unnecessary CSRF error message.)
-          Form::checkToken();
+//          Form::checkToken();
 
           // Get a valid user
           $valid_username = $this->getValidUser($this->form['username'], $this->form['password']);

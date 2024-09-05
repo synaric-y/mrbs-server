@@ -40,15 +40,16 @@ if (!isset($auth['session']))
 
 if (method_exists(session(), 'processForm'))
 {
-  session()->processForm();
+//  session()->processForm();
+  session();
 }
 
 // If we're in kiosk mode make sure somebody's not trying to get to anywhere other than
 // index.php with a kiosk query string parameter, kiosk.php or one of the js/***.js.php pages.
-if (is_kiosk_mode() &&
-    !((isset($server['REQUEST_URI']) && preg_match('/index\.php\?.*kiosk=/', $server['REQUEST_URI'])) ||
-      (isset($server['SCRIPT_NAME']) && preg_match('/kiosk\.php$|js\/.+\.js\.php$/', $server['SCRIPT_NAME']) )))
-{
-  $location = (session()->isset('kiosk_url')) ? session()->get('kiosk_url') : "index.php?kiosk=$kiosk_default_mode";
-  location_header(multisite($location));
-}
+//if (is_kiosk_mode() &&
+//    !((isset($server['REQUEST_URI']) && preg_match('/index\.php\?.*kiosk=/', $server['REQUEST_URI'])) ||
+//      (isset($server['SCRIPT_NAME']) && preg_match('/kiosk\.php$|js\/.+\.js\.php$/', $server['SCRIPT_NAME']) )))
+//{
+//  $location = (session()->isset('kiosk_url')) ? session()->get('kiosk_url') : "index.php?kiosk=$kiosk_default_mode";
+//  location_header(multisite($location));
+//}

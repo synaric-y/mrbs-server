@@ -28,6 +28,14 @@ $error = '';
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 $name = $data['name'];
+
+if (!checkAuth()){
+  $response['code'] = -99;
+  $response['message'] = get_vocab("please_login");
+  echo json_encode($response);
+  return;
+}
+
 $description = $data['description'];
 $capacity = $data['capacity'];
 $room_admin_email = $data['room_admin_email'];

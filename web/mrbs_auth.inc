@@ -184,7 +184,23 @@ function getAuthorised($level, $returl) : bool
   }
 
   // Otherwise we need to check who they are
-  $mrbs_user = session()->getCurrentUser();
+// TODO
+//  $mrbs_user = session()->getCurrentUser();
+//  if (!empty($auth['allow_anonymous_booking'])) {
+//    $session_id = $_COOKIE['session_id'];
+//    $session_data = db()->query("SELECT data FROM " . _tbl("sessions") . " WHERE id = ?", array($session_id));
+//    $session_data = $session_data->next_row_keyed();
+//    session_decode($session_data['data']);
+//    $mrbs_username = $_SESSION['user'];
+//    $result = db()->query("SELECT * FROM " . _tbl("users") . " WHERE username = ? LIMIT 1");
+//    $mrbs_user_map = $result->next_row_keyed();
+//    $mrbs_user = new User($mrbs_user_map['name']);
+//    $mrbs_user->level = $mrbs_user_map['level'];
+//    $mrbs_user->email = $mrbs_user_map['email'];
+//    $mrbs_user->display_name = $mrbs_user_map['display_name'];
+//  }else
+//    $mrbs_user = null;
+  $mrbs_user = new User("");
 
   if(!isset($mrbs_user))
   {
@@ -310,7 +326,34 @@ function getWritable($creator, $rooms=null, $all=true) : bool
   }
 
   // Always allowed to modify your own stuff
-  $mrbs_user = session()->getCurrentUser();
+  //  $mrbs_user = session()->getCurrentUser();
+
+// TODO
+//  $mrbs_user = session()->getCurrentUser();
+//  if (!empty($auth['allow_anonymous_booking'])) {
+//    $session_id = $_COOKIE['session_id'];
+//    $session_data = db()->query("SELECT data FROM " . _tbl("sessions") . " WHERE id = ?", array($session_id));
+//    $session_data = $session_data->next_row_keyed();
+//    session_decode($session_data['data']);
+//    $mrbs_username = $_SESSION['user'];
+//    $result = db()->query("SELECT * FROM " . _tbl("users") . " WHERE username = ? LIMIT 1");
+//    $mrbs_user_map = $result->next_row_keyed();
+//    $mrbs_user = new User($mrbs_user_map['name']);
+//    $mrbs_user->level = $mrbs_user_map['level'];
+//    $mrbs_user->email = $mrbs_user_map['email'];
+//    $mrbs_user->display_name = $mrbs_user_map['display_name'];
+//  }else
+//    $mrbs_user = null;
+  if (!$auth['allow_anonymous_booking']){
+    $result = db()->query("SELECT * FROM " . _tbl("users") . " WHERE name = ? LIMIT 1", array($_SESSION['user']));
+    $mrbs_user_map = $result -> next_row_keyed();
+    $mrbs_user = new User($mrbs_user_map['name']);
+    $mrbs_user -> level = $mrbs_user_map['level'];
+    $mrbs_user -> email = $mrbs_user_map['email'];
+    $mrbs_user -> display_name = $mrbs_user_map['display_name'];
+  }
+  else
+    $mrbs_user = new User("");
   if (isset($mrbs_user) && isset($creator) && (strcasecmp_locale($creator, $mrbs_user->username) === 0))
   {
     return true;
@@ -432,7 +475,7 @@ function is_book_admin($rooms=null, $all=true) : bool
     throw new \Exception('$rooms===null and $all===false not yet supported.');
   }
 
-  $mrbs_user = session()->getCurrentUser();
+//  $mrbs_user = session()->getCurrentUser();
 
   return (isset($mrbs_user) && ($mrbs_user->level >= $min_booking_admin_level));
 }
