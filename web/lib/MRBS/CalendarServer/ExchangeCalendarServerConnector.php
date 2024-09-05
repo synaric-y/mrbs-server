@@ -76,12 +76,12 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
       if (!is_array($calendarItemList)) {
         $calendarItemList = array($calendarItemList);
       }
-      \MRBS\log_i($this::$TAG, "-----------------------------");
-      \MRBS\log_i($this::$TAG, "| print queried calendar");
-      \MRBS\log_i($this::$TAG, "-----------------------------");
-      foreach ($calendarItemList as $ci) {
-        $this->printCalenderItem($ci);
-      }
+//      \MRBS\log_i($this::$TAG, "-----------------------------");
+//      \MRBS\log_i($this::$TAG, "| print queried calendar");
+//      \MRBS\log_i($this::$TAG, "-----------------------------");
+//      foreach ($calendarItemList as $ci) {
+//        $this->printCalenderItem($ci);
+//      }
     }
 
     return $this->handleChangeList($changesSinceLsatCheck);
