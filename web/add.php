@@ -45,14 +45,14 @@ if ($type === 'area') {
   $area = false;
   $room = true;
 } else if ($type !== 'room') {
-  $error = "wrong_type";
+  $error = get_vocab("wrong_type");
 } else {
   $room = false;
 }
 
 // First of all check that we've got an area or room name
 if (!isset($name) || ($name === '')) {
-  $error = "empty_name";
+  $error = get_vocab("empty_name");
 }
 
 // we need to do different things depending on if it's a room
@@ -66,7 +66,7 @@ elseif ($type == "area") {
 if ($area && isset($room) && $room) {
   $response = array(
     "code" => 0,
-    "message" => "success"
+    "message" => get_vocab("success")
   );
   echo json_encode($response);
   return;

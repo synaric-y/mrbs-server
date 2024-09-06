@@ -26,19 +26,19 @@ if ($type == 'area'){
 
 }else{
   $response['code'] = -1;
-  $response['message'] = 'Invalid type';
+  $response['message'] = get_vocab("wrong_type");
   echo json_encode($response);
   return;
 }
 if ($result -> count() < 1){
   $response['code'] = -2;
-  $response['message'] = 'No ' . $type . ' found';
+  $response['message'] = get_vocab($type . "_not_exist");
   echo json_encode($response);
   return;
 }
 
 $response['code'] = 0;
-$response['message'] = 'success';
+$response['message'] = get_vocab('success');
 while($row = $result -> next_row_keyed()){
   $response['data'][] = $row;
 }

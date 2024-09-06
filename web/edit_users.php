@@ -93,7 +93,7 @@ if ($isAdmin != 2){
 
 if (!isset($action) || ($action != 'edit' && $action != 'add' && $action != 'delete')) {
   $response["code"] = -1;
-  $response["message"] = "unexpected action";
+  $response["message"] = get_vocab("wrong_type");
   echo json_encode($response);
   return;
 }
@@ -111,7 +111,7 @@ if (isset($id)) {
   // safe.
   if (!$data) {
     $response['code'] = -2;
-    $response['message'] = 'no user found';
+    $response['message'] = get_vocab("user_not_exist");
     echo json_encode($response);
     return;
   }
@@ -135,23 +135,15 @@ if (!empty($email) && !preg_match($pattern, $email)) {
 
 if ($action == "edit" && !isset($id)){
   $response["code"] = -9;
-  $response["message"] = "id is necessary for editing";
+  $response["message"] = get_vocab("edit_without_id");
   echo json_encode($response);
   return;
-}
-
-if ($action == "edit" && isset($id)){
-  $idExist = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE id = ?", array($id));
-  if ($idExist -> count()) {
-    $response["code"] = -10;
-    $response["message"] = "no user found";
-  }
 }
 
 // Error messages
 if (!empty($invalid_email)) {
   $response['code'] = -3;
-  $response['message'] = "invalid email address";
+  $response['message'] = get_vocab("invalid_email");
   echo json_encode($response);
   return;
 }
@@ -161,14 +153,14 @@ if ($result->count() > 0 && $action == "add")
   $name_not_unique = "true";
 if (!empty($name_not_unique)) {
   $response['code'] = -4;
-  $response['message'] = "name not unique";
+  $response['message'] = get_vocab("name_not_unique");
   echo json_encode($response);
   return;
 //    echo "<p class=\"error\">'" . htmlspecialchars($taken_name) . "' " . get_vocab('name_not_unique') . "<p>\n";
 }
 if (!isset($name) || empty($name)) {
   $response['code'] = -5;
-  $response['message'] = "name is required";
+  $response['message'] = get_vocab("empty_name");
   echo json_encode($response);
   return;
 }
@@ -199,7 +191,7 @@ if (isset($action) && ($action == "edit")){
   if ($username == $row['name']){
     if ($isExist > 1){
       $response['code'] = -11;
-      $response['message'] = "name is already in use";
+      $response['message'] = get_vocab("name_not_unique");
       echo json_encode($response);
       return;
     }
@@ -213,7 +205,7 @@ if (isset($action) && ($action == "edit")){
   db() -> query("UPDATE " . _tbl("users") . " SET name = ?, display_name = ?, email = ?, password_hash = ? WHERE id = ?", array($user['name']
     , $user["display_name"], $user["email"], $user["password"], $user["id"]));
   $response["code"] = 0;
-  $response["message"] = "success";
+  $response["message"] = get_vocab("success");
   echo json_encode($response);
   return;
 }else if (isset($action) && ($action == "add")){
@@ -225,7 +217,7 @@ if (isset($action) && ($action == "edit")){
   $user["level"] = $level;
   db() -> query("INSERT INTO " . _tbl("users") . "(level, name, display_name, email, password_hash) VALUES (?, ?, ?, ?, ?)", array($user["level"], $user["name"], $user["display_name"], $user["email"], $user["password_hash"]));
   $response["code"] = 0;
-  $response["message"] = "success";
+  $response["message"] = get_vocab("success");
   echo json_encode($response);
   return;
 }
@@ -240,7 +232,7 @@ if (isset($action) && ($action == "delete")){
 
   if($username == $name){
     $response["code"] = -8;
-    $response["message"] = "you cannot delete your own account";
+    $response["message"] = get_vocab("delete_yourself");
     echo json_encode($response);
     return;
   }
@@ -248,13 +240,13 @@ if (isset($action) && ($action == "delete")){
   $result = db() -> query("DELETE FROM " . _tbl("users") . " WHERE name = ?", array($name));
   if (!$result) {
     $response["code"] = -7;
-    $response["message"] = "delete failed in DB";
+    $response["message"] = get_vocab("db failed");
     echo json_encode($response);
     return;
   }
 
   $response["code"] = 0;
-  $response["message"] = "success";
+  $response["message"] = get_vocab("success");
   echo json_encode($response);
   return;
 

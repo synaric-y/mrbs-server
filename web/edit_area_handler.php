@@ -446,13 +446,13 @@ if ($areaExist > 0) {
 if ($success){
   $response = array(
     "code" => 0,
-    "message" => "success"
+    "message" => get_vocab("success")
   );
   echo json_encode($response);
 }else{
   $response = array(
     "code" => -1,
-    "message" => "area not exist"
+    "message" => get_vocab("area_not_exist")
   );
   echo json_encode($response);
 }

@@ -284,7 +284,7 @@ if (empty($errors))
     // Go back to the admin page (for the new area)
     $response = array(
       "code" => 0,
-      "message" => "success"
+      "message" => get_vocab("success")
     );
     echo json_encode($response);
     return;

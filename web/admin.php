@@ -27,7 +27,7 @@ if ($type == 'all'){
   $result = db() -> query($sql);
   $response = array(
     "code" => 0,
-    "message" => "success",
+    "message" => get_vocab("success"),
     "data" => array(
 
     )
@@ -45,7 +45,7 @@ if ($type == 'all'){
     if ($areaExist -> count() == 0){
       $response = array(
         "code" => -3,
-        "message" => "area not exist"
+        "message" => get_vocab("area not exist")
       );
       echo json_encode($response);
     }
@@ -54,13 +54,13 @@ if ($type == 'all'){
     if ($result -> count() === 0){
       $response = array(
         "code" => -4,
-        "message" => "there is no room in the area"
+        "message" => get_vocab("no_room_in_area")
       );
       echo json_encode($response);
     }else{
       $response = array(
         "code" => 0,
-        "message" => "success",
+        "message" => get_vocab("success"),
         "data" => array()
       );
       while($row = $result -> next_row_keyed()){
@@ -77,7 +77,7 @@ if ($type == 'all'){
     if ($result -> count() === 0){
       $response = array(
         "code" => -3,
-        "message" => "room not exist"
+        "message" => get_vocab("room_not_exist")
       );
       echo json_encode($response);
       return;
@@ -92,7 +92,7 @@ if ($type == 'all'){
     }
     $response = array(
       "code" => 0,
-      "message" => "success",
+      "message" => get_vocab("success"),
       "data" => $ans
     );
     echo json_encode($response);
@@ -101,7 +101,7 @@ if ($type == 'all'){
 }else{
   $response = array(
     "code" => -1,
-    "message" => "invalid type",
+    "message" => get_vocab("wrong_type"),
   );
   echo json_encode($response);
 }

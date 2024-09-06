@@ -189,7 +189,7 @@ if (!is_book_admin($rooms) && $auth['only_admin_can_book_multiday']) {
 //
 if (false === ($start_date_split = split_iso_date($start_date))) {
   $response["code"] = -1;
-  $response["message"] = "Invalid start date";
+  $response["message"] = get_vocab("Invalid start date");
   echo json_encode($response);
   return;
 }
@@ -197,7 +197,7 @@ list($start_year, $start_month, $start_day) = $start_date_split;
 //
 if (false === ($end_date_split = split_iso_date($end_date))) {
   $response["code"] = -1;
-  $response["message"] = "Invalid end date";
+  $response["message"] = get_vocab("Invalid end date");
   echo json_encode($response);
   return;
 }
@@ -490,12 +490,8 @@ if (!empty($id)) {
   if ($existing_room < 0) {
     // Ideally we should give more feedback to the user when this happens, or
     // even lock the entry once a user starts to edit it.
-    $message = "Tried to edit an entry that no longer exists - probably because " .
-      "somebody else has deleted it in the meantime.";
-//    trigger_error($message, E_USER_NOTICE);
-//    location_header($returl);
     $response["code"] = -8;
-    $response["message"] = $message;
+    $response["message"] = get_vocab("edit_entry_not_exist");
     echo json_encode($response);
     return;
   }
@@ -508,7 +504,7 @@ if (!getWritable($create_by, $target_rooms, false)) {
 //  showAccessDenied($view, $view_all, $year, $month, $day, $area, $room ?? null);
 //  exit;
   $response["code"] = -7;
-  $response["message"] = "No access to delete entry";
+  $response["message"] = get_vocab("no_access_to_entry");
   echo json_encode($response);
   return;
 }
@@ -671,7 +667,7 @@ if (isset($rep_type) && ($rep_type != RepeatRule::NONE) &&
   !is_book_admin($rooms) &&
   !empty($auth['only_admin_can_book_repeat'])) {
   $response["code"] = -7;
-  $response["message"] = "No access to delete entry";
+  $response["message"] = get_vocab("no_access_to_entry");
   echo json_encode($response);
   return;
 }
@@ -796,7 +792,11 @@ try {
     db()->commit();
   } else {
     db()->rollback();
-    trigger_error('Edit failed.', E_USER_WARNING);
+//    trigger_error('Edit failed.', E_USER_WARNING);
+    $response["code"] = -12;
+    $response["message"] = get_vocab("no_access_no_policy");
+    echo json_encode($response);
+    return;
   }
 
   // If this is an Ajax request, output the result and finish
@@ -843,7 +843,7 @@ catch (\Exception $e) {
 if ($result['valid_booking']) {
   if ($result['new_details'][0]['id'] != 0) {
     $response["code"] = 0;
-    $response["message"] = "success";
+    $response["message"] = get_vocab("success");
     if (!empty($result['conflicts']))
       foreach ($result['conflicts'] as $conflict)
         $response["data"]["conflicts"] = $conflict;
@@ -857,132 +857,20 @@ if ($result['valid_booking']) {
     echo json_encode($response);
   }else{
     $response["code"] = -11;
-    $response["message"] = "all entries are conflict";
+    $response["message"] = get_vocab("repeat_entry_conflict");
     echo json_encode($response);
     return;
   }
 }else if ($result['new_details'][0]['id'] != 0){
   $response["code"] = -10;
-  $response["message"] = "conflict with other entries";
+  $response["message"] = get_vocab("entry_conflict");
   $response["data"] = $result['conflicts'];
   echo json_encode($response);
   return;
 }else{
   $response['code'] = -10;
-  $response["message"] = "conflict with other entries";
+  $response["message"] = get_vocab("entry_conflict");
   $response["data"] = $result['conflicts'];
   echo json_encode($response);
   return;
 }
-
-// Everything was OK.   Go back to where we came from
-//if ($result['valid_booking'])
-//{
-//  location_header($returl);
-//}
-
-//else
-//{
-//  $context = array(
-//      'view'      => $view,
-//      'view_all'  => $view_all,
-//      'year'      => $year,
-//      'month'     => $month,
-//      'day'       => $day,
-//      'area'      => $area,
-//      'room'      => $room ?? null
-//    );
-//
-//  print_header($context);
-//
-//  echo "<h2>" . get_vocab("sched_conflict") . "</h2>\n";
-//  if (!empty($result['violations']['errors']))
-//  {
-//    echo "<p>\n";
-//    echo get_vocab("rules_broken") . "\n";
-//    echo "</p>\n";
-//    echo "<ul>\n";
-//    foreach ($result['violations']['errors'] as $rule)
-//    {
-//      echo "<li>$rule</li>\n";
-//    }
-//    echo "</ul>\n";
-//  }
-//  if (!empty($result['conflicts']))
-//  {
-//    echo "<p>\n";
-//    echo get_vocab("conflict") . "\n";
-//    echo "</p>\n";
-//    echo "<ul>\n";
-//    foreach ($result['conflicts'] as $conflict)
-//    {
-//      echo "<li>$conflict</li>\n";
-//    }
-//    echo "</ul>\n";
-//  }
-//}
-//
-//echo "<div id=\"submit_buttons\">\n";
-//
-//$form = new Form(Form::METHOD_POST);
-//
-//$form->setAttributes(array('action' => multisite(this_page())));
-//
-//// Back button
-//$submit = new ElementInputSubmit();
-//$submit->setAttributes(array(
-//    'formaction' => multisite('edit_entry.php'),
-//    'name' => 'back_button',
-//    'value' => get_vocab('back')
-//  ));
-//$form->addElement($submit);
-//
-//// Skip and Book button (to book the entries that don't conflict)
-//// Only show this button if there were no policies broken and it's a series
-//if (empty($result['violations']['errors'])  &&
-//    isset($rep_type) && ($rep_type != RepeatRule::NONE))
-//{
-//  $submit = new ElementInputSubmit();
-//  $submit->setAttributes(array(
-//      'value' => get_vocab('skip_and_book'),
-//      'title' => get_vocab('skip_and_book_note')
-//    ));
-//  $form->addElement($submit);
-//  // Force a skip next time round
-//  $skip = true;
-//}
-//
-//// Put the booking data in as hidden inputs
-//// First the ordinary fields
-//foreach ($form_vars as $var => $var_type)
-//{
-//  if ($var_type == 'array')
-//  {
-//    // See the comment at the top of the page about array formats
-//    foreach ($$var as $value)
-//    {
-//      if (isset($value))
-//      {
-//        $form->addHiddenInput("{$var}[]", $value);
-//      }
-//    }
-//  }
-//  elseif (isset($$var))
-//  {
-//    $form->addHiddenInput($var, $$var);
-//  }
-//}
-//// Then the custom fields
-//foreach($fields as $field)
-//{
-//  if (array_key_exists($field['name'], $custom_fields) && isset($custom_fields[$field['name']]))
-//  {
-//    $form->addHiddenInput(VAR_PREFIX . $field['name'], $custom_fields[$field['name']]);
-//  }
-//}
-//
-//$form->render();
-//
-//echo "</div>\n";
-//
-//print_footer();

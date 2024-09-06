@@ -16,7 +16,7 @@ $password = $data['password'];
 if (!empty($_SESSION) && isset($_SESSION['user'])) {
   $response = array(
     "code" => 1,
-    "message" => "already login"
+    "message" => get_vocab("already_login")
   );
   echo json_encode($response);
   return;
@@ -26,18 +26,17 @@ $result = auth() -> validateUser($username, $password);
 if (!$result) {
   $response = array(
     "code" => -1,
-    "message" => "invalid username or password"
+    "message" => get_vocab("invalid_username_or_password")
   );
   echo json_encode($response);
   return;
 }
-//session_start();
 $_SESSION['user'] = $username;
 $result = db() -> query("SELECT level, display_name FROM " . _tbl("users") . " WHERE name = ?", array($username));
 $row = $result -> next_row_keyed();
 $response = array(
   "code" => 0,
-  "message" => "success",
+  "message" => get_vocab("success"),
   "data" => array(
     "username" => $username,
     "level" => $row['level'],

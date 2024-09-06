@@ -30,7 +30,7 @@ session_write_close();
 
 if (empty($id)){
   $response['code'] = -1;
-  $response['message'] = 'id cannot be empty';
+  $response['message'] = get_vocab("search_without_id");
   echo json_encode($response);
   return;
 }
@@ -39,7 +39,7 @@ $result = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE id = ?", arra
 
 if ($result -> count() < 1){
   $response['code'] = -2;
-  $response['message'] = 'user not found';
+  $response['message'] = get_vocab("user_not_exist");
   echo json_encode($response);
   return;
 }
@@ -55,5 +55,5 @@ else
   $user['last_login'] = get_vocab('never_login');
 $response['code'] = 0;
 $response['data'] = $user;
-$response['message'] = 'success';
+$response['message'] = get_vocab('success');
 echo json_encode($response);

@@ -32,7 +32,7 @@ $result = db() -> query($sql);
 
 if ($result -> count() == 0){
   $response['code'] = -1;
-  $response['message'] = 'No users found';
+  $response['message'] = get_vocab("user_not_exist");
   echo json_encode($response);
   return;
 }else{

@@ -35,10 +35,10 @@ if ($type != 'all') {
   }
 }
 
-$sql = "SELECT E.id AS id, area_id, room_id, start_time, end_time, E.name AS name, book_by, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, R.room_name  FROM " . _tbl("entry") . " E LEFT JOIN " . _tbl("room") .
+$sql = "SELECT E.id AS id, area_id, room_id, start_time, end_time, E.name AS name, book_by, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, R.room_name, area_name  FROM " . _tbl("entry") . " E LEFT JOIN " . _tbl("room") .
 " R ON E.room_id = R.id " . "LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id";
 if ($type == 'area'){
-  $sql .= " WHERE A.id = ? AND start_time >= AND end_time <= ?";
+  $sql .= " WHERE A.id = ? AND start_time >= ? AND end_time <= ?";
 }else if ($type == 'room') {
   $sql .= " WHERE R.id = ? AND start_time >= ? AND end_time <= ?";
 } else if($type != 'all'){
@@ -87,12 +87,16 @@ if ($result -> count() < 1){
 $rows = $result -> all_rows_keyed();
 $default_timezone = date_default_timezone_get();
 foreach ($rows as $row) {
-  date_default_timezone_set($row['timezone']);
+  if (!empty($row['timezone']))
+    date_default_timezone_set($row['timezone']);
+  else
+    date_default_timezone_set($default_timezone);
   $areaId = $row['area_id'];
   $roomId = $row['room_id'];
   if (!isset($tmp[$areaId])){
     $tmp[$areaId] = array(
       'area_id' => $areaId,
+      'area_name' => $row['area_name'],
       'rooms' => array()
     );
   }
