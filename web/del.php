@@ -117,7 +117,7 @@ if ($type == "room")
     // Go back to the admin page
     $response = array(
       "code" => 0,
-      "message" => "success"
+      "message" => get_vocab("success")
     );
     echo json_encode($response);
     return;
@@ -126,7 +126,7 @@ if ($type == "room")
   {
     $response = array(
       "code" => -1,
-      "message" => "Room already in use! Make sure no entry in the room"
+      "message" => get_vocab("entry_in_room")
     );
     echo json_encode($response);
     return;
@@ -153,7 +153,7 @@ if ($type == "area")
     // Redirect back to the admin page
     $response = array(
       "code" => 0,
-      "message" => "success"
+      "message" => get_vocab("success")
     );
     echo json_encode($response);
     return;
@@ -163,7 +163,7 @@ if ($type == "area")
     // There are rooms left in the area
     $response = array(
       "code" => -1,
-      "message" => "There are rooms in this area!"
+      "message" => get_vocab("room_in_area")
     );
     echo json_encode($response);
     return;

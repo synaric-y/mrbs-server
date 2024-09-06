@@ -18,19 +18,25 @@ $response = array(
 
 session_start();
 if (!checkAuth()){
-  $response['code'] = -99;
-  $response['message'] = get_vocab("please_login");
+  $response["code"] = -99;
+  $response["message"] = get_vocab("please_login");
   echo json_encode($response);
   return;
 }
-$username = $_SESSION['user'];
+
+if (getLevel($_SESSION['user']) < 2){
+  $response["code"] = -98;
+  $response["message"] = get_vocab("accessdenied");
+  echo json_encode($response);
+  return;
+}
 
 session_write_close();
 
 
 if (empty($id)){
   $response['code'] = -1;
-  $response['message'] = 'id cannot be empty';
+  $response['message'] = get_vocab("search_without_id");
   echo json_encode($response);
   return;
 }
@@ -39,7 +45,7 @@ $result = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE id = ?", arra
 
 if ($result -> count() < 1){
   $response['code'] = -2;
-  $response['message'] = 'user not found';
+  $response['message'] = get_vocab("user_not_exist");
   echo json_encode($response);
   return;
 }
@@ -55,5 +61,5 @@ else
   $user['last_login'] = get_vocab('never_login');
 $response['code'] = 0;
 $response['data'] = $user;
-$response['message'] = 'success';
+$response['message'] = get_vocab('success');
 echo json_encode($response);

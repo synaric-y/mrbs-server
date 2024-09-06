@@ -148,7 +148,6 @@ class SessionHandlerDb implements SessionHandlerInterface, SessionUpdateTimestam
   public function write($id, $data): bool
   {
     global $dbsys;
-
     // See comment in read()
     if ($dbsys == 'pgsql')
     {

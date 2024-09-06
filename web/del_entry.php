@@ -41,6 +41,14 @@ if (!checkAuth()){
   echo json_encode($response);
   return;
 }
+
+if (getLevel($_SESSION['user']) < 2){
+  $response["code"] = -98;
+  $response["message"] = get_vocab("accessdenied");
+  echo json_encode($response);
+  return;
+}
+
 $user = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE name = ?", array($_SESSION['user']));
 $user = $user -> next_row_keyed();
 session_write_close();
@@ -121,19 +129,19 @@ if ($info = get_booking_info($id, FALSE, TRUE))
         }
       }
       $response["code"] = 0;
-      $response["message"] = "success";
+      $response["message"] = get_vocab("success");
       echo json_encode($response);
       return;
     }
     $response["code"] = -2;
-    $response["message"] = "no access or policy not allow";
+    $response["message"] = get_vocab("no_access_to_entry");
     echo json_encode($response);
     return;
   }
 }
 
 $response["code"] = -1;
-$response["message"] = "cannot delete entry";
+$response["message"] = get_vocab("fail_to_delete_entry");
 echo json_encode($response);
 
 // If you got this far then we got an access denied.
