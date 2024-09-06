@@ -41,6 +41,14 @@ if (!checkAuth()){
   echo json_encode($response);
   return;
 }
+
+if (getLevel($_SESSION['user']) < 2){
+  $response["code"] = -98;
+  $response["message"] = get_vocab("accessdenied");
+  echo json_encode($response);
+  return;
+}
+
 $user = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE name = ?", array($_SESSION['user']));
 $user = $user -> next_row_keyed();
 session_write_close();

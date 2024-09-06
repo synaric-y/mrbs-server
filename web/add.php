@@ -16,6 +16,7 @@ require_once "mrbs_sql.inc";
 //checkAuthorised(this_page());
 
 
+
 // Get non-standard form variables
 //$name = get_form_var('name', 'string', null, INPUT_POST);
 //$description = get_form_var('description', 'string', null, INPUT_POST);
@@ -30,8 +31,15 @@ $data = json_decode($json, true);
 $name = $data['name'];
 
 if (!checkAuth()){
-  $response['code'] = -99;
-  $response['message'] = get_vocab("please_login");
+  $response["code"] = -99;
+  $response["message"] = get_vocab("please_login");
+  echo json_encode($response);
+  return;
+}
+
+if (getLevel($_SESSION['user']) < 2){
+  $response["code"] = -98;
+  $response["message"] = get_vocab("accessdenied");
   echo json_encode($response);
   return;
 }

@@ -14,6 +14,20 @@ require_once "mrbs_sql.inc";
 // Check the user is authorised for this page
 //checkAuthorised(this_page());
 
+if (!checkAuth()){
+  $response["code"] = -99;
+  $response["message"] = get_vocab("please_login");
+  echo json_encode($response);
+  return;
+}
+
+if (getLevel($_SESSION['user']) < 2){
+  $response["code"] = -98;
+  $response["message"] = get_vocab("accessdenied");
+  echo json_encode($response);
+  return;
+}
+
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
