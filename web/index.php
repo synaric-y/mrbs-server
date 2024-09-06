@@ -83,8 +83,9 @@ if ($result -> count() < 1){
   return;
 }
 $rows = $result -> all_rows_keyed();
-
+$default_timezone = date_default_timezone_get();
 foreach ($rows as $row) {
+  date_default_timezone_set($row['timezone']);
   $areaId = $row['area_id'];
   $roomId = $row['room_id'];
   if (!isset($tmp[$areaId])){
@@ -115,11 +116,11 @@ foreach ($rows as $row) {
     "entry_name" => $row['name'],
     "book_by" => $row['book_by'],
     "status" => $status,
-    "duration" => date("h:i:sA", intval($row['start_time'])) . "-" . date("h:i:sA", intval($row['end_time'])),
+    "duration" => date("h:iA", intval($row['start_time'])) . "-" . date("h:iA", intval($row['end_time'])),
     "room_name" => $row['room_name']
   );
 }
-
+date_default_timezone_set($default_timezone);
 $result = array(
   'areas' => array_values($tmp)
 );
@@ -150,8 +151,8 @@ if (empty($rows[count($rows) - 1]['eveningends_minutes']))
   $rows[count($rows) - 1]['eveningends_minutes'] = 0;
 $max_time = sprintf("%02d", $rows[count($rows) - 1]['eveningends'] > 12 ? $rows[count($rows) - 1]['eveningends'] - 12 : $rows[count($rows) - 1]['eveningends']) . ":" . sprintf("%02d", $rows[count($rows) - 1]['eveningends_minutes']) . ($rows[count($rows) - 1]['eveningends'] > 12 ? " PM" : " AM");
 
-
-$date = date("h:i A F d, Y", time());
+$now = time();
+$date = date("h:i A F d, Y", $now);
 
 $response['code'] = 0;
 $response['message'] = "success";
@@ -159,4 +160,5 @@ $response['data'] = $result;
 $response['data']['min_time'] = $min_time;
 $response['data']['max_time'] = $max_time;
 $response['data']['time'] = $date;
+$response['data']['timestamp'] = $now;
 echo json_encode($response);

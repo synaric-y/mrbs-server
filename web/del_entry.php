@@ -120,10 +120,13 @@ if ($info = get_booking_info($id, FALSE, TRUE))
           notifyAdminOnDelete($mail_previous, $start_times, $series);
         }
       }
-
+      $response["code"] = 0;
+      $response["message"] = "success";
+      echo json_encode($response);
+      return;
     }
-    $response["code"] = 0;
-    $response["message"] = "success";
+    $response["code"] = -2;
+    $response["message"] = "no access or policy not allow";
     echo json_encode($response);
     return;
   }

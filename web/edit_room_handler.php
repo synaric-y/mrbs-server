@@ -132,7 +132,8 @@ if (empty($capacity))
 $errors = array();
 
 // Clean up the address list replacing newlines by commas and removing duplicates
-$room_admin_email = clean_address_list($room_admin_email);
+if (!empty($room_admin_email))
+  $room_admin_email = clean_address_list($room_admin_email);
 // Validate email addresses
 if (!validate_email_list($room_admin_email))
 {
@@ -295,10 +296,10 @@ if (empty($errors))
 // Go back to the room form with errors
 $response = array(
   "code" => -1,
-  "message" => array()
+  "message" => $errors[0]
 );
-foreach ($errors as $error)
-{
-  $response["message"][] = $error . "\n";
-}
+//foreach ($errors as $error)
+//{
+//  $response["data"][] = $error . "\n";
+//}
 echo json_encode($response);
