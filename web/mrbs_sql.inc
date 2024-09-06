@@ -1098,7 +1098,9 @@ function mrbsDelEntry(int $id, bool $series, bool $all)
       }
     }
   }
-
+  if (empty($start_times)){
+    return FALSE;
+  }
   // Get rid of any orphaned rows in the repeat table
   $sql = "SELECT COUNT(*)
             FROM " . _tbl('entry') . "
