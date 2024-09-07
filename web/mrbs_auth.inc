@@ -476,7 +476,15 @@ function is_book_admin($rooms=null, $all=true) : bool
   }
 
 //  $mrbs_user = session()->getCurrentUser();
-
+  if(!empty($_SESSION['user'])){
+    $result = db()->query("SELECT * FROM " . _tbl("users") . " WHERE name = ? LIMIT 1", array($_SESSION['user']));
+    $mrbs_user_map = $result -> next_row_keyed();
+    $mrbs_user = new User($mrbs_user_map['name']);
+    $mrbs_user -> level = $mrbs_user_map['level'];
+    $mrbs_user -> email = $mrbs_user_map['email'];
+    $mrbs_user -> display_name = $mrbs_user_map['display_name'];
+  }else
+    $mrbs_user = new USER('');
   return (isset($mrbs_user) && ($mrbs_user->level >= $min_booking_admin_level));
 }
 

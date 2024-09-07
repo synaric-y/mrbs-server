@@ -612,6 +612,8 @@ $vocab["fatal_no_tables"]    = "致命错误：数据库表不存在或无法访
 $vocab["session_expired"]    = "会话已过期.";
 $vocab["browser_not_supported"] = "你的浏览器不支持 %s.  需要升级到最近版本或使用其他浏览器 ";
 $vocab["back"]               = "后退";
+$vocab["success"]            = "成功";
+$vocab["alreday_login"]      = "已经登录了";
 
 // CalendarServer
 $vocab["ic_meeting_accept"]                   = "您发起的会议已经被管理员通过。";
@@ -620,3 +622,27 @@ $vocab["ic_meeting_decline_conflict"]         = "与会议（%s）冲突";
 $vocab["ic_xs_meeting"]                       = "%s的会议";
 $vocab["ic_tp_meeting"]                       = "临时会议";
 $vocab["fast_meeting_time"]                   = "确定要预约 %s - %s的快速会议吗？";
+
+$vocab["invalid_start_time"]          = "起始时间无效";
+$vocab["invalid_end_time"]            = "结束时间无效";
+$vocab["edit_entry_not_exist"]        = "尝试编辑不再存在的会议 - 可能是因为其他人同时删除了它";
+$vocab["no_access_to_entry"]          = "无权限编辑会议";
+$vocab["repeat_entry_conflict"]       = "周期会议中，所有会议都有冲突";
+$vocab["entry_conflict"]              = "会议有冲突";
+$vocab["wrong_type"]                  = "类型错误";
+$vocab["empty_name"]                  = "名称为空";
+$vocab["area_not_exist"]              = "该区域不存在";
+$vocab["no_room_in_area"]             = "该区域内没有房间";
+$vocab["room_not_exist"]              = "房间不存在";
+$vocab["entry_in_room"]               = "该房间仍有会议，请确保房间中没有会议再删除";
+$vocab["room_in_area"]                = "该区域仍有房间";
+$vocab["fail_to_delete_entry"]        = "未能删除会议";
+$vocab["device_not_exist"]            = "该设备不存在";
+$vocab["user_not_exist"]              = "用户不存在";
+$vocab["edit_without_id"]             = "修改时必须要给出原id";
+$vocab["invalid_email"]               = "无效的电子邮箱地址";
+$vocab["name_not_unique"]             = "该用户名已被使用";
+$vocab["delete_yourself"]             = "你不能删除你自己的账号";
+$vocab["no_admin"]                    = "没有管理员";
+$vocab["search_without_id"]           = "搜索时必须要给出id";
+$vocab["no_access_no_policy"]         = "没有权限删除会议或策略不允许删除会议";

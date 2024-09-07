@@ -18,8 +18,15 @@ $response = array(
 
 session_start();
 if (!checkAuth()){
-  $response['code'] = -99;
-  $response['message'] = get_vocab("please_login");
+  $response["code"] = -99;
+  $response["message"] = get_vocab("please_login");
+  echo json_encode($response);
+  return;
+}
+
+if (getLevel($_SESSION['user']) < 2){
+  $response["code"] = -98;
+  $response["message"] = get_vocab("accessdenied");
   echo json_encode($response);
   return;
 }
@@ -32,7 +39,7 @@ $result = db() -> query($sql);
 
 if ($result -> count() == 0){
   $response['code'] = -1;
-  $response['message'] = 'No users found';
+  $response['message'] = get_vocab("user_not_exist");
   echo json_encode($response);
   return;
 }else{

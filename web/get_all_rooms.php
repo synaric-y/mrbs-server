@@ -11,6 +11,8 @@ require_once "mrbs_sql.inc";
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
+$area = null;
+
 $type = $data['type'];
 $id = $data['id'];
 $response = array(
@@ -93,7 +95,7 @@ if ($type == 'all'){
   }
   $response["code"] = 0;
   $response["message"] = "success";
-  $response["data"] = $area;
+  $response["data"]['areas'][] = $area;
   echo json_encode($response);
   return;
 }else if($type == 'room'){

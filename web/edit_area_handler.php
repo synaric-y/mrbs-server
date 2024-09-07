@@ -12,6 +12,19 @@ require_once "mrbs_sql.inc";
 //// Check the user is authorised for this page
 //checkAuthorised(this_page());
 
+if (!checkAuth()){
+  $response["code"] = -99;
+  $response["message"] = get_vocab("please_login");
+  echo json_encode($response);
+  return;
+}
+
+if (getLevel($_SESSION['user']) < 2){
+  $response["code"] = -98;
+  $response["message"] = get_vocab("accessdenied");
+  echo json_encode($response);
+  return;
+}
 
 // Get non-standard form variables
 $form_vars = array(
@@ -446,13 +459,13 @@ if ($areaExist > 0) {
 if ($success){
   $response = array(
     "code" => 0,
-    "message" => "success"
+    "message" => get_vocab("success")
   );
   echo json_encode($response);
 }else{
   $response = array(
     "code" => -1,
-    "message" => "area not exist"
+    "message" => get_vocab("area_not_exist")
   );
   echo json_encode($response);
 }

@@ -7,8 +7,15 @@ require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
 if (!checkAuth()){
-  $response['code'] = -99;
-  $response['message'] = get_vocab("please_login");
+  $response["code"] = -99;
+  $response["message"] = get_vocab("please_login");
+  echo json_encode($response);
+  return;
+}
+
+if (getLevel($_SESSION['user']) < 2){
+  $response["code"] = -98;
+  $response["message"] = get_vocab("accessdenied");
   echo json_encode($response);
   return;
 }
@@ -22,7 +29,7 @@ $result = db() -> query("SELECT name FROM " . _tbl("users") . " WHERE level >= ?
 if ($result -> count() < 1){
   $response = array(
     "code" => -1,
-    "message" => "no admin"
+    "message" => get_vocab("no_admin")
   );
   echo json_encode($response);
   return;
@@ -30,7 +37,7 @@ if ($result -> count() < 1){
 
 $response = array(
   "code" => 0,
-  "message" => "success"
+  "message" => get_vocab("success")
 );
 foreach ($result -> all_rows_keyed() as $row){
   $response["data"][] = $row['name'];

@@ -156,6 +156,13 @@ $vocab["edit_entry_nonexistent_room"] = "You are trying to create or edit an ent
                                         "the booking form.  Instead it is better to get to the " .
                                         "booking form from the calendar view.";
 $vocab["home"]                        = "Home";
+$vocab["invalid_start_time"]          = "invalid start time";
+$vocab["invalid_end_time"]            = "invalid end time";
+$vocab["edit_entry_not_exist"]        = "Tried to edit an entry that no longer exists - probably because " .
+                                              "somebody else has deleted it in the meantime.";
+$vocab["no_access_to_entry"]          = "No access to editing the entry";
+$vocab["repeat_entry_conflict"]       = "All entry have conflicts";
+$vocab["entry_conflict"]              = "Entry conflicts with another entry";
 
 // Used in view_entry.php
 $vocab["description"]             = "Description";
@@ -709,4 +716,25 @@ $vocab["ic_xs_meeting"]                       = "%s's Meeting";
 $vocab["ic_tp_meeting"]                       = "Quick Meeting";
 $vocab["fast_meeting_time"]                   = "Are you sure you want to book a quick meeting between %s - %s？";
 
+$vocab["success"]           = "success";
+$vocab["already_login"]     = "already login";
+$vocab["invalid_username_or_password"] = "invalid username or password";
+
+$vocab["wrong_type"]                   = "Invalid type";
+$vocab["empty_name"]                   = "Name is empty";
+$vocab["area_not_exist"]               = "Area do not exists";
+$vocab["no_room_in_area"]              = "There is no room in the area";
+$vocab["room_not_exist"]               = "Room do not exists";
+$vocab["entry_in_room"]                = "Room already in use! Make sure no entry in the room";
+$vocab["room_in_area"]                 = "There are rooms in this area!";
+$vocab["fail_to_delete_entry"]         = "Fail to delete entry";
+$vocab["device_not_exist"]             = "No device found";
+$vocab["user_not_exist"]               = "No user found";
+$vocab["edit_without_id"]              = "Id is necessary for editing";
+$vocab["invalid_email"]                = "Email address is invalid";
+$vocab["name_not_unique"]              = "Username is already used";
+$vocab["delete_yourself"]              = "You cannot delete your own account";
+$vocab["no_admin"]                     = "No admin";
+$vocab["search_without_id"]            = "Id is necessary for searching";
+$vocab["no_access_no_policy"]          = "No access to entry or policy not allow to edit entry";
 
