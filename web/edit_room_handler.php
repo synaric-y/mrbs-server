@@ -146,13 +146,13 @@ if (empty($capacity))
 $errors = array();
 
 // Clean up the address list replacing newlines by commas and removing duplicates
-if (!empty($room_admin_email))
-  $room_admin_email = clean_address_list($room_admin_email);
-// Validate email addresses
-if (!validate_email_list($room_admin_email))
-{
-  $errors[] = 'invalid_email';
-}
+//if (!empty($room_admin_email))
+//  $room_admin_email = clean_address_list($room_admin_email);
+//// Validate email addresses
+//if (!validate_email_list($room_admin_email))
+//{
+//  $errors[] = 'invalid_email';
+//}
 
 // Make sure the invalid types exist
 if (isset($booking_types))
