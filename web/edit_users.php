@@ -193,7 +193,7 @@ if (!empty($pwd_not_match)) {
 //|             Edit a given entry - 2nd phase: Update the database.            |
 //\*---------------------------------------------------------------------------*/
 //
-if (isset($action) && ($action == "edit")){
+if (!empty($action) && ($action == "edit")){
   $user = $result -> next_row_keyed();
   $isExist = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE id = ?", array($id));
   $row = $isExist -> next_row_keyed();
@@ -209,7 +209,7 @@ if (isset($action) && ($action == "edit")){
   $user["name"] = $name;
   $user["display_name"] = $display_name;
   $user["email"] = $email;
-  if (isset($password0) && isset($password1)) {
+  if (!empty($password0) && !empty($password1)) {
     $user["password"] = password_hash($password1, PASSWORD_DEFAULT);
   }
   db() -> query("UPDATE " . _tbl("users") . " SET name = ?, display_name = ?, email = ?, password_hash = ? WHERE id = ?", array($user['name']
@@ -218,7 +218,7 @@ if (isset($action) && ($action == "edit")){
   $response["message"] = get_vocab("success");
   echo json_encode($response);
   return;
-}else if (isset($action) && ($action == "add")){
+}else if (!empty($action) && ($action == "add")){
   $user = $result -> next_row_keyed();
   $user["name"] = $name;
   $user["display_name"] = $display_name;
@@ -238,7 +238,7 @@ if (isset($action) && ($action == "edit")){
 //|                                Delete a user                                |
 //\*---------------------------------------------------------------------------*/
 //
-if (isset($action) && ($action == "delete")){
+if (!empty($action) && ($action == "delete")){
 
   if($username == $name){
     $response["code"] = -8;
