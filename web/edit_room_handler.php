@@ -15,6 +15,7 @@ require_once "mrbs_sql.inc";
 if (!checkAuth()){
   $response["code"] = -99;
   $response["message"] = get_vocab("please_login");
+  setcookie("session_id", "", time() - 3600, "/web/");
   echo json_encode($response);
   return;
 }
@@ -146,13 +147,13 @@ if (empty($capacity))
 $errors = array();
 
 // Clean up the address list replacing newlines by commas and removing duplicates
-//if (!empty($room_admin_email))
-//  $room_admin_email = clean_address_list($room_admin_email);
-//// Validate email addresses
-//if (!validate_email_list($room_admin_email))
-//{
-//  $errors[] = 'invalid_email';
-//}
+if (!empty($room_admin_email))
+  $room_admin_email = clean_address_list($room_admin_email);
+// Validate email addresses
+if (!validate_email_list($room_admin_email) && !empty($room_admin_email))
+{
+  $errors[] = 'invalid_email';
+}
 
 // Make sure the invalid types exist
 if (isset($booking_types))

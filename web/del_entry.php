@@ -38,6 +38,7 @@ $response = array(
 if (!checkAuth()){
   $response["code"] = -99;
   $response["message"] = get_vocab("please_login");
+  setcookie("session_id", "", time() - 3600, "/web/");
   echo json_encode($response);
   return;
 }

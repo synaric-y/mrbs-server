@@ -12,6 +12,7 @@ $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
 if (!isset($_SESSION['user']) || empty($_SESSION) ) {
+  setcookie("session_id", "", time() - 3600, "/web/");
   $response = array(
     "code" => -1,
     "message" => get_vocab("please_login")

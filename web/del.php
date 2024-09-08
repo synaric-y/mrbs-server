@@ -60,6 +60,21 @@ require "defaultincludes.inc";
 //// Check the user is authorised for this page
 //checkAuthorised(this_page());
 
+if (!checkAuth()){
+  $response["code"] = -99;
+  $response["message"] = get_vocab("please_login");
+  setcookie("session_id", "", time() - 3600, "/web/");
+  echo json_encode($response);
+  return;
+}
+
+if (getLevel($_SESSION['user']) < 2){
+  $response["code"] = -98;
+  $response["message"] = get_vocab("accessdenied");
+  echo json_encode($response);
+  return;
+}
+
 // Get non-standard form variables
 //$type = get_form_var('type', 'string');
 //$confirm = get_form_var('confirm', 'string', null, INPUT_POST);

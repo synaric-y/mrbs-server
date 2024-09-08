@@ -21,7 +21,7 @@ if (!empty($_SESSION) && isset($_SESSION['user'])) {
   echo json_encode($response);
   return;
 }
-
+setcookie("session_id", "", time() - 3600, "/web/");
 $result = auth() -> validateUser($username, $password);
 if (!$result) {
   $response = array(
@@ -32,6 +32,7 @@ if (!$result) {
   return;
 }
 $_SESSION['user'] = $username;
+setcookie("session_id", session_id(), time() + 30 * 24 * 60 * 60, "/web/");
 $result = db() -> query("SELECT level, display_name FROM " . _tbl("users") . " WHERE name = ?", array($username));
 $row = $result -> next_row_keyed();
 $response = array(

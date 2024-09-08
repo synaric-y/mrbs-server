@@ -52,6 +52,7 @@ require_once "mrbs_sql.inc";
 |                         Authenticate the current user                         |
 \*---------------------------------------------------------------------------*/
 if (!checkAuth()){
+  setcookie("session_id", "", time() - 3600, "/web/");
   echo json_encode(array(
     "code" => -99,
     "message" => get_vocab("please_login")
@@ -59,7 +60,16 @@ if (!checkAuth()){
   return;
 }
 $username = $_SESSION['user'];
+
+if (getLevel($_SESSION['user']) < 2){
+  $response["code"] = -98;
+  $response["message"] = get_vocab("accessdenied");
+  echo json_encode($response);
+  return;
+}
 session_write_close();
+
+
 
 /*---------------------------------------------------------------------------*\
 |             Edit a given entry - 1st phase: Get the user input.             |
