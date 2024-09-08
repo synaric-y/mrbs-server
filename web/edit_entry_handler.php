@@ -32,6 +32,7 @@ use MRBS\CalendarServer\CalendarServerManager;
 if (!checkAuth()){
   $response["code"] = -99;
   $response["message"] = get_vocab("please_login");
+  setcookie("session_id", "", time() - 3600, "/web/");
   echo json_encode($response);
   return;
 }
@@ -173,6 +174,21 @@ if (!isset($rep_interval)) {
 //
 // Sanitize the room ids
 $rooms = array_map(__NAMESPACE__ . '\sanitize_room_id', $rooms);
+
+$result = db() -> query("SELECT R.disabled as room_disabled, A.disabled as area_disabled FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id WHERE R.id = ?", array($rooms[0]));
+if ($result -> count() < 1){
+  $response["code"] = -13;
+  $response["message"] = get_vocab("room_not_exist");
+  echo json_encode($response);
+  return;
+}
+$row = $result -> next_row_keyed();
+if ($row['room_disabled'] == 1 || $row['area_disabled'] == 1){
+  $response["code"] = -14;
+  $response["message"] = get_vocab("area_or_room_disabled");
+  echo json_encode($response);
+  return;
+}
 //
 // Convert the registration opens and closes times into seconds
 if (isset($registration_opens_value) && isset($registration_opens_units)) {

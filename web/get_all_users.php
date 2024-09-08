@@ -20,6 +20,7 @@ session_start();
 if (!checkAuth()){
   $response["code"] = -99;
   $response["message"] = get_vocab("please_login");
+  setcookie("session_id", "", time() - 3600, "/web/");
   echo json_encode($response);
   return;
 }
@@ -43,8 +44,15 @@ if ($result -> count() == 0){
   echo json_encode($response);
   return;
 }else{
+  while($row = $result -> next_row_keyed()){
+    if ($row['name'] == $username){
+      $row['is_self'] = 1;
+    }else{
+      $row['is_self'] = 0;
+    }
+    $response['data'][] = $row;
+  }
   $response['code'] = 0;
   $response['message'] = 'success';
-  $response['data'] = $result -> all_rows_keyed();
   echo json_encode($response);
 }

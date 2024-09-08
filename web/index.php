@@ -35,7 +35,7 @@ if ($type != 'all') {
   }
 }
 
-$sql = "SELECT E.id AS id, area_id, room_id, start_time, end_time, E.name AS name, book_by, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, R.room_name, area_name  FROM " . _tbl("entry") . " E LEFT JOIN " . _tbl("room") .
+$sql = "SELECT E.id AS id, area_id, room_id, start_time, end_time, E.name AS name, book_by, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, R.room_name, area_name, A.disabled as area_disabled, R.disabled as room_disabled, timezone  FROM " . _tbl("entry") . " E LEFT JOIN " . _tbl("room") .
 " R ON E.room_id = R.id " . "LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id";
 if ($type == 'area'){
   $sql .= " WHERE A.id = ? AND start_time >= ? AND end_time <= ?";
@@ -58,8 +58,14 @@ else
 if ($result -> count() < 1){
   $result = db() -> query("SELECT * FROM " . _tbl("area"));
   $rows = $result -> all_rows_keyed();
+  usort($rows, function ($a, $b) {
+    if ($a['morningstarts'] == $b['morningstarts']) {
+      return $a['morningstarts_minutes'] <=> $b['morningstarts_minutes'];
+    }
+    return $a['morningstarts'] <=> $b['morningstarts'];
+  });
   if (empty($rows[0]['morningstarts']))
-    $rows[0]['morningstarts'] = 0;
+    $rows[0]['morningstarts'] = 8;
   if (empty($rows[0]['morningstarts_minutes']))
     $rows[0]['morningstarts_minutes'] = 0;
   $min_time = sprintf("%02d", $rows[0]['morningstarts'] > 12 ? $rows[0]['morningstarts'] - 12 : $rows[0]['morningstarts']) . ":" . sprintf("%02d", $rows[0]['morningstarts_minutes']) . ($rows[0]['morningstarts'] > 12 ? " PM" : " AM");
@@ -70,7 +76,7 @@ if ($result -> count() < 1){
     return $a['eveningends'] <=> $b['eveningends'];
   });
   if (empty($rows[count($rows) - 1]['eveningends']))
-    $rows[count($rows) - 1]['eveningends'] = 0;
+    $rows[count($rows) - 1]['eveningends'] = 21;
   if (empty($rows[count($rows) - 1]['eveningends_minutes']))
     $rows[count($rows) - 1]['eveningends_minutes'] = 0;
   $max_time = sprintf("%02d", $rows[count($rows) - 1]['eveningends'] > 12 ? $rows[count($rows) - 1]['eveningends'] - 12 : $rows[count($rows) - 1]['eveningends']) . ":" . sprintf("%02d", $rows[count($rows) - 1]['eveningends_minutes']) . ($rows[count($rows) - 1]['eveningends'] > 12 ? " PM" : " AM");
@@ -81,6 +87,7 @@ if ($result -> count() < 1){
   $response['data']['max_time'] = $max_time;
   $date = datetime_format($datetime_formats['view_day'], time());
   $response['data']['time'] = $date;
+  $response['data']['areas'] = array();
   echo json_encode($response);
   return;
 }
@@ -97,6 +104,7 @@ foreach ($rows as $row) {
     $tmp[$areaId] = array(
       'area_id' => $areaId,
       'area_name' => $row['area_name'],
+      'disabled' => $row['area_disabled'],
       'rooms' => array()
     );
   }
@@ -104,6 +112,7 @@ foreach ($rows as $row) {
   if (!isset($tmp[$areaId]['rooms'][$roomId])){
     $tmp[$areaId]['rooms'][$roomId] = array(
       'room_id' => $roomId,
+      'disabled' => $row['area_disabled'] == 1 ? 1 : $row['room_disabled'],
       'entries' => array()
     );
   }

@@ -20,19 +20,8 @@ $response = array(
   "message" => 'string'
 );
 
-session_start();
-if (!checkAuth()){
-  $response['code'] = -99;
-  $response['message'] = get_vocab("please_login");
-  echo json_encode($response);
-  return;
-}
-$username = $_SESSION['user'];
-
-session_write_close();
-
 if ($type == 'all'){
-  $result = db() -> query("SELECT R.id as room_id, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id");
+  $result = db() -> query("SELECT R.id as room_id, R.disabled as room_disabled, A.disabled as area_disabled, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id");
   if ($result -> count() < 1){
     $response["code"] = -1;
     $response["message"] = "No rooms found";
@@ -49,6 +38,7 @@ if ($type == 'all'){
       $tmp[$areaId] = array(
         'area_id' => $areaId,
         'area_name' => $areaName,
+        'disabled' => $row['area_disabled'],
         'rooms' => array()
       );
     }
@@ -56,7 +46,8 @@ if ($type == 'all'){
     if (!isset($tmp[$areaId]['rooms'][$roomId])){
       $tmp[$areaId]['rooms'][$roomId] = array(
         'room_id' => $roomId,
-        'room_name' => $roomName
+        'room_name' => $roomName,
+        'disabled' => $row['area_disabled'] == 1 ? 1 : $row['room_disabled']
       );
     }
   }
@@ -72,7 +63,7 @@ if ($type == 'all'){
   echo json_encode($response);
   return;
 }else if ($type == 'area'){
-  $result = db() -> query("SELECT R.id as room_id, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id WHERE A.id = ?", array($id));
+  $result = db() -> query("SELECT R.id as room_id,R.disabled as room_disabled, A.disabled as area_disabled, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id WHERE A.id = ?", array($id));
   if ($result -> count() < 1){
     $response["code"] = -1;
     $response["message"] = "No rooms found";
@@ -84,12 +75,14 @@ if ($type == 'all'){
     if (!isset($area)){
       $area = array(
         'area_id' => $row['area_id'],
+        'disabled' => $row['area_disabled'],
         'area_name' => $row['area_name'],
         'rooms' => array()
       );
     }
     $area['rooms'][] = array(
       'room_id' => $row['room_id'],
+      'disabled' => $row['area_disabled'] == 1 ? 1 : $row['room_disabled'],
       'room_name' => $row['room_name']
     );
   }
@@ -99,7 +92,7 @@ if ($type == 'all'){
   echo json_encode($response);
   return;
 }else if($type == 'room'){
-  $result = db() -> query("SELECT R.id as room_id, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " ON R.area_id = A.id WHERE R.id = ?", array($id));
+  $result = db() -> query("SELECT R.id as room_id, R.disabled as room_disabled, A.disabled as area_disabled, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " ON R.area_id = A.id WHERE R.id = ?", array($id));
   if ($result -> count() != 1){
     $response["code"] = -1;
     $response["message"] = "No rooms found";
@@ -110,10 +103,12 @@ if ($type == 'all'){
   $area = array(
     'area_id' => $row['area_id'],
     'area_name' => $row['area_name'],
+    'disabled' => $row['area_disabled'],
     'rooms' => array()
   );
   $area['rooms'][] = array(
     'room_id' => $row['room_id'],
+    'disabled' => $row['area_disabled'] == 1 ? 1 : $row['room_disabled'],
     'room_name' => $row['room_name']
   );
   $response["code"] = 0;

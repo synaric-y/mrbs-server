@@ -17,5 +17,5 @@ function getLevel($name)
     return false;
   }
   $row = $result -> next_row_keyed();
-  return $row['level'];
+  return intval($row['level']);
 }
