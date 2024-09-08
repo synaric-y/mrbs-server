@@ -64,6 +64,15 @@ if (empty($roomExist)){
   ApiHelper::fail("room not found" );
   return;
 }
+if ($roomExist['disabled'] == 1) {
+  ApiHelper::fail("room disabled" );
+  return;
+}
+$area = get_area_details($roomExist['area_id']);
+if (!$area || $area['disabled'] == 1) {
+  ApiHelper::fail("area disabled" );
+  return;
+}
 
 $queryOne = DBHelper::one(_tbl("entry"), $qSQL);
 if (!empty($queryOne)) {
