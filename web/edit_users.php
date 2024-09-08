@@ -199,7 +199,7 @@ if (isset($action) && ($action == "edit")){
   $user["name"] = $name;
   $user["display_name"] = $display_name;
   $user["email"] = $email;
-  if (isset($password0) && isset($password1)) {
+  if (!empty($password0) && !empty($password1)) {
     $user["password"] = password_hash($password1, PASSWORD_DEFAULT);
   }
   db() -> query("UPDATE " . _tbl("users") . " SET name = ?, display_name = ?, email = ?, password_hash = ? WHERE id = ?", array($user['name']
