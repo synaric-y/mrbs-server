@@ -156,6 +156,10 @@ foreach ($form_vars as $var => $var_type) {
   }
 
 }
+if($end_seconds < time()){
+  $response["code"] = -15;
+  $response["message"] = get_vocab("expired_end_time");
+}
 $id = intval($data["id"]);
 $midnight = strtotime("midnight", intval($start_seconds));
 $start_seconds -= $midnight;

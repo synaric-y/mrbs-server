@@ -95,7 +95,7 @@ if ($result -> count() < 1){
 $rows = $result -> all_rows_keyed();
 $default_timezone = date_default_timezone_get();
 foreach ($rows as $row) {
-  if (!empty($row['timezone']))
+  if (!empty($timezone))
     date_default_timezone_set($timezone);
   else
     date_default_timezone_set($default_timezone);

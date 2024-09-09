@@ -250,3 +250,4 @@ $vocab["invalid_resolution"]          = "첫 번째 슬롯, 마지막 슬롯 및
 $vocab["invalid_room_name"]           = "이 방 이름은 이미 해당 지역에서 사용되고 있습니다!";
 $vocab["invalid_area"]                = "잘못된 지역입니다!";
 $vocab["invalid_types"]               = "잘못된 유형";
+$vocab["expired_end_time"]            = "종료 시간이 지난 항목은 편집하거나 생성할 수 없습니다.";
