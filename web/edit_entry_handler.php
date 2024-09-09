@@ -816,18 +816,33 @@ try {
         if($edit_series) {
           $fetch = db()->query("SELECT id FROM " . _tbl("entry") . " WHERE repeat_id = ?", array($d['id']));
           while($row = $fetch->next_row_keyed())
-            CalendarServerManager::updateMeeting($row['id']);
+            CalendarServerManager::createMeeting($row['id']);
         }else
-          CalendarServerManager::updateMeeting($d['id']);
+          CalendarServerManager::createMeeting($d['id']);
       }
     }
     $transaction_ok = mrbsDelEntry($id, $edit_series, true);
+    CalendarServerManager::deleteMeeting($id);
   }
 
   if ($transaction_ok) {
     db()->commit();
   } else {
     db()->rollback();
+    if (!$just_check && $result['valid_booking'] && empty($id)) {
+      if ($result["new_details"]) {
+        foreach ($result["new_details"] as $d) {
+          if ($edit_series) {
+            $fetch = db()->query("SELECT id FROM " . _tbl("entry") . " WHERE repeat_id = ?", array($d['id']));
+            while ($row = $fetch->next_row_keyed())
+              CalendarServerManager::deleteMeeting($row['id']);
+          }else{
+            CalendarServerManager::deleteMeeting($d['id']);
+          }
+        }
+      }
+    }
+    CalendarServerManager::createMeeting($id);
 //    trigger_error('Edit failed.', E_USER_WARNING);
     $response["code"] = -12;
     $response["message"] = get_vocab("no_access_no_policy");
