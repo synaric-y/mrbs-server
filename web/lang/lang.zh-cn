@@ -622,6 +622,7 @@ $vocab["ic_meeting_decline_conflict"]         = "与会议（%s）冲突";
 $vocab["ic_xs_meeting"]                       = "%s的会议";
 $vocab["ic_tp_meeting"]                       = "临时会议";
 $vocab["fast_meeting_time"]                   = "确定要预约 %s - %s的快速会议吗？";
+$vocab["ic_recurring_decline"]                = "暂不支持周期性会议";
 
 $vocab["invalid_start_time"]          = "起始时间无效";
 $vocab["invalid_end_time"]            = "结束时间无效";

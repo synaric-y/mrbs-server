@@ -210,12 +210,13 @@ $vocab["type.I"]            = "내부회의";
 $vocab["type.E"]            = "외부회의";
 
 // CalendarServer
-$vocab["fast_meeting_time"]                   = "오후 %s - %s 간단한 회의를 예약하시겠습니까?";
 $vocab["ic_meeting_accept"]                   = "사용자가 시작한 모임이 관리자에 의해 거부되었습니다.";
 $vocab["ic_meeting_decline"]                  = "사용자가 시작한 모임이 관리자에 의해 거부되었습니다， %s";
 $vocab["ic_meeting_decline_conflict"]         = "회의와 충돌 %s";
 $vocab["ic_xs_meeting"]                       = "%s의 모임";
 $vocab["ic_tp_meeting"]                       = "빠른 회의";
+$vocab["fast_meeting_time"]                   = "오후 %s - %s 간단한 회의를 예약하시겠습니까?";
+$vocab["ic_recurring_decline"]                = "정기 회의는 아직 지원되지 않습니다.";
 
 $vocab["sucess"]           = "성공";
 $vocab["already_login"]    = "이미 로그인";
