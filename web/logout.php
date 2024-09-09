@@ -34,6 +34,6 @@ if (!$result){
 setcookie("session_id", "", time() - 3600, "/web/");
 $response = array(
   "code" => 0,
-  "message" => "success"
+  "message" => get_vocab("success")
 );
 echo json_encode($response);

@@ -159,7 +159,7 @@ $errors = array();
 $id = get_area_id($area_name);
 if (isset($id) && ($id != $area))
 {
-  $errors[] = 'invalid_area_name';
+  $errors[] = get_vocab("area_not_exist");
 }
 
 // Clean up the address list replacing newlines by commas and removing duplicates
@@ -167,7 +167,7 @@ $area_admin_email = clean_address_list($area_admin_email);
 // Validate email addresses
 if (!validate_email_list($area_admin_email))
 {
-  $errors[] = 'invalid_email';
+  $errors[] = get_vocab('invalid_email');
 }
 
 // Check that the time formats are correct (hh:mm).  They should be, because
@@ -177,7 +177,7 @@ if (!validate_email_list($area_admin_email))
 if (!preg_match(REGEX_HHMM, $area_start_first_slot) ||
     !preg_match(REGEX_HHMM, $area_start_last_slot))
 {
-  $errors[] = 'invalid_time_format';
+  $errors[] = get_vocab('invalid_start_time');
 }
 else
 {
@@ -248,7 +248,7 @@ else
     // Avoid divide by zero errors
     if ($area_res_mins == 0)
     {
-      $errors[] = 'invalid_resolution';
+      $errors[] = get_vocab('invalid_resolution');
     }
     else
     {
@@ -267,7 +267,7 @@ else
 
       if ($start_difference%$area_res_mins != 0)
       {
-        $errors[] = 'invalid_resolution';
+        $errors[] = get_vocab('invalid_resolution');
       }
     }
   }

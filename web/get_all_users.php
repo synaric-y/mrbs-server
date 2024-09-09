@@ -53,6 +53,6 @@ if ($result -> count() == 0){
     $response['data'][] = $row;
   }
   $response['code'] = 0;
-  $response['message'] = 'success';
+  $response['message'] = get_vocab('success');
   echo json_encode($response);
 }

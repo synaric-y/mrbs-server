@@ -13,7 +13,7 @@ $id = $data['id'];
 
 $response = array(
   "code" => 'int',
-  "response" => 'string'
+  "message" => 'string'
 );
 
 session_start();

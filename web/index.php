@@ -29,7 +29,7 @@ if ($type != 'all') {
   $roomExist = db()->query1("SELECT COUNT(*) FROM " . _tbl($type) . " WHERE id = ?", array($id));
   if ($roomExist <= 0) {
     $response["code"] = -2;
-    $response["message"] = "Id does not match any area or room";
+    $response["message"] = get_vocab($type . "_not_exist");
     echo json_encode($response);
     return;
   }
@@ -43,7 +43,7 @@ if ($type == 'area'){
   $sql .= " WHERE R.id = ? AND start_time >= ? AND end_time <= ?";
 } else if($type != 'all'){
   $response['code'] = -1;
-  $response['message'] = 'Invalid type';
+  $response['message'] = get_vocab("invalid_types");
   echo json_encode($response);
   return;
 }else{
@@ -81,7 +81,7 @@ if ($result -> count() < 1){
     $rows[count($rows) - 1]['eveningends_minutes'] = 0;
   $max_time = sprintf("%02d", $rows[count($rows) - 1]['eveningends'] > 12 ? $rows[count($rows) - 1]['eveningends'] - 12 : $rows[count($rows) - 1]['eveningends']) . ":" . sprintf("%02d", $rows[count($rows) - 1]['eveningends_minutes']) . ($rows[count($rows) - 1]['eveningends'] > 12 ? " PM" : " AM");
   $response["code"] = 0;
-  $response["message"] = "success";
+  $response["message"] = get_vocab("success");
   $response["data"] = array();
   $response['data']['min_time'] = $min_time;
   $response['data']['max_time'] = $max_time;
@@ -170,7 +170,7 @@ $now = time();
 $date = datetime_format($datetime_formats['view_day'], $now);
 
 $response['code'] = 0;
-$response['message'] = "success";
+$response['message'] = get_vocab("success");
 $response['data'] = $result;
 $response['data']['min_time'] = $min_time;
 $response['data']['max_time'] = $max_time;

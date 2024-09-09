@@ -646,3 +646,6 @@ $vocab["delete_yourself"]             = "你不能删除你自己的账号";
 $vocab["no_admin"]                    = "没有管理员";
 $vocab["search_without_id"]           = "搜索时必须要给出id";
 $vocab["no_access_no_policy"]         = "没有权限删除会议或策略不允许删除会议";
+$vocab["area_disabled"]               = "该区域以禁用";
+$vocab["room_disabled"]               = "该房间以禁用";
+$vocab["invalid_confirm"]             = "confirm不能为空，且应该为1或0";
