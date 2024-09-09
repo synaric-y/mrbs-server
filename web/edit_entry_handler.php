@@ -159,7 +159,7 @@ foreach ($form_vars as $var => $var_type) {
 if($end_seconds < time()){
   $response["code"] = -15;
   $response["message"] = get_vocab("expired_end_time");
-  echo $response;
+  echo json_encode($response);
   return;
 }
 $id = intval($data["id"]);
