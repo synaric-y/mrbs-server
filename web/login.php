@@ -13,14 +13,14 @@ $data = json_decode($json, true);
 $username = $data['username'];
 $password = $data['password'];
 
-//if (!empty($_SESSION) && isset($_SESSION['user'])) {
-//  $response = array(
-//    "code" => 1,
-//    "message" => get_vocab("already_login")
-//  );
-//  echo json_encode($response);
-//  return;
-//}
+if (!empty($_SESSION) && isset($_SESSION['user'])) {
+  $response = array(
+    "code" => 1,
+    "message" => get_vocab("already_login")
+  );
+  echo json_encode($response);
+  return;
+}
 setcookie("session_id", "", time() - 3600, "/web/");
 $result = auth() -> validateUser($username, $password);
 if (!$result) {
