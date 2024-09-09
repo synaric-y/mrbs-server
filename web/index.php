@@ -20,6 +20,7 @@ $type = $data['type'];
 $id = $data['id'];
 $start_time = $data['start_time'];
 $end_time = $data['end_time'];
+$timezone = $data['timezone'];
 $response = array(
   "code" => 'int',
   "message" => 'string'
@@ -95,7 +96,7 @@ $rows = $result -> all_rows_keyed();
 $default_timezone = date_default_timezone_get();
 foreach ($rows as $row) {
   if (!empty($row['timezone']))
-    date_default_timezone_set($row['timezone']);
+    date_default_timezone_set($timezone);
   else
     date_default_timezone_set($default_timezone);
   $areaId = $row['area_id'];
