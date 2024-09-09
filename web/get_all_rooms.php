@@ -25,7 +25,7 @@ if ($type == 'all'){
   $result = db() -> query("SELECT R.id as room_id, R.disabled as room_disabled, A.disabled as area_disabled, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id");
   if ($result -> count() < 1){
     $response["code"] = -1;
-    $response["message"] = "No rooms found";
+    $response["message"] = get_vocab("room_not_exist");
     echo json_encode($response);
     return;
   }
@@ -59,7 +59,7 @@ if ($type == 'all'){
     $area['rooms'] = array_values($area['rooms']);
   }
   $response["code"] = 0;
-  $response["message"] = "success";
+  $response["message"] = get_vocab("success");
   $response["data"] = $result;
   echo json_encode($response);
   return;
@@ -67,7 +67,7 @@ if ($type == 'all'){
   $result = db() -> query("SELECT R.id as room_id,R.disabled as room_disabled, A.disabled as area_disabled, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id WHERE A.id = ?", array($id));
   if ($result -> count() < 1){
     $response["code"] = -1;
-    $response["message"] = "No rooms found";
+    $response["message"] = get_vocab("room_not_exist");
     echo json_encode($response);
     return;
   }
@@ -88,7 +88,7 @@ if ($type == 'all'){
     );
   }
   $response["code"] = 0;
-  $response["message"] = "success";
+  $response["message"] = get_vocab("success");
   $response["data"]['areas'][] = $area;
   echo json_encode($response);
   return;
@@ -96,7 +96,7 @@ if ($type == 'all'){
   $result = db() -> query("SELECT R.id as room_id, R.disabled as room_disabled, A.disabled as area_disabled, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " ON R.area_id = A.id WHERE R.id = ?", array($id));
   if ($result -> count() != 1){
     $response["code"] = -1;
-    $response["message"] = "No rooms found";
+    $response["message"] = get_vocab("room_not_exist");
     echo json_encode($response);
     return;
   }
@@ -113,13 +113,13 @@ if ($type == 'all'){
     'room_name' => $row['room_name']
   );
   $response["code"] = 0;
-  $response["message"] = "success";
+  $response["message"] = get_vocab("success");
   $response["data"] = $area;
   echo json_encode($response);
   return;
 }else{
   $response["code"] = -2;
-  $response["message"] = "Invalid type";
+  $response["message"] = get_vocab("invalid_types");
   echo json_encode($response);
   return;
 }

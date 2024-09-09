@@ -152,7 +152,7 @@ if (!empty($room_admin_email))
 // Validate email addresses
 if (!validate_email_list($room_admin_email) && !empty($room_admin_email))
 {
-  $errors[] = 'invalid_email';
+  $errors[] = get_vocab('invalid_email');
 }
 
 // Make sure the invalid types exist
@@ -183,7 +183,7 @@ if (empty($errors))
 
   if (db()->query1($sql, array($new_area)) < 1)
   {
-    $errors[] = 'invalid_area';
+    $errors[] = get_vocab('invalid_area');
     db()->rollback();
   }
   // If so, check that the room name is not already used in the area
@@ -198,7 +198,7 @@ if (empty($errors))
                                 LIMIT 1
                            FOR UPDATE", array(":room_name" => $room_name, ":area_id" => $new_area)) > 0)
   {
-    $errors[] = 'invalid_room_name';
+    $errors[] = get_vocab('invalid_room_name');
     db()->rollback();
   }
   // If everything is still OK, update the database

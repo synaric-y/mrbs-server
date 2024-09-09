@@ -17,7 +17,6 @@ $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 $roomId = intval($data['room_id']);
 $confirm = intval($data['confirm']);
-//$roomId = intval(ApiHelper::value("room_id"));
 
 $now = time();
 
@@ -50,7 +49,7 @@ if ($confirm == 0){
   echo json_encode($response);
   return;
 }else if (!isset($confirm) || $confirm != 1){
-  ApiHelper::fail("confirm should not be empty and confirm should be 1 or 0", -3);
+  ApiHelper::fail(get_vocab("invalid_confirm"), -3);
 }
 
 $qSQL = "room_id = $roomId and
@@ -61,22 +60,22 @@ $qSQL = "room_id = $roomId and
 
 $roomExist = DBHelper::one(_tbl("room"), "id = $roomId");
 if (empty($roomExist)){
-  ApiHelper::fail("room not found" );
+  ApiHelper::fail(get_vocab("room_not_exist"));
   return;
 }
 if ($roomExist['disabled'] == 1) {
-  ApiHelper::fail("room disabled" );
+  ApiHelper::fail(get_vocab("room_disabled"));
   return;
 }
 $area = get_area_details($roomExist['area_id']);
 if (!$area || $area['disabled'] == 1) {
-  ApiHelper::fail("area disabled" );
+  ApiHelper::fail(get_vocab("area_disabled"));
   return;
 }
 
 $queryOne = DBHelper::one(_tbl("entry"), $qSQL);
 if (!empty($queryOne)) {
-  ApiHelper::fail("already exist entry" , -2);
+  ApiHelper::fail(get_vocab("entry_conflict") , -2);
   return;
 }
 
