@@ -95,7 +95,8 @@ if ($result -> count() < 1){
 $rows = $result -> all_rows_keyed();
 $default_timezone = date_default_timezone_get();
 foreach ($rows as $row) {
-  if (!empty($row['timezone']))
+  // 展示时间以前端设备时区为准，与区域不相关
+  if (!empty($timezone))
     date_default_timezone_set($timezone);
   else
     date_default_timezone_set($default_timezone);

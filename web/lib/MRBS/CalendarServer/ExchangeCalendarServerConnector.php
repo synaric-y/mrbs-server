@@ -189,6 +189,16 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     if ($ci->getMyResponseType() != "Tentative" && $ci->getMyResponseType() != "NoResponseReceived") {
       return;
     }
+    if ($ci->getCalendarItemType() == "RecurringMaster") {
+      \MRBS\log_i($this::$TAG, "not support calendar type: RecurringMaster");
+      try {
+        $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
+      } catch (\Exception $e) {
+        \MRBS\log_i($this::$TAG, $e->getMessage());
+        \MRBS\log_i($this::$TAG, $e->getTraceAsString());
+      }
+      return;
+    }
     $exchangeId = $ci->getItemId()->getId();
     // itemId maybe reused, so don't check itemId
 //    $queryOne = DBHelper::one(_tbl("entry"), "exchange_id = '$exchangeId'");
@@ -248,6 +258,15 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
   {
     // After the meeting is updated, it will revert back to the Tentative state
     if ($ui->getMyResponseType() != "Tentative" && $ui->getMyResponseType() != "NoResponseReceived") {
+      return;
+    }
+    if ($ui->getCalendarItemType() == "RecurringMaster") {
+      try {
+        $this->getCalendar()->declineMeeting($ui->getItemId(), get_vocab("ic_recurring_decline"));
+      } catch (\Exception $e) {
+        \MRBS\log_i($this::$TAG, $e->getMessage());
+        \MRBS\log_i($this::$TAG, $e->getTraceAsString());
+      }
       return;
     }
     $exchangeId = $ui->getItemId()->getId();
