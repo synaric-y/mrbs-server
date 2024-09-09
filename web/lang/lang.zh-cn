@@ -612,8 +612,6 @@ $vocab["fatal_no_tables"]    = "致命错误：数据库表不存在或无法访
 $vocab["session_expired"]    = "会话已过期.";
 $vocab["browser_not_supported"] = "你的浏览器不支持 %s.  需要升级到最近版本或使用其他浏览器 ";
 $vocab["back"]               = "后退";
-$vocab["success"]            = "成功";
-$vocab["alreday_login"]      = "已经登录了";
 
 // CalendarServer
 $vocab["ic_meeting_accept"]                   = "您发起的会议已经被管理员通过。";
@@ -623,6 +621,11 @@ $vocab["ic_xs_meeting"]                       = "%s的会议";
 $vocab["ic_tp_meeting"]                       = "临时会议";
 $vocab["fast_meeting_time"]                   = "确定要预约 %s - %s的快速会议吗？";
 $vocab["ic_recurring_decline"]                = "暂不支持周期性会议";
+
+$vocab["success"]            = "成功";
+$vocab["already_login"]      = "已经登录了";
+$vocab["invalid_username_or_password"] = "账户名或密码不正确";
+
 
 $vocab["invalid_start_time"]          = "起始时间无效";
 $vocab["invalid_end_time"]            = "结束时间无效";
