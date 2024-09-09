@@ -821,8 +821,9 @@ try {
           CalendarServerManager::createMeeting($d['id']);
       }
     }
-    $transaction_ok = mrbsDelEntry($id, $edit_series, true);
     CalendarServerManager::deleteMeeting($id);
+    $transaction_ok = mrbsDelEntry($id, $edit_series, true);
+
   }
 
   if ($transaction_ok) {
