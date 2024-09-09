@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MRBS;
 
 use MRBS\Form\ElementInputSubmit;
@@ -60,7 +61,7 @@ require "defaultincludes.inc";
 //// Check the user is authorised for this page
 //checkAuthorised(this_page());
 
-if (!checkAuth()){
+if (!checkAuth()) {
   $response["code"] = -99;
   $response["message"] = get_vocab("please_login");
   setcookie("session_id", "", time() - 3600, "/web/");
@@ -68,7 +69,7 @@ if (!checkAuth()){
   return;
 }
 
-if (getLevel($_SESSION['user']) < 2){
+if (getLevel($_SESSION['user']) < 2) {
   $response["code"] = -98;
   $response["message"] = get_vocab("accessdenied");
   echo json_encode($response);
@@ -97,59 +98,38 @@ $area = $data['area'];
 
 // This is gonna blast away something. We want them to be really
 // really sure that this is what they want to do.
-if ($type == "room")
-{
-  $n_entries = get_n_entries_by_room($room);
-  // We are supposed to delete a room
-  if ($n_entries === 0)
-  {
-    $limit = 20;
-    $entries = get_entries_by_room($room, null, null, true, $limit);
-    assert(count($entries) === 0);
-    // They have confirmed it already, so go blast!
-    db()->begin();
-    try
-    {
-      // First take out all appointments for this room
-      $sql = "DELETE FROM " . _tbl('entry') . " WHERE room_id=?";
-      db()->command($sql, array($room));
+if ($type == "room") {
 
-      $sql = "DELETE FROM " . _tbl('repeat') . " WHERE room_id=?";
-      db()->command($sql, array($room));
+  db()->begin();
+  try {
+    // First take out all appointments for this room
+    $sql = "DELETE FROM " . _tbl('entry') . " WHERE room_id=?";
+    db()->command($sql, array($room));
 
-      // Now take out the room itself
-      $sql = "DELETE FROM " . _tbl('room') . " WHERE id=?";
-      db()->command($sql, array($room));
-    }
-    catch (DBException $e)
-    {
-      db()->rollback();
-      throw $e;
-    }
+    $sql = "DELETE FROM " . _tbl('repeat') . " WHERE room_id=?";
+    db()->command($sql, array($room));
 
-    db()->commit();
-
-    // Go back to the admin page
-    $response = array(
-      "code" => 0,
-      "message" => get_vocab("success")
-    );
-    echo json_encode($response);
-    return;
+    // Now take out the room itself
+    $sql = "DELETE FROM " . _tbl('room') . " WHERE id=?";
+    db()->command($sql, array($room));
+  } catch (DBException $e) {
+    db()->rollback();
+    throw $e;
   }
-  else
-  {
-    $response = array(
-      "code" => -1,
-      "message" => get_vocab("entry_in_room")
-    );
-    echo json_encode($response);
-    return;
-  }
+
+  db()->commit();
+
+  // Go back to the admin page
+  $response = array(
+    "code" => 0,
+    "message" => get_vocab("success")
+  );
+  echo json_encode($response);
+  return;
+
 }
 
-if ($type == "area")
-{
+if ($type == "area") {
   // We are only going to let them delete an area if there are
   // no rooms. its easier
   $sql = "SELECT COUNT(*)
@@ -157,8 +137,7 @@ if ($type == "area")
            WHERE area_id=?";
 
   $n = db()->query1($sql, array($area));
-  if ($n === 0)
-  {
+  if ($n === 0) {
     // OK, nothing there, let's blast it away
     $sql = "DELETE FROM " . _tbl('area') . "
              WHERE id=?";
@@ -172,9 +151,7 @@ if ($type == "area")
     );
     echo json_encode($response);
     return;
-  }
-  else
-  {
+  } else {
     // There are rooms left in the area
     $response = array(
       "code" => -1,
