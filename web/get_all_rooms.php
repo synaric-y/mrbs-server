@@ -20,6 +20,7 @@ $response = array(
   "message" => 'string'
 );
 
+
 if ($type == 'all'){
   $result = db() -> query("SELECT R.id as room_id, R.disabled as room_disabled, A.disabled as area_disabled, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id");
   if ($result -> count() < 1){
