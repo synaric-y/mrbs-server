@@ -311,7 +311,7 @@ if (empty($errors))
 // Go back to the room form with errors
 $response = array(
   "code" => -1,
-  "message" => $errors[0]
+  "message" => get_vocab($errors[0])
 );
 //foreach ($errors as $error)
 //{

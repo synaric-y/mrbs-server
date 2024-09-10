@@ -282,7 +282,7 @@ if (!empty($errors))
     $query_string .= "&errors[]=$error";
   }
   $response["code"] = -2;
-  $response["message"] = $errors[0];
+  $response["message"] = get_vocab($errors[0]);
   echo json_encode($response);
   return;
 //  location_header("edit_area.php?$query_string");
