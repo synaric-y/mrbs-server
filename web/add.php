@@ -82,7 +82,7 @@ if ($area && isset($room) && $room) {
 } else {
   $response = array(
     "code" => -1,
-    "message" => $error
+    "message" => get_vocab($error)
   );
   echo json_encode($response);
   return;
