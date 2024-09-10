@@ -20,6 +20,9 @@ class CalendarServerManager
 
   public static function createMeeting($id)
   {
+    if (empty($id)) {
+      return;
+    }
     global $thirdCalendarService;
     $entry = get_entry_by_id($id);
     foreach ($thirdCalendarService as $serviceName => $config) {
@@ -36,6 +39,9 @@ class CalendarServerManager
 
   public static function deleteMeeting($id)
   {
+    if (empty($id)) {
+      return;
+    }
     global $thirdCalendarService;
     $entry = get_entry_by_id($id);
     foreach ($thirdCalendarService as $serviceName => $config) {
@@ -53,6 +59,9 @@ class CalendarServerManager
   // Notify third-party services to update meetings.
   public static function updateMeeting($id)
   {
+    if (empty($id)) {
+      return;
+    }
     global $thirdCalendarService;
     $entry = get_entry_by_id($id);
     foreach ($thirdCalendarService as $serviceName => $config) {
