@@ -88,6 +88,7 @@ if ($result -> count() < 1){
   $response['data']['max_time'] = $max_time;
   $date = datetime_format($datetime_formats['view_day'], time());
   $response['data']['time'] = $date;
+  $response['data']['timestamp'] = time();
   $response['data']['areas'] = array();
   echo json_encode($response);
   return;
