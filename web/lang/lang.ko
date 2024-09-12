@@ -255,3 +255,6 @@ $vocab["invalid_room_name"]           = "이 방 이름은 이미 해당 지역�
 $vocab["invalid_area"]                = "잘못된 지역입니다!";
 $vocab["invalid_types"]               = "잘못된 유형";
 $vocab["expired_end_time"]            = "종료 시간이 지난 항목은 편집하거나 생성할 수 없습니다.";
+$vocab["capacity_too_large"]          = "용량이 너무 크다";
+$vocab["no_right"]                    = "사용자는 이것을 할 권리가 없습니다";
+$vocab["area_or_room_disabled"]       = "구역이나 방이 비활성화되어 예약이 허용되지 않습니다";
