@@ -39,7 +39,7 @@ if (!checkAuth()){
 
 if (getLevel($_SESSION['user']) < 2){
   $response["code"] = -98;
-  $response["message"] = get_vocab("accessdenied");
+  $response["message"] = get_vocab("no_right");
   echo json_encode($response);
   return;
 }
@@ -170,6 +170,7 @@ $end_seconds -= $midnight;
 $confirmed = "";
 $skip = boolval($skip);
 $edit_series = boolval($edit_series);
+
 
 // Provide a default for $rep_interval (it could be null in an Ajax post request
 // if the user has an empty string in the input).
@@ -795,7 +796,7 @@ try {
   $result = mrbsMakeBookings($bookings, $this_id, $just_check, $skip, $original_room_id, $send_mail, $edit_series);
   // Notify the third-party Calendar service that a meeting has been created
   if (!$just_check && $result['valid_booking'] && empty($id)) {
-    if ($result["new_details"]) {
+    if ($result["new_details"][0]['id']) {
       foreach ($result["new_details"] as $d) {
         if ($edit_series) {
           $fetch = db()->query("SELECT id FROM " . _tbl("entry") . " WHERE repeat_id = ?", array($d['id']));
@@ -816,9 +817,9 @@ try {
         if($edit_series) {
           $fetch = db()->query("SELECT id FROM " . _tbl("entry") . " WHERE repeat_id = ?", array($d['id']));
           while($row = $fetch->next_row_keyed())
-            CalendarServerManager::createMeeting($row['id']);
+            CalendarServerManager::updateMeeting($row['id']);
         }else
-          CalendarServerManager::createMeeting($d['id']);
+          CalendarServerManager::updateMeeting($d['id']);
       }
     }
     CalendarServerManager::deleteMeeting($id);
