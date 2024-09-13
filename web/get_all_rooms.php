@@ -40,6 +40,8 @@ if ($type == 'all'){
         'area_id' => $areaId,
         'area_name' => $areaName,
         'disabled' => $row['area_disabled'],
+        'start_time' => sprintf("%02d", $row['morningstarts'] > 12 ? $row['morningstarts'] - 12 : $row['morningstarts']) . ":" . sprintf("%02d", $row['morningstarts_minutes']) . ($row['morningstarts'] > 12 ? " PM" : " AM"),
+        'end_time' => sprintf("%02d", $row['eveningends'] > 12 ? $row['eveningends'] - 12 : $row['eveningends']) . ":" . sprintf("%02d", $row['eveningends_minutes']) . ($row['eveningends'] > 12 ? " PM" : " AM"),
         'rooms' => array()
       );
     }
@@ -48,6 +50,8 @@ if ($type == 'all'){
       $tmp[$areaId]['rooms'][$roomId] = array(
         'room_id' => $roomId,
         'room_name' => $roomName,
+        'description' => $row['description'],
+        'status' => "可预约",
         'disabled' => $row['area_disabled'] == 1 ? 1 : $row['room_disabled']
       );
     }
