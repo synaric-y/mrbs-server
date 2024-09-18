@@ -13,18 +13,12 @@ require_once "mrbs_sql.inc";
 //checkAuthorised(this_page());
 
 if (!checkAuth()){
-  $response["code"] = -99;
-  $response["message"] = get_vocab("please_login");
   setcookie("session_id", "", time() - 3600, "/web/");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
 if (getLevel($_SESSION['user']) < 2){
-  $response["code"] = -98;
-  $response["message"] = get_vocab("accessdenied");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
 // Get non-standard form variables
@@ -138,8 +132,7 @@ if (empty($capacity))
 {
   $capacity = 0;
 }else if ($capacity > 1000){
-  $response["code"] = -2;
-  $response["message"] = get_vocab("capacity_too_large");
+  ApiHelper::fail(get_vocab("capacity_too_large"), ApiHelper::CAPACITY_TOO_LARGE);
 }
 
 // UPDATE THE DATABASE
@@ -154,7 +147,7 @@ if (!empty($room_admin_email))
 // Validate email addresses
 if (!validate_email_list($room_admin_email) && !empty($room_admin_email))
 {
-  $errors[] = get_vocab('invalid_email');
+  ApiHelper::fail(get_vocab("invalid_email"), ApiHelper::INVALID_EMAIL);
 }
 
 // Make sure the invalid types exist
@@ -185,8 +178,8 @@ if (empty($errors))
 
   if (db()->query1($sql, array($new_area)) < 1)
   {
-    $errors[] = get_vocab('invalid_area');
     db()->rollback();
+    ApiHelper::fail(get_vocab("invalid_area"), ApiHelper::INVALID_AREA);
   }
   // If so, check that the room name is not already used in the area
   // (only do this if you're changing the room name or the area - if you're
@@ -200,8 +193,8 @@ if (empty($errors))
                                 LIMIT 1
                            FOR UPDATE", array(":room_name" => $room_name, ":area_id" => $new_area)) > 0)
   {
-    $errors[] = get_vocab('invalid_room_name');
     db()->rollback();
+    ApiHelper::fail(get_vocab("invalid_room_name"));
   }
   // If everything is still OK, update the database
   else
@@ -299,24 +292,8 @@ if (empty($errors))
     db()->commit();
 
     // Go back to the admin page (for the new area)
-    $response = array(
-      "code" => 0,
-      "message" => get_vocab("success")
-    );
-    echo json_encode($response);
-    return;
+    ApiHelper::success(null);
   }
 
 }
 
-
-// Go back to the room form with errors
-$response = array(
-  "code" => -1,
-  "message" => $errors[0]
-);
-//foreach ($errors as $error)
-//{
-//  $response["data"][] = $error . "\n";
-//}
-echo json_encode($response);

@@ -745,4 +745,7 @@ $vocab["expired_end_time"]             = "Editing or creating an entry which end
 $vocab["capacity_too_large"]           = "Capacity is too large";
 $vocab["no_right"]                     = "User is no right to do this";
 $vocab["area_or_room_disabled"]        = "Area or room is disabled, booking is not allowed";
+$vocab["missing_parameters"]           = "Parameters should not be empty";
+$vocab["invalid_code"]                 = "Wxwork code is invalid";
+$vocab["fail_to_create_user"]          = "Fail to create user from wxwork";
 

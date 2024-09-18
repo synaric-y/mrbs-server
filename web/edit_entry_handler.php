@@ -10,6 +10,7 @@ require_once 'mrbs_sql.inc';
 require_once 'functions_ical.inc';
 require_once 'functions_mail.inc';
 
+use MRBS\ApiHelper;
 use MRBS\CalendarServer\CalendarServerManager;
 
 
@@ -30,18 +31,12 @@ use MRBS\CalendarServer\CalendarServerManager;
 //checkAuthorised(this_page());
 
 if (!checkAuth()){
-  $response["code"] = -99;
-  $response["message"] = get_vocab("please_login");
   setcookie("session_id", "", time() - 3600, "/web/");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
 if (getLevel($_SESSION['user']) < 2){
-  $response["code"] = -98;
-  $response["message"] = get_vocab("no_right");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
 //$sessionData = "";
@@ -139,10 +134,12 @@ $response = array(
 $just_check = false;
 
 if (!checkAuth()){
-  $response["code"] = -99;
-  $response["message"] = get_vocab("please_login");
-  echo json_encode($response);
-  return;
+  setcookie("session_id", "", time() - 3600, "/web/");
+  ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
+}
+
+if (getLevel($_SESSION['user']) < 2){
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
 foreach ($form_vars as $var => $var_type) {
@@ -157,10 +154,7 @@ foreach ($form_vars as $var => $var_type) {
 
 }
 if($end_seconds < time()){
-  $response["code"] = -15;
-  $response["message"] = get_vocab("expired_end_time");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("expired_end_time"), ApiHelper::EXPIRED_END_TIME);
 }
 $id = intval($data["id"]);
 $midnight = strtotime("midnight", intval($start_seconds));
@@ -184,17 +178,11 @@ $rooms = array_map(__NAMESPACE__ . '\sanitize_room_id', $rooms);
 
 $result = db() -> query("SELECT R.disabled as room_disabled, A.disabled as area_disabled FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id WHERE R.id = ?", array($rooms[0]));
 if ($result -> count() < 1){
-  $response["code"] = -13;
-  $response["message"] = get_vocab("room_not_exist");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("room_not_exist"), ApiHelper::ROOM_NOT_EXIST);
 }
 $row = $result -> next_row_keyed();
 if ($row['room_disabled'] == 1 || $row['area_disabled'] == 1){
-  $response["code"] = -14;
-  $response["message"] = get_vocab("area_or_room_disabled");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("area_or_room_disabled"), ApiHelper::AREA_OR_ROOM_DISABLED);
 }
 //
 // Convert the registration opens and closes times into seconds
@@ -225,18 +213,12 @@ if (!is_book_admin($rooms) && $auth['only_admin_can_book_multiday']) {
 }
 //
 if (false === ($start_date_split = split_iso_date($start_date))) {
-  $response["code"] = -1;
-  $response["message"] = get_vocab("Invalid start date");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("invalid_start_time"), ApiHelper::INVALID_START_TIME);
 }
 list($start_year, $start_month, $start_day) = $start_date_split;
 //
 if (false === ($end_date_split = split_iso_date($end_date))) {
-  $response["code"] = -1;
-  $response["message"] = get_vocab("Invalid end date");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("invalid_end_time"), ApiHelper::INVALID_END_TIME);
 }
 list($end_year, $end_month, $end_day) = $end_date_split;
 
@@ -300,8 +282,7 @@ foreach ($fields as $field) {
 //
 // Only carry out this check if it's not an Ajax request.  If it is an Ajax request then
 // $create_by isn't set yet, but a getWritable check will be done later,
-//if (!$is_ajax)
-//{
+
 if (!isset($create_by)) {
   // Shouldn't happen, unless something's gone wrong with the form or the POST request.
   throw new Exception('$create_by not set');
@@ -313,36 +294,16 @@ if (!is_book_admin($rooms) || (empty($id) && $auth['admin_can_only_book_for_self
     $create_by = $mrbs_username;
   }
 }
-//}
-//
+
 if (empty($rooms)) {
-//  if (!$is_ajax)
-//  {
-//    invalid_booking(get_vocab('no_rooms_selected'));
-//  }
-  $response["code"] = -2;
-  $response["message"] = get_vocab("no_rooms_selected");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("invalid_room_name"), ApiHelper::INVALID_ROOM_NAME);
 }
-//
-//// Don't bother with these checks if this is an Ajax request.
-//if (!$is_ajax)
-//{
 if (!isset($name) || ($name === '')) {
-//    invalid_booking(get_vocab('must_set_description'));
-  $response["code"] = -3;
-  $response["message"] = get_vocab("must_set_description");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("empty_name"), ApiHelper::EMPTY_NAME);
 }
-//
+
 if (($rep_type != RepeatRule::NONE) && ($rep_interval < 1)) {
-//    invalid_booking(get_vocab('invalid_rep_interval'));
-  $response["code"] = -4;
-  $response["message"] = get_vocab("invalid_rep_interval");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("invalid_rep_interval"), ApiHelper::INVALID_REP_INTERVAL);
 }
 //
 if (count($is_mandatory_field)) {
@@ -351,12 +312,7 @@ if (count($is_mandatory_field)) {
     if ($value) {
       if ((in_array($field, $standard_fields['entry']) && ($$field === '')) ||
         (array_key_exists($field, $custom_fields) && ($custom_fields[$field] === ''))) {
-//          invalid_booking(get_vocab('missing_mandatory_field') . ' "' .
-//                          get_loc_field_name(_tbl('entry'), $field) . '"');
-        $response["code"] = -5;
-        $response["message"] = get_vocab("missing_mandatory_field") . get_loc_field_name(_tbl('entry'), $field);
-        echo json_encode($response);
-        return;
+        ApiHelper::fail(get_vocab("missing_mandatory_field"), ApiHelper::MISSING_MANDATORY_FIELD);
       }
     }
   }
@@ -369,9 +325,7 @@ if (!isset($type)) {
 
 // Check that the type is allowed
 if (!is_book_admin($rooms) && isset($auth['admin_only_types']) && in_array($type, $auth['admin_only_types'])) {
-//  invalid_booking(get_vocab('type_reserved_for_admins', get_type_vocab($type)));
-  $response["code"] = -6;
-  $response["message"] = get_vocab("type_reserved_for_admins", get_type_vocab($type));
+  ApiHelper::fail(get_vocab("type_reserved_for_admins", get_type_vocab($type)), ApiHelper::TYPE_RESERVED_FOR_ADMINS);
 }
 
 if (isset($month_relative_ord) && isset($month_relative_day)) {
@@ -527,10 +481,7 @@ if (!empty($id)) {
   if ($existing_room < 0) {
     // Ideally we should give more feedback to the user when this happens, or
     // even lock the entry once a user starts to edit it.
-    $response["code"] = -8;
-    $response["message"] = get_vocab("edit_entry_not_exist");
-    echo json_encode($response);
-    return;
+    ApiHelper::fail(get_vocab("edit_entry_not_exist"), ApiHelper::EDIT_ENTRY_NOT_EXIST);
   }
   $target_rooms[] = $existing_room;
   $target_rooms = array_unique($target_rooms);
@@ -540,10 +491,7 @@ if (!empty($id)) {
 if (!getWritable($create_by, $target_rooms, false)) {
 //  showAccessDenied($view, $view_all, $year, $month, $day, $area, $room ?? null);
 //  exit;
-  $response["code"] = -7;
-  $response["message"] = get_vocab("no_access_to_entry");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("no_access_to_entry"), ApiHelper::NO_ACCESS_TO_ENTRY);
 }
 //
 //
@@ -703,10 +651,7 @@ $area = mrbsGetRoomArea($room);
 if (isset($rep_type) && ($rep_type != RepeatRule::NONE) &&
   !is_book_admin($rooms) &&
   !empty($auth['only_admin_can_book_repeat'])) {
-  $response["code"] = -7;
-  $response["message"] = get_vocab("no_access_to_entry");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("no_access_to_entry"), ApiHelper::NO_ACCESS_TO_ENTRY);
 }
 
 
@@ -845,11 +790,7 @@ try {
       }
     }
     CalendarServerManager::createMeeting($id);
-//    trigger_error('Edit failed.', E_USER_WARNING);
-    $response["code"] = -12;
-    $response["message"] = get_vocab("no_access_no_policy");
-    echo json_encode($response);
-    return;
+    ApiHelper::fail(get_vocab("no_access_no_policy"), ApiHelper::NO_ACCESS_NO_POLICY);
   }
 
   // If this is an Ajax request, output the result and finish
@@ -880,50 +821,26 @@ try {
 //  }
 //}
 catch (\Exception $e) {
-//  if ($is_ajax)
-//  {
-//    output_exception_error($e, true);
-//    http_response_code(500);
-//    exit;
-//  }
-  $response["code"] = -9;
-  $response["message"] = $e->getMessage();
-  echo json_encode($response);
-  return;
-//  exception_handler($e);
+ApiHelper::fail("", ApiHelper::UNKOWN_ERROR);
 }
 
 if ($result['valid_booking']) {
   if ($result['new_details'][0]['id'] != 0) {
-    $response["code"] = 0;
-    $response["message"] = get_vocab("success");
     if (!empty($result['conflicts']))
       foreach ($result['conflicts'] as $conflict)
-        $response["data"]["conflicts"] = $conflict;
-//    $response["data"]["entry"] = $result['new_details'];
+        $data1["conflicts"][] = $conflict;
     $entries = array_column($result['new_details'], 'id');
     if ($edit_series)
       $result = db() -> query("SELECT id, start_time, end_time, entry_type, room_id, create_by, name, type, description, book_by FROM " . _tbl("entry") . " WHERE repeat_id = ?", $entries);
     else
       $result = db() -> query("SELECT id, start_time, end_time, entry_type, room_id, create_by, name, type, description, book_by FROM " . _tbl("entry") . " WHERE id = ?", $entries);
-    $response["data"]["entries"] = $result -> all_rows_keyed();
-    echo json_encode($response);
+    $data1["entries"] = $result -> all_rows_keyed();
+    ApiHelper::success($data1);
   }else{
-    $response["code"] = -11;
-    $response["message"] = get_vocab("repeat_entry_conflict");
-    echo json_encode($response);
-    return;
+    ApiHelper::fail(get_vocab("repeat_entry_conflict"), ApiHelper::REPEAT_ENTRY_CONFLICT);
   }
 }else if ($result['new_details'][0]['id'] != 0){
-  $response["code"] = -10;
-  $response["message"] = get_vocab("entry_conflict");
-  $response["data"] = $result['conflicts'];
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("entry_conflict"), ApiHelper::ENTRY_CONFLICT, $result['conflicts']);
 }else{
-  $response['code'] = -10;
-  $response["message"] = get_vocab("entry_conflict");
-  $response["data"] = $result['conflicts'];
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("entry_conflict"), ApiHelper::ENTRY_CONFLICT, $reslut['conflicts']);
 }

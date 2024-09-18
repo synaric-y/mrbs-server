@@ -4,77 +4,18 @@ declare(strict_types=1);
 namespace MRBS;
 
 use MRBS\CalendarServer\CalendarServerManager;
-use MRBS\Form\ElementInputSubmit;
-use MRBS\Form\Form;
+use MRBS\ApiHelper;
 
 require "defaultincludes.inc";
 
-
-//function generate_no_form(int $room, int $area) : void
-//{
-//  $form = new Form(Form::METHOD_POST);
-//
-//  $attributes = array('action' => multisite('admin.php'));
-//
-//  $form->setAttributes($attributes);
-//
-//  // Hidden inputs
-//  $hidden_inputs = array('area' => $area,
-//                         'room' => $room);
-//  $form->addHiddenInputs($hidden_inputs);
-//
-//  // The button
-//  $element = new ElementInputSubmit();
-//  $element->setAttribute('value', get_vocab("NO"));
-//  $form->addElement($element);
-//
-//  $form->render();
-//}
-//
-//
-//function generate_yes_form(int $room, int $area) : void
-//{
-//  $form = new Form(Form::METHOD_POST);
-//
-//  $attributes = array('action' => multisite('del.php'));
-//
-//  $form->setAttributes($attributes);
-//
-//  // Hidden inputs
-//  $hidden_inputs = array('type'    => 'room',
-//                         'area'    => $area,
-//                         'room'    => $room,
-//                         'confirm' => '1');
-//  $form->addHiddenInputs($hidden_inputs);
-//
-//  // The button
-//  $element = new ElementInputSubmit();
-//  $element->setAttribute('value', get_vocab("YES"));
-//  $form->addElement($element);
-//
-//  $form->render();
-//}
-
-
-//// Check the CSRF token
-//Form::checkToken();
-//
-//// Check the user is authorised for this page
-//checkAuthorised(this_page());
-
 if (!checkAuth()) {
-  $response["code"] = -99;
-  $response["message"] = get_vocab("please_login");
   setcookie("session_id", "", time() - 3600, "/web/");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("please_login"), \MRBS\ApiHelper::PLEASE_LOGIN);
 }
 
+
 if (getLevel($_SESSION['user']) < 2) {
-  $response["code"] = -98;
-  $response["message"] = get_vocab("accessdenied");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
 // Get non-standard form variables
@@ -124,12 +65,7 @@ if ($type == "room") {
   db()->commit();
 
   // Go back to the admin page
-  $response = array(
-    "code" => 0,
-    "message" => get_vocab("success")
-  );
-  echo json_encode($response);
-  return;
+  ApiHelper::success(null);
 
 }
 
@@ -149,22 +85,12 @@ if ($type == "area") {
     db()->command($sql, array($area));
 
     // Redirect back to the admin page
-    $response = array(
-      "code" => 0,
-      "message" => get_vocab("success")
-    );
-    echo json_encode($response);
-    return;
+    ApiHelper::success(null);
   } else {
     // There are rooms left in the area
-    $response = array(
-      "code" => -1,
-      "message" => get_vocab("room_in_area")
-    );
-    echo json_encode($response);
-    return;
+    ApiHelper::fail(get_vocab("room_in_area"), ApiHelper::ROOM_IN_AREA);
   }
 }
 
-throw new \Exception ("Unknown type");
+ApiHelper::fail(get_vocab("invalid_types"), ApiHelper::INVALID_TYPES);
 

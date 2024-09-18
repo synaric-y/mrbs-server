@@ -7,18 +7,12 @@ require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
 if (!checkAuth()){
-  $response["code"] = -99;
-  $response["message"] = get_vocab("please_login");
   setcookie("session_id", "", time() - 3600, "/web/");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
 if (getLevel($_SESSION['user']) < 2){
-  $response["code"] = -98;
-  $response["message"] = get_vocab("accessdenied");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
 $json = file_get_contents('php://input');
@@ -28,19 +22,10 @@ global $min_booking_admin_level;
 
 $result = db() -> query("SELECT name FROM " . _tbl("users") . " WHERE level >= ?", array($min_booking_admin_level));
 if ($result -> count() < 1){
-  $response = array(
-    "code" => -1,
-    "message" => get_vocab("no_admin")
-  );
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("no_admin"), ApiHelper::NO_ADMIN);
 }
 
-$response = array(
-  "code" => 0,
-  "message" => get_vocab("success")
-);
 foreach ($result -> all_rows_keyed() as $row){
-  $response["data"][] = $row['name'];
+  $data1[] = $row['name'];
 }
-echo json_encode($response);
+echo json_encode($data1);

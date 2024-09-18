@@ -657,3 +657,6 @@ $vocab["expired_end_time"]            = "已过时，不可预约会议";
 $vocab["capacity_too_large"]          = "房间容量过大";
 $vocab["no_right"]                    = "用户无权进行该操作";
 $vocab["area_or_room_disabled"]       = "区域或房间禁用，不可预约会议";
+$vocab["missing_parameters"]          = "参数不能为空";
+$vocab["invalid_code"]                = "企业微信身份码无效";
+$vocab["fail_to_create_user"]         = "未能创建来自企业微信的用户";

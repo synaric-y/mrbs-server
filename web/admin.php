@@ -15,18 +15,12 @@ require_once "mrbs_sql.inc";
 //checkAuthorised(this_page());
 
 if (!checkAuth()){
-  $response["code"] = -99;
-  $response["message"] = get_vocab("please_login");
   setcookie("session_id", "", time() - 3600, "/web/");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
 if (getLevel($_SESSION['user']) < 2){
-  $response["code"] = -98;
-  $response["message"] = get_vocab("accessdenied");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
 $json = file_get_contents('php://input');
@@ -40,62 +34,37 @@ if ($type == 'all'){
 } else if ($type == 'area'){
   $sql = "SELECT * FROM " . _tbl("area");
   $result = db() -> query($sql);
-  $response = array(
-    "code" => 0,
-    "message" => get_vocab("success"),
-    "data" => array(
-
-    )
-  );
   while($row = $result -> next_row_keyed()){
     unset($row['exchange_server']);
     unset($row['wxwork_corpid']);
     unset($row['wxwork_secret']);
-    $response["data"][] = $row;
+    $data[] = $row;
   }
-  echo json_encode($response);
+  ApiHelper::success($data);
 }else if ($type == 'room'){
   if (!empty($area)){
     $areaExist = db() -> query("SELECT id FROM " . _tbl("area") . " WHERE id = ?", array($area));
     if ($areaExist -> count() == 0){
-      $response = array(
-        "code" => -3,
-        "message" => get_vocab("area not exist")
-      );
-      echo json_encode($response);
+      ApiHelper::fail(get_vocab("area_not_exist"), ApiHelper::AREA_NOT_EXIST);
     }
     $sql = "SELECT *  FROM " . _tbl("room") . " WHERE area_id = ?";
     $result = db() -> query($sql, array($area));
     if ($result -> count() === 0){
-      $response = array(
-        "code" => -4,
-        "message" => get_vocab("no_room_in_area")
-      );
-      echo json_encode($response);
+      ApiHelper::fail(get_vocab("no_room_in_area"), ApiHelper::NO_ROOM_IN_AREA);
     }else{
-      $response = array(
-        "code" => 0,
-        "message" => get_vocab("success"),
-        "data" => array()
-      );
       while($row = $result -> next_row_keyed()){
         unset($row['exchange_username']);
         unset($row['exchange_password']);
         unset($row['wxwork_mr_id']);
         unset($row['exchange_sync_state']);
-        $response["data"][] = $row;
+        $data[] = $row;
       }
-      echo json_encode($response);
+      ApiHelper::success($data);
     }
   }else{
     $result = db() -> query("SELECT * FROM " . _tbl("room"));
     if ($result -> count() === 0){
-      $response = array(
-        "code" => -3,
-        "message" => get_vocab("room_not_exist")
-      );
-      echo json_encode($response);
-      return;
+      ApiHelper::fail(get_vocab("room_not_exist"), ApiHelper::ROOM_NOT_EXIST);
     }
     $rows = $result -> all_rows_keyed();
     foreach($rows as $row){
@@ -105,20 +74,10 @@ if ($type == 'all'){
       unset($row['exchange_sync_state']);
       $ans[] = $row;
     }
-    $response = array(
-      "code" => 0,
-      "message" => get_vocab("success"),
-      "data" => $ans
-    );
-    echo json_encode($response);
-    return;
+    ApiHelper::success($ans);
   }
 }else{
-  $response = array(
-    "code" => -1,
-    "message" => get_vocab("wrong_type"),
-  );
-  echo json_encode($response);
+  ApiHelper::fail(get_vocab("wrong_type"), ApiHelper::WRONG_TYPE);
 }
 
 

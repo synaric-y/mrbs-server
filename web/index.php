@@ -14,8 +14,9 @@ require_once "mrbs_sql.inc";
 
 global $datetime_formats;
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
+//$json = file_get_contents('php://input');
+//$data = json_decode($json, true);
+$data = $_POST;
 $type = $data['type'];
 $id = $data['id'];
 $start_time = $data['start_time'];
@@ -26,13 +27,17 @@ $response = array(
   "message" => 'string'
 );
 
+if($type != "all" && $type != "area" && $type != "room"){
+  ApiHelper::fail(get_vocab("invalid_types"), ApiHelper::INVALID_TYPES);
+}
+
 if ($type != 'all') {
   $roomExist = db()->query1("SELECT COUNT(*) FROM " . _tbl($type) . " WHERE id = ?", array($id));
   if ($roomExist <= 0) {
-    $response["code"] = -2;
-    $response["message"] = get_vocab($type . "_not_exist");
-    echo json_encode($response);
-    return;
+    if ($type == 'room')
+      ApiHelper::fail(get_vocab($type . "_not_exist"), ApiHelper::ROOM_NOT_EXIST);
+    else
+      ApiHelper::fail(get_vocab($type . "_not_exist"), ApiHelper::AREA_NOT_EXIST);
   }
 }
 
@@ -43,10 +48,7 @@ if ($type == 'area'){
 }else if ($type == 'room') {
   $sql .= " WHERE R.id = ? AND start_time >= ? AND end_time <= ?";
 } else if($type != 'all'){
-  $response['code'] = -1;
-  $response['message'] = get_vocab("invalid_types");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("invalid_types"), ApiHelper::INVALID_TYPES);
 }else{
   $sql .= " WHERE start_time >= ? AND end_time <= ?";
 }
@@ -81,16 +83,14 @@ if ($result -> count() < 1){
   if (empty($rows[count($rows) - 1]['eveningends_minutes']))
     $rows[count($rows) - 1]['eveningends_minutes'] = 0;
   $max_time = sprintf("%02d", $rows[count($rows) - 1]['eveningends'] > 12 ? $rows[count($rows) - 1]['eveningends'] - 12 : $rows[count($rows) - 1]['eveningends']) . ":" . sprintf("%02d", $rows[count($rows) - 1]['eveningends_minutes']) . ($rows[count($rows) - 1]['eveningends'] > 12 ? " PM" : " AM");
-  $response["code"] = 0;
-  $response["message"] = get_vocab("success");
-  $response["data"] = array();
-  $response['data']['min_time'] = $min_time;
-  $response['data']['max_time'] = $max_time;
+  $data = array();
+  $data['min_time'] = $min_time;
+  $data['max_time'] = $max_time;
   $date = datetime_format($datetime_formats['date_and_time'], time());
-  $response['data']['time'] = $date;
-  $response['data']['areas'] = array();
-  echo json_encode($response);
-  return;
+  $data['time'] = $date;
+  $data['timestamp'] = time();
+  $data['areas'] = array();
+  ApiHelper::success($data);
 }
 $rows = $result -> all_rows_keyed();
 $default_timezone = date_default_timezone_get();
@@ -203,11 +203,9 @@ $max_time = sprintf("%02d", $rows[count($rows) - 1]['eveningends'] > 12 ? $rows[
 $now = time();
 $date = datetime_format($datetime_formats['date_and_time'], $now);
 
-$response['code'] = 0;
-$response['message'] = get_vocab("success");
-$response['data'] = $result;
-$response['data']['min_time'] = $min_time;
-$response['data']['max_time'] = $max_time;
-$response['data']['time'] = $date;
-$response['data']['timestamp'] = $now;
-echo json_encode($response);
+$data = $result;
+$data['min_time'] = $min_time;
+$data['max_time'] = $max_time;
+$data['time'] = $date;
+$data['timestamp'] = $now;
+ApiHelper::success($data);

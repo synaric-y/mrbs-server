@@ -12,25 +12,14 @@ $data = json_decode($json, true);
 
 $type = $data['type'];
 $id = $data['id'];
-$response = array(
-  "code" => 'int',
-  "message" => 'string',
-  "data" => null
-);
 
 if (!checkAuth()){
-  $response["code"] = -99;
-  $response["message"] = get_vocab("please_login");
   setcookie("session_id", "", time() - 3600, "/web/");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
 if (getLevel($_SESSION['user']) < 2){
-  $response["code"] = -98;
-  $response["message"] = get_vocab("accessdenied");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
 if ($type == 'area'){
@@ -40,21 +29,13 @@ if ($type == 'area'){
 }else if ($type == 'device'){
 
 }else{
-  $response['code'] = -1;
-  $response['message'] = get_vocab("wrong_type");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("wrong_type"), ApiHelper::WRONG_TYPE);
 }
 if ($result -> count() < 1){
-  $response['code'] = -2;
-  $response['message'] = get_vocab($type . "_not_exist");
-  echo json_encode($response);
-  return;
+  if ($type == 'room')
+    ApiHelper::fail(get_vocab($type . "_not_exist"), ApiHelper::ROOM_NOT_EXIST);
+  else if ($type == 'area')
+    ApiHelper::fail(get_vocab($type . "_not_exist"), ApiHelper::AREA_NOT_EXIST);
 }
 
-$response['code'] = 0;
-$response['message'] = get_vocab('success');
-while($row = $result -> next_row_keyed()){
-  $response['data'][] = $row;
-}
-echo json_encode($response);
+ApiHelper::success($result -> all_rows_keyed());

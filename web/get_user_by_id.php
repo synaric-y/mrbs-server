@@ -16,39 +16,26 @@ $response = array(
   "message" => 'string'
 );
 
-session_start();
 if (!checkAuth()){
-  $response["code"] = -99;
-  $response["message"] = get_vocab("please_login");
   setcookie("session_id", "", time() - 3600, "/web/");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
 if (getLevel($_SESSION['user']) < 2){
-  $response["code"] = -98;
-  $response["message"] = get_vocab("accessdenied");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
 session_write_close();
 
 
 if (empty($id)){
-  $response['code'] = -1;
-  $response['message'] = get_vocab("search_without_id");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("search_without_id"), ApiHelper::SEARCH_WITHOUT_ID);
 }
 
 $result = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE id = ?", array($id));
 
 if ($result -> count() < 1){
-  $response['code'] = -2;
-  $response['message'] = get_vocab("user_not_exist");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("user_not_exist"), ApiHelper::USER_NOT_EXIST);
 }
 
 $user = $result -> next_row_keyed();
@@ -60,7 +47,4 @@ if (!empty($user['last_login']))
   $user['last_login'] = date('Y-m-d h:i:s A', intval($user['last_login']));
 else
   $user['last_login'] = get_vocab('never_login');
-$response['code'] = 0;
-$response['data'] = $user;
-$response['message'] = get_vocab('success');
-echo json_encode($response);
+ApiHelper::success($user);

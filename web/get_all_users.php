@@ -16,20 +16,13 @@ $response = array(
   "message" => 'string',
 );
 
-session_start();
 if (!checkAuth()){
-  $response["code"] = -99;
-  $response["message"] = get_vocab("please_login");
   setcookie("session_id", "", time() - 3600, "/web/");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
 if (getLevel($_SESSION['user']) < 2){
-  $response["code"] = -98;
-  $response["message"] = get_vocab("accessdenied");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 $username = $_SESSION['user'];
 
@@ -39,10 +32,7 @@ $sql = "SELECT id, level, name, display_name, email FROM " . _tbl("users");
 $result = db() -> query($sql);
 
 if ($result -> count() == 0){
-  $response['code'] = -1;
-  $response['message'] = get_vocab("user_not_exist");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("user_not_exist"), ApiHelper::USER_NOT_EXIST);
 }else{
   while($row = $result -> next_row_keyed()){
     if ($row['name'] == $username){
@@ -50,9 +40,7 @@ if ($result -> count() == 0){
     }else{
       $row['is_self'] = 0;
     }
-    $response['data'][] = $row;
+    $data1[] = $row;
   }
-  $response['code'] = 0;
-  $response['message'] = get_vocab('success');
-  echo json_encode($response);
+  ApiHelper::success($data1);
 }
