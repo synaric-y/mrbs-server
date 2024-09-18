@@ -133,7 +133,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
   private function handleChangeList(SyncFolderItemsResponseMessageType $changesSinceLsatCheck)
   {
     if (empty($changesSinceLsatCheck->getChanges())) {
-
+      \MRBS\log_i($this::$TAG, "empty change since last check, skip all");
       $this->updateSyncState($changesSinceLsatCheck);
       return null;
     }
