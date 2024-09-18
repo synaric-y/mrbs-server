@@ -137,8 +137,10 @@ foreach($fields as $field)
 if (empty($capacity))
 {
   $capacity = 0;
+}else if ($capacity > 1000){
+  $response["code"] = -2;
+  $response["message"] = get_vocab("capacity_too_large");
 }
-
 
 // UPDATE THE DATABASE
 // -------------------
