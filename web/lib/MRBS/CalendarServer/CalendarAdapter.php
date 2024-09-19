@@ -36,7 +36,11 @@ class CalendarAdapter
     }
     if ($this->mode == $this::$MODE_ADD) {
       $result["create_by"] = "admin";
-      $result["name"] = $calendarItem->getSubject() ? get_vocab("ic_xs_meeting", $calendarItem->getSubject()) : "Unknown Meeting";
+      if (strpos($calendarItem->getSubject(), "(BCC)")) {
+        $result["name"] = $calendarItem->getSubject() ? get_vocab("ic_xs_meeting", $calendarItem->getSubject()) : "Unknown Meeting";
+      } else {
+        $result["name"] = $calendarItem->getSubject() ?? "Unknown Meeting";
+      }
       $result["description"] = "";
       $result["book_by"] = $calendarItem->getOrganizer()->getMailbox()->getName() ?? "Unknown";
       $result["type"] = "I";
