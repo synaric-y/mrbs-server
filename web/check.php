@@ -5,7 +5,9 @@ require_once "mrbs_sql.inc";
 
 function checkAuth()
 {
-  if (!isset($_SESSION) || empty($_SESSION))
+  if (empty($_SESSION))
+    return false;
+  else if (empty($_SESSION['user']))
     return false;
   return true;
 }

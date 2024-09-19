@@ -5,6 +5,7 @@ namespace MRBS;
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 use MRBS\CalendarServer\CalendarServerManager;
 use MRBS\Form\Form;
+use MRBS\ApiHelper;
 
 // Deletes an entry, or a series.    The $id is always the id of
 // an individual entry.   If $series is set then the entire series
@@ -36,18 +37,12 @@ $response = array(
 );
 
 if (!checkAuth()){
-  $response["code"] = -99;
-  $response["message"] = get_vocab("please_login");
   setcookie("session_id", "", time() - 3600, "/web/");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
 if (getLevel($_SESSION['user']) < 2){
-  $response["code"] = -98;
-  $response["message"] = get_vocab("accessdenied");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
 $user = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE name = ?", array($_SESSION['user']));
@@ -129,21 +124,11 @@ if ($info = get_booking_info($id, FALSE, TRUE))
           notifyAdminOnDelete($mail_previous, $start_times, $series);
         }
       }
-      $response["code"] = 0;
-      $response["message"] = get_vocab("success");
-      echo json_encode($response);
-      return;
+      ApiHelper::success(null);
     }
-    $response["code"] = -2;
-    $response["message"] = get_vocab("no_access_to_entry");
-    echo json_encode($response);
-    return;
+    ApiHelper::fail(get_vocab("no_access_to_entry"));
   }
 }
 
-$response["code"] = -1;
-$response["message"] = get_vocab("fail_to_delete_entry");
-echo json_encode($response);
-
-// If you got this far then we got an access denied.
+ApiHelper::fail(get_vocab("fail_to_delete_entry"), ApiHelper::FAIL_TO_DELETE_ENTRY);
 

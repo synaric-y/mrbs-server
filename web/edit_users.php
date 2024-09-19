@@ -53,19 +53,12 @@ require_once "mrbs_sql.inc";
 \*---------------------------------------------------------------------------*/
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
-  echo json_encode(array(
-    "code" => -99,
-    "message" => get_vocab("please_login")
-  ));
-  return;
+  ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 $username = $_SESSION['user'];
 
 if (getLevel($_SESSION['user']) < 2){
-  $response["code"] = -98;
-  $response["message"] = get_vocab("accessdenied");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 session_write_close();
 
@@ -95,17 +88,11 @@ $response = array(
 );
 $isAdmin = getLevel($username);
 if ($isAdmin != 2){
-  $response['code'] = -13;
-  $response['message'] = get_vocab("access_denied");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::NO_RIGHT);
 }
 
 if (!isset($action) || ($action != 'edit' && $action != 'add' && $action != 'delete')) {
-  $response["code"] = -1;
-  $response["message"] = get_vocab("wrong_type");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("wrong_type"), ApiHelper::WRONG_TYPE);
 }
 
 if (isset($id)) {
@@ -120,10 +107,7 @@ if (isset($id)) {
   // the id parameter in the query string then we won't.   If the result is invalid, go somewhere
   // safe.
   if (!$data) {
-    $response['code'] = -2;
-    $response['message'] = get_vocab("user_not_exist");
-    echo json_encode($response);
-    return;
+    ApiHelper::fail(get_vocab("user_not_exist"), ApiHelper::USER_NOT_EXIST);
   }
 }
 
@@ -144,35 +128,22 @@ if (!empty($email) && !preg_match($pattern, $email)) {
 }
 
 if ($action == "edit" && !isset($id)){
-  $response["code"] = -9;
-  $response["message"] = get_vocab("edit_without_id");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("edit_without_id"), ApiHelper::EDIT_WITHOUT_ID);
 }
 
 // Error messages
 if (!empty($invalid_email)) {
-  $response['code'] = -3;
-  $response['message'] = get_vocab("invalid_email");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("invalid_email"), ApiHelper::INVALID_EMAIL);
 }
 
 $result = db()->query("SELECT * FROM " . _tbl("users") . " WHERE name = ?", array($name));
 if ($result->count() > 0 && $action == "add")
   $name_not_unique = "true";
 if (!empty($name_not_unique)) {
-  $response['code'] = -4;
-  $response['message'] = get_vocab("name_not_unique");
-  echo json_encode($response);
-  return;
-//    echo "<p class=\"error\">'" . htmlspecialchars($taken_name) . "' " . get_vocab('name_not_unique') . "<p>\n";
+  ApiHelper::fail(get_vocab("name_not_unique"), ApiHelper::NAME_NOT_UNIQUE);
 }
 if (!isset($name) || empty($name)) {
-  $response['code'] = -5;
-  $response['message'] = get_vocab("empty_name");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("empty_name"), ApiHelper::EMPTY_NAME);
 }
 
 
@@ -183,10 +154,7 @@ if ($password0 != $password1) {
 }
 
 if (!empty($pwd_not_match)) {
-  $response['code'] = -6;
-  $response['message'] = get_vocab("passwords_not_eq");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("passwords_not_eq"), ApiHelper::PASSWORDS_NOT_EQ);
 }
 
 ///*---------------------------------------------------------------------------*\
@@ -200,10 +168,7 @@ if (!empty($action) && ($action == "edit")){
   $isExist = db() -> query1("SELECT COUNT(*) FROM " . _tbl("users") . " WHERE name = ?", array($name));
   if ($username == $row['name']){
     if ($isExist > 1){
-      $response['code'] = -11;
-      $response['message'] = get_vocab("name_not_unique");
-      echo json_encode($response);
-      return;
+      ApiHelper::fail(get_vocab("name_not_unique"), ApiHelper::NAME_NOT_UNIQUE);
     }
   }
   $user["name"] = $name;
@@ -214,10 +179,7 @@ if (!empty($action) && ($action == "edit")){
   }
   db() -> query("UPDATE " . _tbl("users") . " SET name = ?, display_name = ?, email = ?, password_hash = ? WHERE id = ?", array($user['name']
     , $user["display_name"], $user["email"], $user["password"], $user["id"]));
-  $response["code"] = 0;
-  $response["message"] = get_vocab("success");
-  echo json_encode($response);
-  return;
+  ApiHelper::success(null);
 }else if (!empty($action) && ($action == "add")){
   $user = $result -> next_row_keyed();
   $user["name"] = $name;
@@ -226,10 +188,7 @@ if (!empty($action) && ($action == "edit")){
   $user["password_hash"] = password_hash($password0, PASSWORD_DEFAULT);
   $user["level"] = $level;
   db() -> query("INSERT INTO " . _tbl("users") . "(level, name, display_name, email, password_hash) VALUES (?, ?, ?, ?, ?)", array($user["level"], $user["name"], $user["display_name"], $user["email"], $user["password_hash"]));
-  $response["code"] = 0;
-  $response["message"] = get_vocab("success");
-  echo json_encode($response);
-  return;
+  ApiHelper::success(null);
 }
 
 
@@ -241,24 +200,17 @@ if (!empty($action) && ($action == "edit")){
 if (!empty($action) && ($action == "delete")){
 
   if($username == $name){
-    $response["code"] = -8;
-    $response["message"] = get_vocab("delete_yourself");
-    echo json_encode($response);
-    return;
+    ApiHelper::fail(get_vocab("delete_yourself"), ApiHelper::DELETE_YOURSELF);
   }
 
   $result = db() -> query("DELETE FROM " . _tbl("users") . " WHERE name = ?", array($name));
   if (!$result) {
-    $response["code"] = -7;
-    $response["message"] = get_vocab("db failed");
-    echo json_encode($response);
-    return;
+    ApiHelper::fail("", ApiHelper::UNKOWN_ERROR);
+//    $response["code"] = -7;
+//    $response["message"] = get_vocab("db_failed");
+//    echo json_encode($response);
+//    return;
   }
-
-  $response["code"] = 0;
-  $response["message"] = get_vocab("success");
-  echo json_encode($response);
-  return;
-
+  ApiHelper::success(null);
 }
 

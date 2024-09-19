@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace MRBS;
 
-use MRBS\Form\Form;
-
 require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
@@ -15,19 +13,12 @@ $area = null;
 
 $type = $data['type'];
 $id = $data['id'];
-$response = array(
-  "code" => 'int',
-  "message" => 'string'
-);
 
 
 if ($type == 'all'){
   $result = db() -> query("SELECT R.id as room_id, R.disabled as room_disabled, A.disabled as area_disabled, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id");
   if ($result -> count() < 1){
-    $response["code"] = -1;
-    $response["message"] = get_vocab("room_not_exist");
-    echo json_encode($response);
-    return;
+    ApiHelper::fail(get_vocab("room_not_exist"), ApiHelper::ROOM_NOT_EXIST);
   }
   $rows = $result -> all_rows_keyed();
   foreach ($rows as $row){
@@ -40,6 +31,8 @@ if ($type == 'all'){
         'area_id' => $areaId,
         'area_name' => $areaName,
         'disabled' => $row['area_disabled'],
+        'start_time' => sprintf("%02d", $row['morningstarts'] > 12 ? $row['morningstarts'] - 12 : $row['morningstarts']) . ":" . sprintf("%02d", $row['morningstarts_minutes']) . ($row['morningstarts'] > 12 ? " PM" : " AM"),
+        'end_time' => sprintf("%02d", $row['eveningends'] > 12 ? $row['eveningends'] - 12 : $row['eveningends']) . ":" . sprintf("%02d", $row['eveningends_minutes']) . ($row['eveningends'] > 12 ? " PM" : " AM"),
         'rooms' => array()
       );
     }
@@ -48,6 +41,8 @@ if ($type == 'all'){
       $tmp[$areaId]['rooms'][$roomId] = array(
         'room_id' => $roomId,
         'room_name' => $roomName,
+        'description' => $row['description'],
+        'status' => "可预约",
         'disabled' => $row['area_disabled'] == 1 ? 1 : $row['room_disabled']
       );
     }
@@ -58,18 +53,11 @@ if ($type == 'all'){
   foreach ($result['areas'] as &$area) {
     $area['rooms'] = array_values($area['rooms']);
   }
-  $response["code"] = 0;
-  $response["message"] = get_vocab("success");
-  $response["data"] = $result;
-  echo json_encode($response);
-  return;
+  ApiHelper::success($result);
 }else if ($type == 'area'){
   $result = db() -> query("SELECT R.id as room_id,R.disabled as room_disabled, A.disabled as area_disabled, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id WHERE A.id = ?", array($id));
   if ($result -> count() < 1){
-    $response["code"] = -1;
-    $response["message"] = get_vocab("room_not_exist");
-    echo json_encode($response);
-    return;
+    ApiHelper::fail(get_vocab("room_not_exist"), ApiHelper::ROOM_NOT_EXIST);
   }
   $rows = $result -> all_rows_keyed();
   foreach ($rows as $row){
@@ -87,18 +75,12 @@ if ($type == 'all'){
       'room_name' => $row['room_name']
     );
   }
-  $response["code"] = 0;
-  $response["message"] = get_vocab("success");
-  $response["data"]['areas'][] = $area;
-  echo json_encode($response);
-  return;
+  $data1['areas'] = $area;
+  ApiHelper::success($data1);
 }else if($type == 'room'){
   $result = db() -> query("SELECT R.id as room_id, R.disabled as room_disabled, A.disabled as area_disabled, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " ON R.area_id = A.id WHERE R.id = ?", array($id));
   if ($result -> count() != 1){
-    $response["code"] = -1;
-    $response["message"] = get_vocab("room_not_exist");
-    echo json_encode($response);
-    return;
+    ApiHelper::fail(get_vocab("room_not_exist"), ApiHelper::ROOM_NOT_EXIST);
   }
   $row = $result -> next_row_keyed();
   $area = array(
@@ -112,14 +94,7 @@ if ($type == 'all'){
     'disabled' => $row['area_disabled'] == 1 ? 1 : $row['room_disabled'],
     'room_name' => $row['room_name']
   );
-  $response["code"] = 0;
-  $response["message"] = get_vocab("success");
-  $response["data"] = $area;
-  echo json_encode($response);
-  return;
+  ApiHelper::success($area);
 }else{
-  $response["code"] = -2;
-  $response["message"] = get_vocab("invalid_types");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("invalid_types"), ApiHelper::INVALID_TYPES);
 }

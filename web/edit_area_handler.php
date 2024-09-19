@@ -6,25 +6,15 @@ namespace MRBS;
 require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
-//// Check the CSRF token.
-//Form::checkToken();
-//
-//// Check the user is authorised for this page
-//checkAuthorised(this_page());
+use MRBS\ApiHelper;
 
 if (!checkAuth()){
-  $response["code"] = -99;
-  $response["message"] = get_vocab("please_login");
   setcookie("session_id", "", time() - 3600, "/web/");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
 if (getLevel($_SESSION['user']) < 2){
-  $response["code"] = -98;
-  $response["message"] = get_vocab("accessdenied");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
 // Get non-standard form variables
@@ -159,7 +149,7 @@ $errors = array();
 $id = get_area_id($area_name);
 if (isset($id) && ($id != $area))
 {
-  $errors[] = get_vocab("area_not_exist");
+  ApiHelper::fail(get_vocab("area_not_exist"), ApiHelper::AREA_NOT_EXIST);
 }
 
 // Clean up the address list replacing newlines by commas and removing duplicates
@@ -167,7 +157,7 @@ $area_admin_email = clean_address_list($area_admin_email);
 // Validate email addresses
 if (!validate_email_list($area_admin_email))
 {
-  $errors[] = get_vocab('invalid_email');
+  ApiHelper::fail(get_vocab("invalid_email"), ApiHelper::INVALID_EMAIL);
 }
 
 // Check that the time formats are correct (hh:mm).  They should be, because
@@ -177,7 +167,7 @@ if (!validate_email_list($area_admin_email))
 if (!preg_match(REGEX_HHMM, $area_start_first_slot) ||
     !preg_match(REGEX_HHMM, $area_start_last_slot))
 {
-  $errors[] = get_vocab('invalid_start_time');
+  ApiHelper::fail(get_vocab("invalid_start_time"), ApiHelper::INVALID_START_TIME);
 }
 else
 {
@@ -248,7 +238,7 @@ else
     // Avoid divide by zero errors
     if ($area_res_mins == 0)
     {
-      $errors[] = get_vocab('invalid_resolution');
+      ApiHelper::fail(get_vocab("invalid_resolution"), ApiHelper::INVALID_RESOLUTION);
     }
     else
     {
@@ -267,25 +257,10 @@ else
 
       if ($start_difference%$area_res_mins != 0)
       {
-        $errors[] = get_vocab('invalid_resolution');
+        ApiHelper::fail(get_vocab("invalid_resolution"), ApiHelper::INVALID_RESOLUTION);
       }
     }
   }
-}
-
-// Errors in the form data - go back to the form
-if (!empty($errors))
-{
-  $query_string = "area=$area";
-  foreach ($errors as $error)
-  {
-    $query_string .= "&errors[]=$error";
-  }
-  $response["code"] = -2;
-  $response["message"] = get_vocab($errors[0]);
-  echo json_encode($response);
-  return;
-//  location_header("edit_area.php?$query_string");
 }
 
 // Everything is OK, update the database
@@ -458,18 +433,7 @@ if ($areaExist > 0) {
   $success = false;
 }
 if ($success){
-  $response = array(
-    "code" => 0,
-    "message" => get_vocab("success")
-  );
-  echo json_encode($response);
+  ApiHelper::success(null);
 }else{
-  $response = array(
-    "code" => -1,
-    "message" => get_vocab("area_not_exist")
-  );
-  echo json_encode($response);
+  ApiHelper::fail(get_vocab("area_not_exist"), ApiHelper::AREA_NOT_EXIST);
 }
-
-//// Go back to the admin page
-////location_header("admin.php?day=$day&month=$month&year=$year&area=$area");

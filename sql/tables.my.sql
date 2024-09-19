@@ -282,3 +282,24 @@ ALTER TABLE mrbs_area ADD COLUMN  `wxwork_secret` varchar(255)  NULL DEFAULT '' 
 ALTER TABLE mrbs_room ADD COLUMN  `wxwork_sync_state` varchar(255)  NULL DEFAULT ''   COMMENT '';
 ALTER TABLE mrbs_room ADD COLUMN  `battery_level` int NULL COMMENT '';
 
+CREATE TABLE mrbs_system_variable(
+  id                     int NOT NULL auto_increment,
+  use_wxwork             tinyint NOT NULL DEFAULT 0 COMMENT 'whether use wxwork',
+  use_exchange           tinyint NOT NULL DEFAULT 0 COMMENT 'whether use exchange',
+  exchange_server        varchar(255) NULL DEFAULT '' COMMENT 'only be used when use_exchange=1, this is exchange server ip or domain',
+  corpid                 varchar(255) NULL DEFAULT '' COMMENT 'only be used when use_wxwork=1, get from wxwork',
+  secret                 varchar(255) NULL DEFAULT '' COMMENT 'only be used when use_wxwork=1, get from wxwork',
+  agentid                varchar(255) NULL DEFAULT '' COMMENT 'only be used when use_wxwork=1, get from wxwork',
+  default_password_hash  varchar(255) NULL DEFAULT '$2y$10$KBS1/8LXU4eNKgKyosKXWeX1TVOMUhpXwrFgSE9PoOPxs6Dh23i0G' COMMENT 'when create by third-party, this will be the default password',
+  call_back_domain       varchar(255) NULL DEFAULT '' COMMENT 'only be used when use_wxwork=1, set in wxwork',
+  mysql_host             varchar(255) NULL DEFAULT 'localhost' COMMENT 'mysql host',
+  mysql_port             int NULL DEFAULT 3306 COMMENT 'mysql port',
+  redis_host             varchar(255) NULL DEFAULT 'localhost' COMMENT 'redis host',
+  redis_port             int NULL DEFAULT 6379 COMMENT 'redis port',
+
+  PRIMARY KEY (id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE mrbs_system_variable ADD COLUMN `mysql_user` varchar(255) NULL DEFAULT 'mrbs';
+ALTER TABLE mrbs_system_variable ADD COLUMN `mysql_password` varchar(255) NULL DEFAULT '$2y$10$KBS1/8LXU4eNKgKyosKXWeX1TVOMUhpXwrFgSE9PoOPxs6Dh23i0G';
+ALTER TABLE mrbs_system_variable ADD COLUMN `redis_password` varchar(255) NULL DEFAULT '';

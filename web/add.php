@@ -31,18 +31,12 @@ $data = json_decode($json, true);
 $name = $data['name'];
 
 if (!checkAuth()){
-  $response["code"] = -99;
-  $response["message"] = get_vocab("please_login");
   setcookie("session_id", "", time() - 3600, "/web/");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
 if (getLevel($_SESSION['user']) < 2){
-  $response["code"] = -98;
-  $response["message"] = get_vocab("accessdenied");
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
 $description = $data['description'];
@@ -54,14 +48,14 @@ if ($type === 'area') {
   $area = false;
   $room = true;
 } else if ($type !== 'room') {
-  $error = get_vocab("wrong_type");
+  ApiHelper::fail(get_vocab("wrong_type"), ApiHelper::WRONG_TYPE);
 } else {
   $room = false;
 }
 
 // First of all check that we've got an area or room name
 if (!isset($name) || ($name === '')) {
-  $error = get_vocab("empty_name");
+  ApiHelper::fail(get_vocab("empty_name"), ApiHelper::EMPTY_NAME);
 }
 
 // we need to do different things depending on if it's a room
@@ -73,18 +67,12 @@ elseif ($type == "area") {
 }
 
 if ($area && isset($room) && $room) {
-  $response = array(
-    "code" => 0,
-    "message" => get_vocab("success")
-  );
-  echo json_encode($response);
-  return;
+  ApiHelper::success(null);
 } else {
   $response = array(
-    "code" => -1,
-    "message" => get_vocab($error)
+    "code" => -100,
+    "message" => $error
   );
   echo json_encode($response);
-  return;
 }
 

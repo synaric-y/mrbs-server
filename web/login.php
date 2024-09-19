@@ -14,35 +14,21 @@ $username = $data['username'];
 $password = $data['password'];
 
 if (!empty($_SESSION) && isset($_SESSION['user'])) {
-  $response = array(
-    "code" => 1,
-    "message" => get_vocab("already_login")
-  );
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("already_login"), ApiHelper::ALREADY_LOGIN);
 }
 setcookie("session_id", "", time() - 3600, "/web/");
 $result = auth() -> validateUser($username, $password);
 if (!$result) {
-  $response = array(
-    "code" => -1,
-    "message" => get_vocab("invalid_username_or_password")
-  );
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("invalid_username_or_password"), ApiHelper::INVALID_USERNAME_OR_PASSWORD);
 }
 $_SESSION['user'] = $username;
 setcookie("session_id", session_id(), time() + 30 * 24 * 60 * 60, "/web/");
 $result = db() -> query("SELECT level, display_name FROM " . _tbl("users") . " WHERE name = ?", array($username));
 $row = $result -> next_row_keyed();
-$response = array(
-  "code" => 0,
-  "message" => get_vocab("success"),
-  "data" => array(
-    "username" => $username,
-    "level" => $row['level'],
-    "display_name" => $row['display_name']
-  )
+$data = array(
+  "username" => $username,
+  "level" => $row['level'],
+  "display_name" => $row['display_name']
 );
 session_write_close();
-echo json_encode($response);
+ApiHelper::success($data);
