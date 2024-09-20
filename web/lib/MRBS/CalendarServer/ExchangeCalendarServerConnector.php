@@ -244,13 +244,20 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     $adapter = new CalendarAdapter(CalendarAdapter::$MODE_ADD);
     $this->fmtChangeList["create"][] = array(
       "from" => "exchange",
-      "data" => $adapter->exchangeCalendarToEntry($ci, $this->room)
+      "data" => $adapter->exchangeCalendarToEntry($ci, $this->room),
+      "item" => $ci
     );
     try {
-      $this->getCalendar()->acceptMeeting($ci->getItemId(), "");
+//      echo $ci->getItemId()->getId() . "\n";
+//      $this->getCalendar()->acceptMeeting($ci->getItemId(), "");
+//      echo 1;
+//      $this->getCalendar()->declineMeeting($ci->getItemId(), "test");
     } catch (\Exception $e) {
 //      \MRBS\log_write($this::$TAG, $e->getMessage();
 //      \MRBS\log_write($this::$TAG, $e->getTraceAsString();
+//      $this->getCalendar()->declineMeeting($ci->getItemId(), "test");
+//      echo $e->getMessage();
+//      echo $e->getTraceAsString();
     }
   }
 
@@ -345,6 +352,26 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
       DBHelper::update(_tbl("entry"), array("exchange_id" => $exchange_id, "exchange_key" => $exchange_key), "id = $id");
     } catch (\Exception $e) {
 
+    }
+  }
+
+  public function declineMeeting(CalendarItemType $i, string $msg)
+  {
+    try{
+      $this->getCalendar()->declineMeeting($i->getItemId(), $msg);
+    }catch (\Exception $e){
+//      echo $e->getMessage();
+//      echo $e->getTraceAsString();
+    }
+  }
+
+  public function acceptMeeting(CalendarItemType $i, string $msg)
+  {
+    try{
+      $this->getCalendar()->acceptMeeting($i->getItemId(), $msg);
+    }catch (\Exception $e){
+//      echo $e->getMessage();
+//      echo $e->getTraceAsString();
     }
   }
 }

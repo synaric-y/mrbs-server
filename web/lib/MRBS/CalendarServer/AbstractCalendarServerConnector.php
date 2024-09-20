@@ -20,4 +20,5 @@ interface AbstractCalendarServerConnector {
 
   // Notify third-party services to update meetings.
   function updateMeeting($entry);
+
 }
