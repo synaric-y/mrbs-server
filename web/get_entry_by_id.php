@@ -7,14 +7,15 @@ namespace MRBS;
 require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-$id = $data['id'];
+/*
+ * 根据会议id查询会议
+ * @Params
+ * id：待查询的会议id
+ * @Return
+ * data中包含该会议的所有信息
+ */
 
-$response = array(
-  "code" => 'int',
-  "message" => 'string',
-);
+$id = $_POST['id'];
 
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");

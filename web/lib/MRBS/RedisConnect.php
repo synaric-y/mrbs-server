@@ -2,6 +2,9 @@
 
 namespace MRBS;
 
+
+use Redis;
+
 class RedisConnect
 {
   private static $redis;
@@ -24,7 +27,7 @@ class RedisConnect
     if (flock($file, LOCK_EX)){
       try{
         if (empty($redis)) {
-          self::$redis = new \Redis();
+          self::$redis = new Redis();
           self::$redis->connect($redis_host, $redis_port);
         }
       } finally {

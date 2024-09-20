@@ -8,6 +8,18 @@ require_once "mrbs_sql.inc";
 
 use MRBS\ApiHelper;
 
+/*
+ * 用于编辑会议的接口
+ * @Params
+ * area：区域id
+ * sort_key：排序值
+ * area_name：区域名称
+ * area_disabled：区域是否禁用
+ * area_timezone：区域时区，TODO 暂时未启用
+ * area_admin_email：区域管理员电子邮箱
+ * area_start_first_slot：区域
+ */
+
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
@@ -57,20 +69,11 @@ $form_vars = array(
   'area_confirmed_default' => 'string',
   'area_default_type' => 'string',
   'area_times_along_top' => 'string',
-  'area_use_exchange' => 'int',
-  'area_use_wxwork' => 'int',
-  'area_exchange_server' => 'string',
-  'area_wxwork_corpid' => 'string',
-  'area_wxwork_secret' => 'string',
-  'custom_html' => 'string'
 );
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-$area = $data['area'];
+$area = $_POST['area'];
 foreach ($form_vars as $var => $var_type) {
-//  $$var = get_form_var($var, $var_type);
-  $$var = $data[$var];
+  $$var = $_POST[$var];
   if (($var_type == 'bool') || ($$var !== null)) {
     switch ($var_type) {
       case 'array':
@@ -119,19 +122,19 @@ foreach ($interval_types as $interval_type)
 {
   $var = "area_max_per_$interval_type";
 //  $$var = get_form_var($var, 'int');
-  $$var = intval($data[$var]);
+  $$var = intval($_POST[$var]);
   $var = "area_max_per_{$interval_type}_enabled";
 //  $$var = get_form_var($var, 'string');
-  $$var = (string) $data[$var];
+  $$var = (string) $_POST[$var];
   $var = "area_max_secs_per_$interval_type";
 //  $$var = get_form_var($var, 'int');
-  $$var = intval($data[$var]);
+  $$var = intval($_POST[$var]);
   $var = "area_max_secs_per_{$interval_type}_units";
 //  $$var = get_form_var($var, 'string');
-  $$var = (string) $data[$var];
+  $$var = (string) $_POST[$var];
   $var = "area_max_secs_per_{$interval_type}_enabled";
 //  $$var = get_form_var($var, 'string');
-  $$var = (string) $data[$var];
+  $$var = (string) $_POST[$var];
 }
 
 // UPDATE THE DATABASE
@@ -411,16 +414,6 @@ $assign_array[] = "default_type=?";
 $sql_params[] = $area_default_type;
 $assign_array[] = "times_along_top=?";
 $sql_params[] = $area_times_along_top;
-$assign_array[] = 'use_exchange=?';
-$sql_params[] = $area_use_exchange;
-$assign_array[] = 'use_wxwork=?';
-$sql_params[] = $area_use_wxwork;
-$assign_array[] = 'exchange_server=?';
-$sql_params[] = $area_exchange_server;
-$assign_array[] = 'wxwork_corpid=?';
-$sql_params[] = $area_wxwork_corpid;
-$assign_array[] = 'wxwork_secret=?';
-$sql_params[] = $area_wxwork_secret;
 
 $sql .= implode(",", $assign_array) . " WHERE id=?";
 $sql_params[] = $area;

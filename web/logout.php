@@ -8,8 +8,9 @@ require_once "mrbs_sql.inc";
 
 header('Content-Type: application/json');
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
+/*
+ * 登出接口，无传入传出值，需要有登录状态的cookie
+ */
 
 if (!isset($_SESSION['user']) || empty($_SESSION) ) {
   setcookie("session_id", "", time() - 3600, "/web/");
@@ -28,8 +29,4 @@ if (!$result){
 }
 
 setcookie("session_id", "", time() - 3600, "/web/");
-$response = array(
-  "code" => 0,
-  "message" => get_vocab("success")
-);
-echo json_encode($response);
+ApiHelper::success(null);

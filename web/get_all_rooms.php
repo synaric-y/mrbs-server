@@ -6,13 +6,19 @@ namespace MRBS;
 require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
+/*
+ * 获取所有房间信息
+ * @Params
+ * type：用于判断是查询所有内容，还是某个区域下的房间，还是某个具体房间
+ * id：待查询的区域或房间id
+ * @Return
+ * data中包含查询到的相应的区域、房间信息
+ */
 
 $area = null;
 
-$type = $data['type'];
-$id = $data['id'];
+$type = $_POST['type'];
+$id = $_POST['id'];
 
 
 if ($type == 'all'){

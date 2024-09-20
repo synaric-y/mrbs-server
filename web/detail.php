@@ -6,12 +6,18 @@ namespace MRBS;
 require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
+/*
+ * 用于获取房间或者区域的具体信息
+ * @Params
+ * type：用于判断需要获取的是房间信息还是区域信息
+ * id：待获取的房间或者区域的id
+ * @Return
+ * data中包含查询到的房间或者区域的信息
+ */
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
 
-$type = $data['type'];
-$id = $data['id'];
+$type = $_POST['type'];
+$id = $_POST['id'];
 
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");

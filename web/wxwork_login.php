@@ -2,13 +2,24 @@
 declare(strict_types=1);
 
 
-
+require_once './appapi/api.php';
 require_once '../vendor/autoload.php';
 require_once "./defaultincludes.inc";
 require_once "./functions_table.inc";
 require_once "./mrbs_sql.inc";
 require_once "./lib/Wxwork/api/src/CorpAPI.class.php";
 require_once "./lib/Wxwork/api/src/Utils.php";
+
+use MRBS\ApiHelper;
+
+/*
+ * 企业微信登录接口，通过企业微信获取登陆人（GET），通常通过email字段进行比对，如果email字段没有比对成功
+ * 则会新创建一个用户
+ * @Param
+ * code：通过企业微信回调后，由企业微信提供的code值，利用该code值可以获取到登陆人信息
+ * @Return
+ * 无，但是会设置js不可修改的cookie
+ */
 
 global $corpid, $secret, $default_password_hash;
 
@@ -23,7 +34,6 @@ if (!isset($_GET) || empty($_GET["code"])) {
 }
 
 $retry = 0;
-
 while ($retry < 2){
   $access_token = get_access_token($corpid, $secret);
   $code = $_GET['code'];
@@ -89,13 +99,14 @@ while($retry < 2){
   $retry++;
 }
 
-$result = \MRBS\db()-> query("SELECT * FROM " . \MRBS\_tbl("user") . " WHERE email = ? or email = ?", array($data['email'], $data['userid']));
+$result = \MRBS\db()-> query("SELECT * FROM " . \MRBS\_tbl("users") . " WHERE email = ? or email = ?", array($data['email'], $data['userid']));
 if ($result -> count() < 1){
   \MRBS\db()->begin();
   try{
-    $transaction_ok = \MRBS\db()-> query("INSERT INTO " . \MRBS\_tbl("user") . "(level, name, display_name, password_hash, email, timestamp) VALUES (?, ?, ?, ?, ?, ?)", array(1, explode("@", $data['userid'])[0], str_replace(".", " ", explode("@", $data['userid'])[0]), $default_password_hash, $data['email'] ?? $data['userid'], time()));
+    $transaction_ok = \MRBS\db()-> query("INSERT INTO " . \MRBS\_tbl("user") . "(level, name, display_name, password_hash, email, timestamp) VALUES (?, ?, ?, ?, ?, ?)", array(1, explode("@", $data['userid'])[0], str_replace(".", " ", explode("@", $data['userid'])[0]), $default_password_hash, $data['email'] ?? $data['userid'], date("Y-m-d H:i:s", time())));
     if ($transaction_ok){
       \MRBS\db()->commit();
+      $_SESSION['user'] = explode("@", $data['userid'])[0];
     }else{
       \MRBS\db()->rollback();
     }
@@ -103,9 +114,11 @@ if ($result -> count() < 1){
     \MRBS\db()->rollback();
     \MRBS\ApiHelper::fail(\MRBS\get_vocab("fail_to_create_user"), \MRBS\ApiHelper::FAIL_TO_CREATE_USER);
   }
+}else{
+  $row = $result->next_row_keyed();
+  $_SESSION['user'] = $row['name'];
 }
 
-$_SESSION['user'] = explode("@", $data['userid'])[0];
 session_write_close();
 \MRBS\ApiHelper::success(null);
 

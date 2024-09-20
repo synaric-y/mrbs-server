@@ -1,6 +1,10 @@
 <?php
 namespace MRBS;
 
+/*
+ * 用于统一调用的接口，通过此接口固定response的头参数
+ */
+
 $origin_arr = [
   'https://meeting-manage-dev.businessconnectchina.com:11443',
   'http://localhost:5173',

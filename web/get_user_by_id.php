@@ -6,15 +6,15 @@ namespace MRBS;
 require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
+/*
+ * 根据用户id查询用户信息
+ * @Params
+ * id：用户id
+ * @Return
+ * data中包含该用户的所有信息
+ */
 
-$id = $data['id'];
-
-$response = array(
-  "code" => 'int',
-  "message" => 'string'
-);
+$id = $_POST['id'];
 
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");

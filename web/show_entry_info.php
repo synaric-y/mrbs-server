@@ -6,31 +6,23 @@ namespace MRBS;
 require_once "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
+/*
+ * 根据id查询会议信息
+ * @Params
+ * id：待查询会议的id
+ * @Return
+ * data中包含该会议的信息
+ */
 
-$id = intval($data['id']);
-$response = array(
-  "code" => 'int',
-  "message" => 'string',
-);
+$id = intval($_POST['id']);
 
 if (!isset($id) || $id === '' || $id == 0) {
-  $response['code'] = -1;
-  $response['message'] = 'missing id or id is not a number';
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("search_without_id"), ApiHelper::SEARCH_WITHOUT_ID);
 }
 
 $result = db() -> query("SELECT * FROM " . _tbl("entry") . " WHERE id = ?", array($id));
 if ($result -> count() < 1){
-  $response['code'] = -2;
-  $response['message'] = 'entry ' . $id . ' not found';
-  echo json_encode($response);
-  return;
+  ApiHelper::fail(get_vocab("entry_not_exist"), ApiHelper::ENTRY_NOT_EXIST);
 }
 
-$response['code'] = 0;
-$response['message'] = 'success';
-$response['data'] = $result ->next_row_keyed();
-echo json_encode($response);
+ApiHelper::success($result->next_row_keyed());

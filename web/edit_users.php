@@ -47,7 +47,18 @@ use MRBS\Form\Form;
 require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
-
+/*
+ * 编辑用户接口
+ * @Params
+ * action：用于判断该操作是新增还是编辑还是删除
+ * id：当action是编辑或者删除时，id为待编辑或待删除用户的id
+ * email：用户的电子邮箱地址
+ * name：用户的用户名
+ * password0：第一次输入的密码
+ * password1：第二次输入的密码
+ * level：用户的权限级别
+ * display_name：用户用于展示的名字
+ */
 /*---------------------------------------------------------------------------*\
 |                         Authenticate the current user                         |
 \*---------------------------------------------------------------------------*/
@@ -70,26 +81,15 @@ session_write_close();
 
 
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-$action = $data['action'];
-$id = $data['id'];
+$action = $_POST['action'];
+$id = $_POST['id'];
 
-$email = $data['email'];
-$name = $data['name'];
-$password0 = $data['password0'];
-$password1 = $data['password1'];
-$level = $data['level'];
-$display_name = $data['display_name'];
-
-$response = array(
-  "code" => 'int',
-  "message" => 'string'
-);
-$isAdmin = getLevel($username);
-if ($isAdmin != 2){
-  ApiHelper::fail(get_vocab("no_right"), ApiHelper::NO_RIGHT);
-}
+$email = $_POST['email'];
+$name = $_POST['name'];
+$password0 = $_POST['password0'];
+$password1 = $_POST['password1'];
+$level = $_POST['level'];
+$display_name = $_POST['display_name'];
 
 if (!isset($action) || ($action != 'edit' && $action != 'add' && $action != 'delete')) {
   ApiHelper::fail(get_vocab("wrong_type"), ApiHelper::WRONG_TYPE);
