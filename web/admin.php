@@ -6,13 +6,14 @@ require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
 
-// Check the CSRF token.
-// Only check the token if the page is accessed via a POST request.  Therefore
-// this page should not take any action, but only display data.
-//Form::checkToken(true);
-
-// Check the user is authorised for this page
-//checkAuthorised(this_page());
+/*
+ * 用于查询区域或房间信息
+ * @Param
+ * type：查询区域时为area，查询房间时为room
+ * area：查询房间时生效，用于限定查询某个区域的房间
+ * @Return
+ * code为0时表示成功，data中会包含查询到的数据
+ */
 
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
@@ -23,11 +24,8 @@ if (getLevel($_SESSION['user']) < 2){
   ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-
-$type = $data['type'];
-$area = $data['area'];
+$type = $_POST['type'];
+$area = $_POST['area'];
 
 if ($type == 'all'){
 

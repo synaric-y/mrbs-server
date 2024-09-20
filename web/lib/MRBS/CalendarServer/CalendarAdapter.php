@@ -3,6 +3,8 @@ namespace MRBS\CalendarServer;
 
 use DateTime;
 use garethp\ews\API\Type\CalendarItemType;
+use MRBS\RepeatRule;
+use function MRBS\_tbl;
 use function MRBS\generate_global_uid;
 use function MRBS\get_vocab;
 
@@ -31,6 +33,10 @@ class CalendarAdapter
     $result["end_time"] = $this->iOSTimeToTimeStamp($calendarItem->getEnd());
     $result["entry_type"] = 0;
     $result["room_id"] = $room["id"];
+//    $result["skip"] = false;
+//    $result["edit_series"] = false;
+    $repeat_rule = new RepeatRule();
+    $repeat_rule -> setType(RepeatRule::NONE);
     if ($this->mode == $this::$MODE_UPDATE) {
       $result["modified_by"] = "admin";
     }
@@ -61,7 +67,10 @@ class CalendarAdapter
       $result["id"] = $oldData["id"];
       $result["ical_sequence"] = $oldData["ical_sequence"] + 1;
     }
-
+//    $result["confirm"] = "";
+//    $result["private"] = false;
+//    $result["awaiting_approval"] = false;
+//    $result["tentative"] = false;
     return $result;
   }
 
@@ -126,5 +135,13 @@ class CalendarAdapter
   {
     $dateTime = new DateTime($time);
     return $dateTime->getTimestamp();
+  }
+
+  public function exchangeCalendarToRecurringEntry(CalendarItemType $calendarItem, $room, $oldData = null) : array{
+
+
+
+
+    return array();
   }
 }

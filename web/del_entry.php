@@ -18,23 +18,26 @@ require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 require_once "functions_mail.inc";
 
+/*
+ * 用于删除会议，支持删除普通会议以及周期会议
+ * @Params
+ * id：待删除会议的id
+ * series：用于判断待删除会议是否是周期会议，如果不是，则该参数为空字符串，否则为任意非空字符串
+ */
 
-// Get non-standard form variables
-//$id = get_form_var('id', 'int', null, INPUT_POST);
-//$series = get_form_var('series', 'bool', null, INPUT_POST);
-//$returl = get_form_var('returl', 'string', null, INPUT_POST);
-//$action = get_form_var('action', 'string', null, INPUT_POST);
-//$note = get_form_var('note', 'string', '', INPUT_POST);
+$id = $_POST["entry_id"];
+$series = boolval($_POST["entry_series"]);
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-$id = $data["entry_id"];
-$series = boolval($data["entry_series"]);
-
-$response = array(
-  "code" => 'int',
-  "message" => 'string'
-);
+if (!$series){
+  $result = db() -> query("SELECT * FROM " . _tbl("entry") . " WHERE id = ?", array($id));
+  if ($result -> count() < 1){
+    ApiHelper::fail(get_vocab("entry_not_exist"), ApiHelper::ENTRY_NOT_EXIST);
+  }
+  $row = $result -> next_row_keyed();
+  if($row['end_time'] <= time()){
+    ApiHelper::fail(get_vocab("expired_end_time"), ApiHelper::EXPIRED_END_TIME);
+  }
+}
 
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");

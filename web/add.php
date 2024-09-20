@@ -9,41 +9,40 @@ require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
 
-//// Check the CSRF token
-//Form::checkToken();
-//
-//// Check the user is authorised for this page
-//checkAuthorised(this_page());
-
-
-
-// Get non-standard form variables
-//$name = get_form_var('name', 'string', null, INPUT_POST);
-//$description = get_form_var('description', 'string', null, INPUT_POST);
-//$capacity = get_form_var('capacity', 'int', null, INPUT_POST);
-//$room_admin_email = get_form_var('room_admin_email', 'string', null, INPUT_POST);
-//$type = get_form_var('type', 'string', null, INPUT_POST);
+/*
+ * 添加区域或房间接口
+ * @Param
+ * name：房间或区域名称（不可为空）
+ * description：房间描述，TODO 目前用来存储房间内设备
+ * capacity：房间的容纳量
+ * room_admin_email：房间管理员的email
+ * type：添加的是区域还是房间，如果是区域则该参数为area，如果是房间则该参数为room
+ * area：如果添加的是房间，需要给出区域的id
+ * @Return
+ * 如果code为0，则代表操作成功，如果为-99，说明用户没有登录状态，如果为-98，说明用户没有该操作权限，如果-9代表
+ * type参数无效，如果为-10说明name参数为空
+ */
 
 // This file is for adding new areas/rooms
 $error = '';
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-$name = $data['name'];
+$name = $_POST['name'];
 
+//判断用户是否登录
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
+//判断用户是否具有权限
 if (getLevel($_SESSION['user']) < 2){
   ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
-$description = $data['description'];
-$capacity = $data['capacity'];
-$room_admin_email = $data['room_admin_email'];
-$type = $data['type'];
-$area = $data['area'];
+$description = $_POST['description'];
+$capacity = $_POST['capacity'];
+$room_admin_email = $_POST['room_admin_email'];
+$type = $_POST['type'];
+$area = $_POST['area'];
 if ($type === 'area') {
   $area = false;
   $room = true;
@@ -71,7 +70,7 @@ if ($area && isset($room) && $room) {
 } else {
   $response = array(
     "code" => -100,
-    "message" => $error
+    "message" => get_vocab($error)
   );
   echo json_encode($response);
 }

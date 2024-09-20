@@ -8,6 +8,15 @@ use MRBS\ApiHelper;
 
 require "defaultincludes.inc";
 
+/*
+ * 用于判断删除区域或者房间的接口，如果删除放进，则会将该房间下的所有会议删除，但是如果删除区域，则必须保证该
+ * 区域下没有其他房间，否则会删除失败。
+ * @Params
+ * type：待删除的是区域还是房间
+ * room：待删除的房间id
+ * area：待删除的区域id
+ */
+
 if (!checkAuth()) {
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), \MRBS\ApiHelper::PLEASE_LOGIN);
@@ -22,11 +31,9 @@ if (getLevel($_SESSION['user']) < 2) {
 //$type = get_form_var('type', 'string');
 //$confirm = get_form_var('confirm', 'string', null, INPUT_POST);
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-$type = $data['type'];
-$room = $data['room'];
-$area = $data['area'];
+$type = $_POST['type'];
+$room = $_POST['room'];
+$area = $_POST['area'];
 
 //$context = array(
 //    'view'      => $view,

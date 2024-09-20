@@ -4,10 +4,11 @@ use MRBS\CalendarServer\CalendarServerManager;
 use MRBS\DBHelper;
 
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+
 require_once dirname(__DIR__) . "/defaultincludes.inc";
+
 require_once dirname(__DIR__) . "/functions_table.inc";
 require_once dirname(__DIR__) . "/mrbs_sql.inc";
-
 
 ini_set('display_errors', 1);            //错误信息
 ini_set('display_startup_errors', 1);    //php启动错误信息
@@ -59,15 +60,26 @@ while (true) {
           }
         }
         foreach ($fmtChangeList["create"] as $create) {
-          DBHelper::insert(\MRBS\_tbl("entry"), $create["data"]);
+          $success = DBHelper::insert(\MRBS\_tbl("entry"), $create["data"]) ?? false;
+//          $result = MRBS\mrbsMakeBookings(array($create["data"]), null, false, $create["data"]["skip"], $room[""]);
           foreach ($thirdCalendarService as $serviceName => $config) {
-            if ($area[$config["switch"]] != 1)
-              continue;
-            if ($create["from"] == $serviceName) {
+            if (!$success && $create["from"] == $serviceName) {
+              $connector = CalendarServerManager::getServer($config, $area, $room);
+              $connector->declineMeeting($create['item'], "DB Failed");
+              break;
+            } else if (!$success && $create["from"] != $serviceName) {
               continue;
             }
+            if ($area[$config["switch"]] != 1)
+              continue;
+//            if ($create["from"] == $serviceName) {
+//              continue;
+//            }
             $connector = CalendarServerManager::getServer($config, $area, $room);
-            $connector->createMeeting($create["data"]);
+            if ($create["from"] == $serviceName) {
+              $connector->acceptMeeting($create['item'], "");
+            } else
+              $connector->createMeeting($create["data"]);
           }
         }
         foreach ($fmtChangeList["update"] as $update) {
@@ -95,7 +107,6 @@ while (true) {
       }
     }
   }
-
   \MRBS\log_i($tag, "done!");
   sleep(10);
 }

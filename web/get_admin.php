@@ -6,6 +6,14 @@ namespace MRBS;
 require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
+/*
+ * 用于获取所有管理员名称的接口
+ * @Param
+ * 无
+ * @Return
+ * 所有管理员的name
+ */
+
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
@@ -15,8 +23,6 @@ if (getLevel($_SESSION['user']) < 2){
   ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
 
 global $min_booking_admin_level;
 
