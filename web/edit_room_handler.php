@@ -296,4 +296,3 @@ if (empty($errors))
   }
 
 }
-

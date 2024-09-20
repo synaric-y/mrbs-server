@@ -17,6 +17,8 @@ For details on the display project, please see[mrbs-app](https://github.com/syna
 - Tablet screen displays conference room status and reservation information
 - Sync Calendar with Microsoft Exchange, extensible third-party Calendar support
 - I18n support, Chinese/English/Korean...
+- Booking Fast Meeting
+- Remote Update
 
 # Install
 
