@@ -32,9 +32,9 @@ if (getLevel($_SESSION['user']) < 2) {
 //$type = get_form_var('type', 'string');
 //$confirm = get_form_var('confirm', 'string', null, INPUT_POST);
 
-$type = $_POST['type'];
-$room = $_POST['room'];
-$area = $_POST['area'];
+$type = $_POST['type'] ?? null;
+$room = $_POST['room'] ?? null;
+$area = $_POST['area'] ?? null;
 
 //$context = array(
 //    'view'      => $view,

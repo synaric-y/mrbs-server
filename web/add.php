@@ -26,7 +26,7 @@ require_once './appapi/api_helper.php';
 
 // This file is for adding new areas/rooms
 $error = '';
-$name = $_POST['name'];
+$name = $_POST['name'] ?? null;
 
 //判断用户是否登录
 if (!checkAuth()){
@@ -39,11 +39,14 @@ if (getLevel($_SESSION['user']) < 2){
   ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
-$description = $_POST['description'];
-$capacity = $_POST['capacity'];
-$room_admin_email = $_POST['room_admin_email'];
-$type = $_POST['type'];
-$area = $_POST['area'];
+$description = $_POST['description'] ?? null;
+$capacity = $_POST['capacity'] ?? null;
+if (empty(intval($capacity))){
+  ApiHelper::fail(get_vocab("missing_parameters"), ApiHelper::MISSING_PARAMETERS);
+}
+$room_admin_email = $_POST['room_admin_email'] ?? null;
+$type = $_POST['type'] ?? null;
+$area = $_POST['area'] ?? null;
 if ($type === 'area') {
   $area = false;
   $room = true;

@@ -7,6 +7,7 @@ use MRBS\RepeatRule;
 use function MRBS\_tbl;
 use function MRBS\generate_global_uid;
 use function MRBS\get_vocab;
+use MRBS\DBHelper;
 
 class CalendarAdapter
 {
@@ -41,8 +42,9 @@ class CalendarAdapter
       $result["modified_by"] = "admin";
     }
     if ($this->mode == $this::$MODE_ADD) {
-      $result["create_by"] = "admin";
-      $calendarItem->getOrganizer();
+      $email = $calendarItem -> getOrganizer() ->getMailbox() -> getEmailAddress();
+      $create_by = DBHelper::one(_tbl("users"), ["email" => $email]);
+      $result["create_by"] = $create_by ?? "exchange";
       if ($calendarItem->getOrganizer()->getMailbox()->getName() == $calendarItem->getSubject()) {
         $result["name"] = $calendarItem->getSubject() ? get_vocab("ic_xs_meeting", $calendarItem->getSubject()) : "Unknown Meeting";
       } else {
@@ -137,11 +139,58 @@ class CalendarAdapter
     return $dateTime->getTimestamp();
   }
 
-  public function exchangeCalendarToRecurringEntry(CalendarItemType $calendarItem, $room, $oldData = null) : array{
+  public function exchangeCalendarToRecurringEntry(CalendarItemType $calendarItem, $room, RepeatRule $rep_rule ,$oldData = null) : array{
+    global $allow_registration_default, $registrant_limit_default, $registrant_limit_enabled_default;
+    global $registration_opens_default, $registration_opens_enabled_default, $registration_closes_default;
+    global $registration_closes_enabled_default;
 
-
-
-
-    return array();
+    $result = array();
+    $result["start_time"] = $this->iOSTimeToTimeStamp($calendarItem->getRecurrence()->getEndDateRecurrence()->getStartDate());
+    $result["end_time"] = $this->iOSTimeToTimeStamp($calendarItem->getRecurrence()->getEndDateRecurrence()->getEndDate());
+    $result["entry_type"] = 0;
+    $result["room_id"] = $room["id"];
+//    $result["skip"] = false;
+//    $result["edit_series"] = false;
+    $repeat_rule = $rep_rule;
+    if ($this->mode == $this::$MODE_UPDATE) {
+      $result["modified_by"] = "admin";
+    }
+    if ($this->mode == $this::$MODE_ADD) {
+      $email = $calendarItem -> getOrganizer() ->getMailbox() -> getEmailAddress();
+      $create_by = DBHelper::one(_tbl("users"), ["email" => $email]);
+      $result["create_by"] = $create_by ?? "exchange";
+      $result["name"] = $calendarItem->getSubject() ? get_vocab("ic_xs_meeting", $calendarItem->getSubject()) : "Unknown Meeting";
+      $result["description"] = "";
+      $result["book_by"] = $calendarItem->getOrganizer()->getMailbox()->getName() ?? "Unknown";
+      $result["type"] = "I";
+      $result["status"] = 0;
+      $result["ical_uid"] = generate_global_uid($result["name"]);
+      $result["allow_registration"] = $allow_registration_default ? 1 : 0;
+      $result["registrant_limit"] = $registrant_limit_default;
+      $result["registrant_limit_enabled"] = $registrant_limit_enabled_default  ? 1 : 0;
+      $result["registration_opens"] = $registration_opens_default;
+      $result["registration_opens_enabled"] = $registration_opens_enabled_default  ? 1 : 0;
+      $result["registration_closes"] = $registration_closes_default;
+      $result["registration_closes_enabled"] = $registration_closes_enabled_default  ? 1 : 0;
+      $result["exchange_id"] = $calendarItem->getItemId()->getId();
+      $result["exchange_key"] = $calendarItem->getItemId()->getChangeKey();
+      $result["create_source"] = "exchange";
+      $result["repeat_rule"] = $repeat_rule;
+      $result["duration"] = ($this->iOSTimeToTimeStamp($calendarItem->getStart()) - $this->iOSTimeToTimeStamp($calendarItem->getEnd())) / 60;
+      $result["dur_units"] = "minutes";
+      $result["private"] = false;
+      $result["awaiting_approval"] = false;
+      $result["tentative"] = true;
+      $result["ical_sequence"] = 1;
+      $result["ical_recur_id"] = "";
+    } elseif ($this->mode == $this::$MODE_UPDATE) {
+      $result["id"] = $oldData["id"];
+      $result["ical_sequence"] = $oldData["ical_sequence"] + 1;
+    }
+//    $result["confirm"] = "";
+//    $result["private"] = false;
+//    $result["awaiting_approval"] = false;
+//    $result["tentative"] = false;
+    return $result;
   }
 }
