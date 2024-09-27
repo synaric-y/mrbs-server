@@ -8,9 +8,13 @@ use MRBS\Form\Form;
 use MRBS\Intl\IntlDateFormatter;
 use OpenPsa\Ranger\Ranger;
 
-require "defaultincludes.inc";
+
+require_once "defaultincludes.inc";
 require_once "functions_table.inc";
 require_once "mrbs_sql.inc";
+require_once './appapi/api_helper.php';
+
+use MRBS\ApiHelper;
 
 global $datetime_formats;
 
@@ -27,16 +31,35 @@ global $datetime_formats;
  * 的可预订时间，time表示后端时间转换到前端时区后的时间，timestamp表示当前后端时间戳
  */
 
+if(isset($_POST['type'])) {
+  $type = $_POST['type'];
+}
+if (isset($_POST['id'])) {
+  $id = $_POST['id'];
+}
+if (isset($_POST['start_time'])) {
+  $start_time = $_POST['start_time'];
+}else{
+  $start_time = strtotime("today midnight");
+}
+if (isset($_POST['end_time'])) {
+  $end_time = $_POST['end_time'];
+}else{
+  $end_time = strtotime("tomorrow midnight");
+}
+if (isset($_POST['timezone'])) {
+  $timezone = $_POST['timezone'];
+}
 
-$type = $_POST['type'];
-$id = $_POST['id'];
-$start_time = $_POST['start_time'];
-$end_time = $_POST['end_time'];
-$timezone = $_POST['timezone'];
-
-
-if($type != "all" && $type != "area" && $type != "room"){
+if(empty($type) || ($type != "all" && $type != "area" && $type != "room")){
   ApiHelper::fail(get_vocab("invalid_types"), ApiHelper::INVALID_TYPES);
+}
+
+if (empty($start_time)) {
+  $start_time = strtotime("today midnight");
+}
+if (empty($end_time)) {
+  $end_time = strtotime("tomorrow midnight");
 }
 
 if ($type != 'all') {
@@ -49,7 +72,7 @@ if ($type != 'all') {
   }
 }
 
-$sql = "SELECT E.id AS id, area_id, room_id, start_time, end_time, E.name AS name, book_by, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, R.room_name, area_name, A.disabled as area_disabled, R.disabled as room_disabled, timezone, R.description as description  FROM " . _tbl("entry") . " E LEFT JOIN " . _tbl("room") .
+$sql = "SELECT E.id AS id, area_id, room_id, start_time, end_time, E.name AS name, book_by, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, R.room_name, area_name, A.disabled as area_disabled, R.disabled as room_disabled, timezone, R.description as description, resolution, capacity FROM " . _tbl("entry") . " E LEFT JOIN " . _tbl("room") .
 " R ON E.room_id = R.id " . "LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id";
 if ($type == 'area'){
   $sql .= " WHERE A.id = ? AND start_time >= ? AND end_time <= ?";
@@ -117,6 +140,11 @@ foreach ($rows as $row) {
       'start_time' => sprintf("%02d", $row['morningstarts'] > 12 ? $row['morningstarts'] - 12 : $row['morningstarts']) . ":" . sprintf("%02d", $row['morningstarts_minutes']) . ($row['morningstarts'] > 12 ? " PM" : " AM"),
       'end_time' => sprintf("%02d", $row['eveningends'] > 12 ? $row['eveningends'] - 12 : $row['eveningends']) . ":" . sprintf("%02d", $row['eveningends_minutes']) . ($row['eveningends'] > 12 ? " PM" : " AM"),
       'status' => 'string',
+      'morningstarts' => $row['morningstarts'],
+      'morningstarts_minutes' => $row['morningstarts_minutes'],
+      'eveningends' => $row['eveningends'],
+      'eveningends_minutes' => $row['eveningends_minutes'],
+      'resolution' => $row['resolution'],
       'rooms' => array()
     );
   }
@@ -126,6 +154,7 @@ foreach ($rows as $row) {
       'room_id' => $roomId,
       'disabled' => $row['area_disabled'] == 1 ? 1 : $row['room_disabled'],
       'description' => $row['description'],
+      'capacity' => $row['capacity'],
       'entries' => array()
     );
   }

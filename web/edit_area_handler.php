@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace MRBS;
 
-require "defaultincludes.inc";
+require_once "defaultincludes.inc";
 require_once "mrbs_sql.inc";
+require_once './appapi/api_helper.php';
 
 use MRBS\ApiHelper;
 
@@ -73,7 +74,7 @@ $form_vars = array(
 
 $area = $_POST['area'];
 foreach ($form_vars as $var => $var_type) {
-  $$var = $_POST[$var];
+  $$var = $_POST[$var] ?? null;
   if (($var_type == 'bool') || ($$var !== null)) {
     switch ($var_type) {
       case 'array':
@@ -122,19 +123,24 @@ foreach ($interval_types as $interval_type)
 {
   $var = "area_max_per_$interval_type";
 //  $$var = get_form_var($var, 'int');
-  $$var = intval($_POST[$var]);
+  if (isset($_POST[$var]))
+    $$var = intval($_POST[$var]);
   $var = "area_max_per_{$interval_type}_enabled";
 //  $$var = get_form_var($var, 'string');
-  $$var = (string) $_POST[$var];
+  if (isset($_POST[$var]))
+    $$var = (string) $_POST[$var] ?? null;
   $var = "area_max_secs_per_$interval_type";
 //  $$var = get_form_var($var, 'int');
-  $$var = intval($_POST[$var]);
+  if (isset($_POST[$var]))
+    $$var = intval($_POST[$var]);
   $var = "area_max_secs_per_{$interval_type}_units";
 //  $$var = get_form_var($var, 'string');
-  $$var = (string) $_POST[$var];
+  if (isset($_POST[$var]))
+    $$var = (string) $_POST[$var] ?? null;
   $var = "area_max_secs_per_{$interval_type}_enabled";
 //  $$var = get_form_var($var, 'string');
-  $$var = (string) $_POST[$var];
+  if (isset($_POST[$var]))
+    $$var = (string) $_POST[$var] ?? null;
 }
 
 // UPDATE THE DATABASE

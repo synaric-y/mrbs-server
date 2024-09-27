@@ -660,3 +660,6 @@ $vocab["area_or_room_disabled"]       = "区域或房间禁用，不可预约会
 $vocab["missing_parameters"]          = "参数不能为空";
 $vocab["invalid_code"]                = "企业微信身份码无效";
 $vocab["fail_to_create_user"]         = "未能创建来自企业微信的用户";
+$vocab["invalid_secret"]              = "secret参数无效，请查看secret参数是否正确";
+$vocab["invalid_corpid"]              = "corpid参数无效，请查看corpid参数是否正确";
+$vocab["not_select_the_day_of_week"]  = "该日期的周几尚未被选择。";

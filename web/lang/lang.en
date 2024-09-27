@@ -748,4 +748,6 @@ $vocab["area_or_room_disabled"]        = "Area or room is disabled, booking is n
 $vocab["missing_parameters"]           = "Parameters should not be empty";
 $vocab["invalid_code"]                 = "Wxwork code is invalid";
 $vocab["fail_to_create_user"]          = "Fail to create user from wxwork";
-
+$vocab["invalid_secret"]               = "Wxwork secret is invalid";
+$vocab["invalid_corpid"]               = "Wxwork corpid is invalid";
+$vocab["not_select_the_day_of_week"]   = "The day of the week for the given date has not been selected.";

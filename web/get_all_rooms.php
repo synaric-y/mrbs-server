@@ -3,8 +3,12 @@ declare(strict_types=1);
 
 namespace MRBS;
 
-require "defaultincludes.inc";
+
+require_once "defaultincludes.inc";
 require_once "mrbs_sql.inc";
+require_once './appapi/api_helper.php';
+
+use MRBS\ApiHelper;
 
 /*
  * 获取所有房间信息
@@ -17,12 +21,16 @@ require_once "mrbs_sql.inc";
 
 $area = null;
 
-$type = $_POST['type'];
-$id = $_POST['id'];
+if (isset($_POST['type'])) {
+  $type = $_POST['type'];
+}
+if (isset($_POST['id'])) {
+  $id = $_POST['id'];
+}
 
 
 if ($type == 'all'){
-  $result = db() -> query("SELECT R.id as room_id, R.disabled as room_disabled, A.disabled as area_disabled, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id");
+  $result = db() -> query("SELECT R.id as room_id, R.disabled as room_disabled, A.disabled as area_disabled, resolution, capacity, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id");
   if ($result -> count() < 1){
     ApiHelper::fail(get_vocab("room_not_exist"), ApiHelper::ROOM_NOT_EXIST);
   }
@@ -39,6 +47,7 @@ if ($type == 'all'){
         'disabled' => $row['area_disabled'],
         'start_time' => sprintf("%02d", $row['morningstarts'] > 12 ? $row['morningstarts'] - 12 : $row['morningstarts']) . ":" . sprintf("%02d", $row['morningstarts_minutes']) . ($row['morningstarts'] > 12 ? " PM" : " AM"),
         'end_time' => sprintf("%02d", $row['eveningends'] > 12 ? $row['eveningends'] - 12 : $row['eveningends']) . ":" . sprintf("%02d", $row['eveningends_minutes']) . ($row['eveningends'] > 12 ? " PM" : " AM"),
+        'resolution' => $row['resolution'],
         'rooms' => array()
       );
     }
@@ -49,6 +58,7 @@ if ($type == 'all'){
         'room_name' => $roomName,
         'description' => $row['description'],
         'status' => "可预约",
+        'capacity' => $row['capacity'],
         'disabled' => $row['area_disabled'] == 1 ? 1 : $row['room_disabled']
       );
     }
@@ -70,15 +80,21 @@ if ($type == 'all'){
     if (!isset($area)){
       $area = array(
         'area_id' => $row['area_id'],
-        'disabled' => $row['area_disabled'],
         'area_name' => $row['area_name'],
+        'disabled' => $row['area_disabled'],
+        'start_time' => sprintf("%02d", $row['morningstarts'] > 12 ? $row['morningstarts'] - 12 : $row['morningstarts']) . ":" . sprintf("%02d", $row['morningstarts_minutes']) . ($row['morningstarts'] > 12 ? " PM" : " AM"),
+        'end_time' => sprintf("%02d", $row['eveningends'] > 12 ? $row['eveningends'] - 12 : $row['eveningends']) . ":" . sprintf("%02d", $row['eveningends_minutes']) . ($row['eveningends'] > 12 ? " PM" : " AM"),
+        'resolution' => $row['resolution'],
         'rooms' => array()
       );
     }
     $area['rooms'][] = array(
       'room_id' => $row['room_id'],
-      'disabled' => $row['area_disabled'] == 1 ? 1 : $row['room_disabled'],
-      'room_name' => $row['room_name']
+      'room_name' => $row['room_name'],
+      'description' => $row['description'],
+      'status' => "可预约",
+      'capacity' => $row['capacity'],
+      'disabled' => $row['area_disabled'] == 1 ? 1 : $row['room_disabled']
     );
   }
   $data1['areas'] = $area;
@@ -93,12 +109,18 @@ if ($type == 'all'){
     'area_id' => $row['area_id'],
     'area_name' => $row['area_name'],
     'disabled' => $row['area_disabled'],
+    'start_time' => sprintf("%02d", $row['morningstarts'] > 12 ? $row['morningstarts'] - 12 : $row['morningstarts']) . ":" . sprintf("%02d", $row['morningstarts_minutes']) . ($row['morningstarts'] > 12 ? " PM" : " AM"),
+    'end_time' => sprintf("%02d", $row['eveningends'] > 12 ? $row['eveningends'] - 12 : $row['eveningends']) . ":" . sprintf("%02d", $row['eveningends_minutes']) . ($row['eveningends'] > 12 ? " PM" : " AM"),
+    'resolution' => $row['resolution'],
     'rooms' => array()
   );
   $area['rooms'][] = array(
     'room_id' => $row['room_id'],
-    'disabled' => $row['area_disabled'] == 1 ? 1 : $row['room_disabled'],
-    'room_name' => $row['room_name']
+    'room_name' => $row['room_name'],
+    'description' => $row['description'],
+    'status' => "可预约",
+    'capacity' => $row['capacity'],
+    'disabled' => $row['area_disabled'] == 1 ? 1 : $row['room_disabled']
   );
   ApiHelper::success($area);
 }else{

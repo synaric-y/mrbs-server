@@ -303,3 +303,8 @@ CREATE TABLE mrbs_system_variable(
 ALTER TABLE mrbs_system_variable ADD COLUMN `mysql_user` varchar(255) NULL DEFAULT 'mrbs';
 ALTER TABLE mrbs_system_variable ADD COLUMN `mysql_password` varchar(255) NULL DEFAULT '$2y$10$KBS1/8LXU4eNKgKyosKXWeX1TVOMUhpXwrFgSE9PoOPxs6Dh23i0G';
 ALTER TABLE mrbs_system_variable ADD COLUMN `redis_password` varchar(255) NULL DEFAULT '';
+
+INSERT INTO mrbs_users (level, name, display_name, email) values (1, 'exchange', 'exchange', '');
+
+INSERT INTO mrbs_users (level, name, display_name, email) values (2, 'admin', 'admin', '');
+
