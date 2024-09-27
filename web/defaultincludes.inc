@@ -37,3 +37,4 @@ require_once 'init.inc';
 require_once 'upgrade.inc';
 require 'standard_vars.inc.php';
 require_once 'check.php';
+

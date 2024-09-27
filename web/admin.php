@@ -2,8 +2,9 @@
 declare(strict_types=1);
 namespace MRBS;
 
-require "defaultincludes.inc";
+require_once "defaultincludes.inc";
 require_once "mrbs_sql.inc";
+require_once './appapi/api_helper.php';
 
 
 /*
@@ -25,13 +26,14 @@ if (getLevel($_SESSION['user']) < 2){
 }
 
 $type = $_POST['type'];
-$area = $_POST['area'];
+$area = $_POST['area'] ?? null;
 
 if ($type == 'all'){
 
 } else if ($type == 'area'){
   $sql = "SELECT * FROM " . _tbl("area");
   $result = db() -> query($sql);
+  $data = array();
   while($row = $result -> next_row_keyed()){
     unset($row['exchange_server']);
     unset($row['wxwork_corpid']);

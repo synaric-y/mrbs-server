@@ -2,9 +2,9 @@
 declare(strict_types=1);
 namespace MRBS;
 
-require "defaultincludes.inc";
+require_once "defaultincludes.inc";
 require_once "mrbs_sql.inc";
-
+require_once './appapi/api_helper.php';
 
 // Check the CSRF token.
 //Form::checkToken();
@@ -38,14 +38,13 @@ $form_vars = array(
   'wxwork_mr_id'     => 'string',
   'custom_html'      => 'string'
 );
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-$room = $data['room'];
+
+$room = $_POST['room'];
 
 foreach($form_vars as $var => $var_type)
 {
 //  $$var = get_form_var($var, $var_type);
-  $$var = $data[$var];
+  $$var = $_POST[$var] ?? null;
   if (($var_type == 'bool') || ($$var !== null))
   {
     switch ($var_type)
@@ -107,7 +106,7 @@ foreach($fields as $field)
   }
   $var = VAR_PREFIX . $field['name'];
 //  $$var = get_form_var($var, $type);
-  $$var = $data[$var];
+  $$var = $_POST[$var] ?? null;
   if (($type == 'int') && ($$var === ''))
   {
     unset($$var);

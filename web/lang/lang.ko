@@ -263,3 +263,6 @@ $vocab["invalid_rep_interval"]        = "반복 간격은 0보다 커야 합니�
 $vocab["missing_mandatory_field"]     = "필수 필드에 값을 제공하지 않았습니다";
 $vocab["invalid_code"]                = "기업 WeChat ID 코드가 유효하지 않습니다기업 WeChat ID 코드가 유효하지 않습니다";
 $vocab["fail_to_create_user"]         = "Enterprise WeChat에서 사용자를 생성하지 못했습니다";
+$vocab["invalid_secret"]              = "secret 매개변수가 잘못되었습니다. secret 매개변수가 올바른지 확인하세요";
+$vocab["invalid_corpid"]              = "orpid 매개변수가 잘못되었습니다. corpid 매개변수가 올바른지 확인하세요";
+$vocab["not_select_the_day_of_week"]  = "해당 날짜의 요일이 선택되지 않았습니다.";

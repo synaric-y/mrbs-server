@@ -14,9 +14,10 @@ use MRBS\ApiHelper;
 // means that $id is the id of an entry in the repeat table.   This
 // should be fixed sometime.]
 
-require "defaultincludes.inc";
+require_once "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 require_once "functions_mail.inc";
+require_once './appapi/api_helper.php';
 
 /*
  * 用于删除会议，支持删除普通会议以及周期会议
@@ -26,7 +27,7 @@ require_once "functions_mail.inc";
  */
 
 $id = $_POST["entry_id"];
-$series = boolval($_POST["entry_series"]);
+$series = boolval($_POST["entry_series"] ?? false);
 
 if (!$series){
   $result = db() -> query("SELECT * FROM " . _tbl("entry") . " WHERE id = ?", array($id));
@@ -44,9 +45,9 @@ if (!checkAuth()){
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
-if (getLevel($_SESSION['user']) < 2){
-  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
-}
+//if (getLevel($_SESSION['user']) < 2){
+//  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
+//}
 
 $user = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE name = ?", array($_SESSION['user']));
 $user = $user -> next_row_keyed();

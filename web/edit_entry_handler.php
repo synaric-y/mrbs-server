@@ -5,15 +5,16 @@ namespace MRBS;
 
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
-require 'defaultincludes.inc';
+require_once 'defaultincludes.inc';
 require_once 'mrbs_sql.inc';
 require_once 'functions_ical.inc';
 require_once 'functions_mail.inc';
+require_once './appapi/api_helper.php';
 
 use MRBS\ApiHelper;
 use MRBS\CalendarServer\CalendarServerManager;
 
-
+global $min_booking_admin_level;
 //$is_ajax = is_ajax();
 //
 //if ($is_ajax && !checkAuthorised(this_page(), true))
@@ -35,9 +36,9 @@ if (!checkAuth()){
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
-if (getLevel($_SESSION['user']) < 2){
-  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
-}
+//if (getLevel($_SESSION['user']) < $min_booking_admin_level){
+//  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
+//}
 
 //$sessionData = "";
 //session_decode($sessionData);
@@ -124,39 +125,25 @@ $form_vars = array(
   'commit' => 'string'
 );
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-$response = array(
-  "code" => "int",
-  "message" => "string"
-);
-
 $just_check = false;
-
-if (!checkAuth()){
-  setcookie("session_id", "", time() - 3600, "/web/");
-  ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
-}
-
-if (getLevel($_SESSION['user']) < 2){
-  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
-}
 
 foreach ($form_vars as $var => $var_type) {
 //  $$var = get_form_var($var, $var_type);
-  $$var = $data[$var];
+  if (isset($_POST[$var]))
+    $$var = $_POST[$var];
 
   // Trim the strings and truncate them to the maximum field length
-  if (is_string($$var)) {
+  if (!empty($$var) && is_string($$var)) {
     $$var = trim($$var);
     $$var = truncate($$var, "entry.$var");
   }
 
 }
+
 if($end_seconds < time()){
   ApiHelper::fail(get_vocab("expired_end_time"), ApiHelper::EXPIRED_END_TIME);
 }
-$id = intval($data["id"]);
+$id = intval($_POST["id"]);
 $midnight = strtotime("midnight", intval($start_seconds));
 $start_seconds -= $midnight;
 $midnight = strtotime("midnight", intval($end_seconds));
@@ -165,6 +152,9 @@ $confirmed = "";
 $skip = boolval($skip);
 $edit_series = boolval($edit_series);
 
+if (!empty($id) && db()->query1("SELECT * FROM " . _tbl("entry") . " WHERE id = ?", array($id)) < 1){
+  ApiHelper::fail(get_vocab("entry_not_exist"), ApiHelper::ENTRY_NOT_EXIST);
+}
 
 // Provide a default for $rep_interval (it could be null in an Ajax post request
 // if the user has an empty string in the input).
@@ -202,7 +192,7 @@ if (isset($registration_closes_value) && isset($registration_closes_units)) {
 //{
 //  // Convert the database booleans (the custom field booleans are done later)
 foreach (['allow_registration', 'registrant_limit_enabled', 'registration_opens_enabled', 'registration_closes_enabled'] as $var) {
-  $$var = ($$var) ? 1 : 0;
+  $$var = !empty($$var) ? 1 : 0;
 }
 //}
 //
@@ -343,11 +333,6 @@ if ($private_mandatory && !is_book_admin()) {
 // Make sure the area corresponds to the room that is being booked
 $area = get_area($rooms[0]);
 get_area_settings($area);  // Update the area settings
-
-// and that $room is in $area
-if (get_area($room) != $area) {
-  $room = get_default_room($area);
-}
 
 // Check that they really are allowed to set $no_mail;
 if ($no_mail) {
@@ -823,7 +808,6 @@ try {
 catch (\Exception $e) {
 ApiHelper::fail("", ApiHelper::UNKOWN_ERROR);
 }
-
 if ($result['valid_booking']) {
   if ($result['new_details'][0]['id'] != 0) {
     if (!empty($result['conflicts']))

@@ -282,6 +282,7 @@ function checkAuthorised($page, $just_check=false)
  */
 function getWritable($creator, $rooms=null, $all=true) : bool
 {
+  global $auth;
   if (is_array($rooms) && (count($rooms) > 0))
   {
     if ($all)

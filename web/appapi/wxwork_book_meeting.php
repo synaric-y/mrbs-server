@@ -81,7 +81,7 @@ $result["registration_opens"] = $registration_opens_default;
 $result["registration_opens_enabled"] = $registration_opens_enabled_default  ? 1 : 0;
 $result["registration_closes"] = $registration_closes_default;
 $result["registration_closes_enabled"] = $registration_closes_enabled_default  ? 1 : 0;
-$result["create_source"] = "system";
+$result["create_source"] = "wxwork";
 
 DBHelper::insert(\MRBS\_tbl("entry"), $result);
 //$insertId = DBHelper::insert_id(_tbl("entry"), "id");

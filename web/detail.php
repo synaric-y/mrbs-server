@@ -5,6 +5,7 @@ namespace MRBS;
 
 require "defaultincludes.inc";
 require_once "mrbs_sql.inc";
+require_once './appapi/api_helper.php';
 
 /*
  * 用于获取房间或者区域的具体信息

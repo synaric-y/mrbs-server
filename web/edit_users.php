@@ -44,7 +44,8 @@ use MRBS\Form\Form;
  *                                                                            *
  * \*****************************************************************************/
 
-require "defaultincludes.inc";
+require_once "defaultincludes.inc";
+require_once './appapi/api_helper.php';
 require_once "mrbs_sql.inc";
 
 /*
@@ -82,20 +83,20 @@ session_write_close();
 
 
 $action = $_POST['action'];
-$id = $_POST['id'];
+$id = $_POST['id'] ?? "";
 
-$email = $_POST['email'];
+$email = $_POST['email'] ?? "";
 $name = $_POST['name'];
-$password0 = $_POST['password0'];
-$password1 = $_POST['password1'];
-$level = $_POST['level'];
-$display_name = $_POST['display_name'];
+$password0 = $_POST['password0'] ?? "";
+$password1 = $_POST['password1'] ?? "";
+$level = $_POST['level'] ?? null;
+$display_name = $_POST['display_name'] ?? null;
 
 if (!isset($action) || ($action != 'edit' && $action != 'add' && $action != 'delete')) {
   ApiHelper::fail(get_vocab("wrong_type"), ApiHelper::WRONG_TYPE);
 }
 
-if (isset($id)) {
+if (!empty($id)) {
   // If it's an existing user then get the data from the database
   $sql = "SELECT *
               FROM " . _tbl('users') . "
@@ -162,11 +163,10 @@ if (!empty($pwd_not_match)) {
 //\*---------------------------------------------------------------------------*/
 //
 if (!empty($action) && ($action == "edit")){
-  $user = $result -> next_row_keyed();
   $isExist = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE id = ?", array($id));
-  $row = $isExist -> next_row_keyed();
+  $user = $isExist -> next_row_keyed();
   $isExist = db() -> query1("SELECT COUNT(*) FROM " . _tbl("users") . " WHERE name = ?", array($name));
-  if ($username == $row['name']){
+  if ($username == $user['name']){
     if ($isExist > 1){
       ApiHelper::fail(get_vocab("name_not_unique"), ApiHelper::NAME_NOT_UNIQUE);
     }
@@ -175,10 +175,27 @@ if (!empty($action) && ($action == "edit")){
   $user["display_name"] = $display_name;
   $user["email"] = $email;
   if (!empty($password0) && !empty($password1)) {
-    $user["password"] = password_hash($password1, PASSWORD_DEFAULT);
+    $user["password_hash"] = password_hash($password1, PASSWORD_DEFAULT);
   }
-  db() -> query("UPDATE " . _tbl("users") . " SET name = ?, display_name = ?, email = ?, password_hash = ? WHERE id = ?", array($user['name']
-    , $user["display_name"], $user["email"], $user["password"], $user["id"]));
+//  db() -> query("UPDATE " . _tbl("users") . " SET name = ?, display_name = ?, email = ?, password_hash = ? WHERE id = ?", array($user['name']
+//    , $user["display_name"], $user["email"], $user["password"], $user["id"]));
+  $sql = "UPDATE " . _tbl("users") . " SET ";
+  foreach ($user as $key => $value) {
+    $sql .= $key . "=?,";
+  }
+  $sql = substr($sql, 0, -1);
+  $sql .= " WHERE id=?";
+  $id = $user['id'];
+  $params = array();
+  foreach ($user as $key => $value) {
+    $params[] = $value;
+  }
+  $params[] = $id;
+  try{
+    db()->query($sql, $params);
+  }catch(\Exception $e){
+    echo $e -> getMessage() . $e -> getTraceAsString();
+  }
   ApiHelper::success(null);
 }else if (!empty($action) && ($action == "add")){
   $user = $result -> next_row_keyed();
