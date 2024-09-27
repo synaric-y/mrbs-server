@@ -306,5 +306,5 @@ ALTER TABLE mrbs_system_variable ADD COLUMN `redis_password` varchar(255) NULL D
 
 INSERT INTO mrbs_users (level, name, display_name, email) values (1, 'exchange', 'exchange', '');
 
-
+INSERT INTO mrbs_users (level, name, display_name, email) values (2, 'admin', 'admin', '');
 
