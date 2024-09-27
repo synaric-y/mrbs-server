@@ -45,7 +45,11 @@ class CalendarAdapter
       $email = $calendarItem -> getOrganizer() ->getMailbox() -> getEmailAddress();
       $create_by = DBHelper::one(_tbl("users"), ["email" => $email]);
       $result["create_by"] = $create_by ?? "exchange";
-      $result["name"] = $calendarItem->getSubject() ? get_vocab("ic_xs_meeting", $calendarItem->getSubject()) : "Unknown Meeting";
+      if ($calendarItem->getOrganizer()->getMailbox()->getName() == $calendarItem->getSubject()) {
+        $result["name"] = $calendarItem->getSubject() ? get_vocab("ic_xs_meeting", $calendarItem->getSubject()) : "Unknown Meeting";
+      } else {
+        $result["name"] = $calendarItem->getSubject() ?? "Unknown Meeting";
+      }
       $result["description"] = "";
       $result["book_by"] = $calendarItem->getOrganizer()->getMailbox()->getName() ?? "Unknown";
       $result["type"] = "I";
