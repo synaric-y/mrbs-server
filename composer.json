@@ -1,7 +1,8 @@
 {
-    "require": {
-        "garethp/php-ews": "^0.9.6",
-      "ext-json": "*",
-      "ext-redis": "*"
-    }
+  "require": {
+    "garethp/php-ews": "^0.9.6",
+    "ext-json": "*",
+    "ext-redis": "*",
+    "directorytree/ldaprecord": "^2.20"
+  }
 }

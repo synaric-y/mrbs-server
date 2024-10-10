@@ -2724,6 +2724,14 @@ function log_i()
   log_by_name("", $aglist);
 }
 
+function log_ad()
+{
+  /*写日志*/
+  //时间   操作内容
+  $aglist = func_get_args();
+  log_by_name("ad_", $aglist);
+}
+
 function log_by_name($file, $aglist)
 {
   /*写日志*/
