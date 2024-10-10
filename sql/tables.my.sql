@@ -255,17 +255,10 @@ ALTER TABLE mrbs_room ADD COLUMN  `icon` varchar(255)  NULL DEFAULT ''   COMMENT
 ALTER TABLE mrbs_room ADD COLUMN  `exchange_username` varchar(80)  NULL DEFAULT ''   COMMENT 'exchange username';
 ALTER TABLE mrbs_room ADD COLUMN  `exchange_password` varchar(255)  NULL DEFAULT ''   COMMENT 'exchange password';
 ALTER TABLE mrbs_room ADD COLUMN  `exchange_sync_state` varchar(511)  NULL DEFAULT ''   COMMENT '';
-ALTER TABLE mrbs_room ADD COLUMN  `wxwork_mr_id` varchar(32)  NULL DEFAULT ''   COMMENT '';
-
-ALTER TABLE mrbs_area ADD COLUMN  `use_exchange` tinyint(4)  NULL DEFAULT 0   COMMENT '';
-ALTER TABLE mrbs_area ADD COLUMN  `use_wxwork` tinyint(4)  NULL DEFAULT 0   COMMENT '';
-ALTER TABLE mrbs_area ADD COLUMN  `exchange_server` varchar(255)  NULL DEFAULT ''   COMMENT 'exchange server';
 
 ALTER TABLE mrbs_entry ADD COLUMN  `book_by` varchar(80)  NULL DEFAULT ''   COMMENT 'booker';
 ALTER TABLE mrbs_entry ADD COLUMN  `exchange_id` varchar(511)  NULL DEFAULT ''   COMMENT '';
 ALTER TABLE mrbs_entry ADD COLUMN  `exchange_key` varchar(511)  NULL DEFAULT ''   COMMENT '';
-ALTER TABLE mrbs_entry ADD COLUMN  `wxwork_bid` varchar(511)  NULL DEFAULT ''   COMMENT '';
-ALTER TABLE mrbs_entry ADD COLUMN  `wxwork_sid` varchar(511)  NULL DEFAULT ''   COMMENT '';
 ALTER TABLE mrbs_entry ADD COLUMN  `create_source` varchar(20)  NULL DEFAULT 'system'   COMMENT 'system/exchange/wxwork';
 
 
@@ -292,19 +285,72 @@ CREATE TABLE mrbs_system_variable(
   agentid                varchar(255) NULL DEFAULT '' COMMENT 'only be used when use_wxwork=1, get from wxwork',
   default_password_hash  varchar(255) NULL DEFAULT '$2y$10$SeZPxKE78o0MFMIdNxpD/uMS.fBudoEGfUBkujLAmImaLva1T4Zm6' COMMENT 'when create by third-party, this will be the default password',
   call_back_domain       varchar(255) NULL DEFAULT '' COMMENT 'only be used when use_wxwork=1, set in wxwork',
-  mysql_host             varchar(255) NULL DEFAULT 'localhost' COMMENT 'mysql host',
-  mysql_port             int NULL DEFAULT 3306 COMMENT 'mysql port',
   redis_host             varchar(255) NULL DEFAULT 'localhost' COMMENT 'redis host',
   redis_port             int NULL DEFAULT 6379 COMMENT 'redis port',
 
   PRIMARY KEY (id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-ALTER TABLE mrbs_system_variable ADD COLUMN `mysql_user` varchar(255) NULL DEFAULT 'mrbs';
-ALTER TABLE mrbs_system_variable ADD COLUMN `mysql_password` varchar(255) NULL DEFAULT '$2y$10$SeZPxKE78o0MFMIdNxpD/uMS.fBudoEGfUBkujLAmImaLva1T4Zm6';
+CREATE TABLE mrbs_device(
+  id            int NOT NULL auto_increment,
+  device_id     varchar(255) NOT NULL DEFAULT '' COMMENT 'device id',
+  version       varchar(100) NULL DEFAULT '' COMMENT 'device app version',
+  description   varchar(255) NULL DEFAULT '' COMMENT '',
+  resolution    varchar(100) NULL DEFAULT '' COMMENT '',
+  battery_level int NULL COMMENT '',
+  status        int NULL DEFAULT 1 COMMENT '',
+  is_set        tinyint NULL DEFAULT 0 COMMENT '',
+  set_time      int NULL COMMENT '',
+  room_id       int NULL COMMENT '',
+  PRIMARY KEY(id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 ALTER TABLE mrbs_system_variable ADD COLUMN `redis_password` varchar(255) NULL DEFAULT '';
 
 INSERT INTO mrbs_users (level, name, display_name, email) values (1, 'exchange', 'exchange', '');
 
 INSERT INTO mrbs_users (level, name, display_name, email) values (2, 'admin', 'admin', '');
 
+ALTER TABLE mrbs_users ADD COLUMN  `disabled` tinyint  NOT NULL DEFAULT '0';
+ALTER TABLE mrbs_users ADD COLUMN `source` varchar(50) NOT NULL DEFAULT 1;
+ALTER TABLE mrbs_system_variable ADD COLUMN `AD_server` varchar(255) NULL DEFAULT '' COMMENT 'AD server address';
+ALTER TABLE mrbs_system_variable ADD COLUMN `AD_port` int NULL COMMENT 'AD port';
+ALTER TABLE mrbs_system_variable ADD COLUMN `AD_base_dn` varchar(255) NULL DEFAULT '' COMMENT '';
+ALTER TABLE mrbs_system_variable ADD COLUMN `AD_username` varchar(255) NULL DEFAULT '' COMMENT '';
+ALTER TABLE mrbs_system_variable ADD COLUMN `AD_password` varchar(255) NULL DEFAULT '' COMMENT '';
+ALTER TABLE mrbs_system_variable ADD COLUMN `AD_timely_sync` tinyint NULL DEFAULT 0 COMMENT 'decide if synchronize timely';
+ALTER TABLE mrbs_system_variable ADD COLUMN `AD_interval_type` tinyint NULL COMMENT 'only use when AD_timely_sync is 1';
+ALTER TABLE mrbs_system_variable ADD COLUMN `AD_interval_time` int NULL COMMENT '';
+ALTER TABLE mrbs_system_variable ADD COLUMN `AD_interval_date` int NULL COMMENT '';
+ALTER TABLE mrbs_system_variable ADD COLUMN `Exchange_server` varchar(255) NULL DEFAULT '';
+ALTER TABLE mrbs_system_variable ADD COLUMN `Exchange_sync_type` varchar(30) NULL DEFAULT '';
+ALTER TABLE mrbs_system_variable ADD COLUMN `Exchange_sync_interval` int NULL COMMENT '';
+ALTER TABLE mrbs_system_variable ADD COLUMN `logo_dir` varchar(255) NULL DEFAULT '';
+ALTER TABLE mrbs_system_variable ADD COLUMN `app_logo_dir` varchar(255) NULL DEFAULT '';
+ALTER TABLE mrbs_system_variable ADD COLUMN `time_type` int NULL DEFAULT '';
+ALTER TABLE mrbs_system_variable ADD COLUMN `now_version` varchar(100) NULL DEFAULT '';
+ALTER TABLE mrbs_system_variable ADD COLUMN `show_book` tinyint NULL DEFAULT 1;
+ALTER TABLE mrbs_system_variable ADD COLUMN `show_meeting_name` tinyint NULL DEFAULT 1;
+ALTER TABLE mrbs_system_variable ADD COLUMN `temporary_meeting` tinyint NULL DEFAULT 1;
+ALTER TABLE mrbs_system_variable ADD COLUMN `fast_meeting_type` tinyint NULL DEFAULT 1;
+ALTER TABLE mrbs_system_variable ADD COLUMN `resolution` int NULL DEFAULT 1800;
+ALTER TABLE mrbs_system_variable ADD COLUMN `company_name` varchar(255) NULL DEFAULT '';
+ALTER TABLE mrbs_area ADD COLUMN `parent_id` int NULL DEFAULT 0;
+ALTER TABLE mrbs_room ADD COLUMN `show_book` tinyint NULL DEFAULT 1;
+ALTER TABLE mrbs_room ADD COLUMN `show_meeting_name` tinyint NULL DEFAULT 1;
+ALTER TABLE mrbs_room ADD COLUMN `temporary_meeting` tinyint NULL DEFAULT 1;
+ALTER TABLE mrbs_room ADD COLUMN `device_id` int NULL DEFAULT 1;
+
+CREATE TABLE mrbs_area_group(
+  id int NOT NULL auto_increment,
+  area_id int NOT NULL,
+  group_id int NOT NULL,
+  PRIMARY KEY (id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE mrbs_room_group(
+  id int NOT NULL auto_increment,
+  room_id int NOT NULL,
+  group_id int NOT NULL,
+  PRIMARY KEY (id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
