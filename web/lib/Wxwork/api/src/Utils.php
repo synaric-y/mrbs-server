@@ -5,13 +5,12 @@
 
 function get_access_token(string $corpid, string $secret)
 {
-  $redis = \MRBS\RedisConnect::newInstance();
   $string = hash("MD5", $corpid . $secret);
-  $access_token = $redis->get($string);
+  $access_token = \MRBS\RedisConnect::get($string);
   if (!empty($access_token)) return $access_token;
   $file = fopen("./mutex_lock.lock", "w+");
   if (flock($file, LOCK_EX)) {
-    if ($redis->get($string)) {
+    if (\MRBS\RedisConnect::get($string)) {
       try{
         $result = refresh_access_token($corpid, $secret);
         if($result === false || $result === -1) return $result;
@@ -28,7 +27,6 @@ function get_access_token(string $corpid, string $secret)
 
 function refresh_access_token(string $corpid, string $secret)
 {
-  $redis = \MRBS\RedisConnect::newInstance();
   $string = hash("MD5", $corpid . $secret);
   try {
     $url = HttpUtils::MakeUrl(
@@ -42,7 +40,7 @@ function refresh_access_token(string $corpid, string $secret)
       return $errCode;
     } else {
       $access_token = $data['access_token'];
-      $redis->set($string, $access_token, ['ex' => 7000]);
+      \MRBS\RedisConnect::setex($string, $access_token, 7000);
     }
   } catch (RedisException $e) {
     return -1;
@@ -52,6 +50,5 @@ function refresh_access_token(string $corpid, string $secret)
 
 function get_user_info(string $code)
 {
-  $redis = \MRBS\RedisConnect::newInstance();
 
 }

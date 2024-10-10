@@ -16,25 +16,129 @@ class RedisConnect
   {
   }
 
-  public static function newInstance()
+  private static function newInstance(): void
   {
     global $redis_host, $redis_port;
 
-    if (!empty(self::$redis)){
-      return self::$redis;
+    if (!empty(self::$redis[$redis_host . ":" . (string)$redis_port])){
+      return;
     }
     $file = fopen("./mutex.lock", "w+");
     if (flock($file, LOCK_EX)){
       try{
-        if (empty($redis)) {
+        if (empty(self::$redis[$redis_host . ":" . (string)$redis_port])) {
           self::$redis = new Redis();
           self::$redis->connect($redis_host, $redis_port);
         }
+      } catch (\RedisException $e) {
       } finally {
         flock($file, LOCK_UN);
         fclose($file);
       }
     }
-    return self::$redis;
+  }
+
+  public static function setex($key, $value, $expire = 0)
+  {
+    if (empty(self::$redis)){
+      self::newInstance();
+    }
+    self::$redis->setex($key, $expire, $value);
+  }
+
+  public static function set($key, $value)
+  {
+    if (empty(self::$redis)){
+      self::newInstance();
+    }
+    self::$redis->set($key, $value);
+  }
+
+  public static function get($key){
+    if (empty(self::$redis)){
+      self::newInstance();
+    }
+    return self::$redis->get($key);
+  }
+
+  public static function del($key){
+    if (empty(self::$redis)){
+      self::newInstance();
+    }
+    return self::$redis->del($key);
+  }
+
+  public static function getKeys($pattern = '*'){
+    if (empty(self::$redis)){
+      self::newInstance();
+    }
+    return self::$redis->keys($pattern);
+  }
+
+  public static function clear(){
+    if (empty(self::$redis)){
+      self::newInstance();
+    }
+    return self::$redis->flushALL();
+  }
+
+
+  //TODO temporarily not provide select, because RedisConnect cannot be created and redis
+  //  connect is the only one, change db may cause other function failed to use redis
+//  public static function selectDB($database){
+//    if (empty(self::$redis)){
+//      self::newInstance();
+//    }
+//    return self::$redis->select($database);
+//  }
+
+  public static function zADD($name, $member, $score){
+    if (empty(self::$redis)){
+      self::newInstance();
+    }
+    return self::$redis->zADD($name, $score, $member);
+  }
+
+  public static function zREM($name, $member){
+    if (empty(self::$redis)){
+      self::newInstance();
+    }
+    return self::$redis->zREM($name, $member);
+  }
+
+  public static function zRange($name, $begin, $end, $withscore = false){
+    if (empty(self::$redis)){
+      self::newInstance();
+    }
+    return self::$redis->zRange($name, $begin, $end, $withscore);
+
+  }
+
+  public static function zRangeByScore($name, $begin, $end, $withscore = false){
+    if (empty(self::$redis)){
+      self::newInstance();
+    }
+    return self::$redis->zRangeByScore($name, $begin, $end, $withscore);
+  }
+
+  public static function zScore($name, $member){
+    if (empty(self::$redis)){
+      self::newInstance();
+    }
+    return self::$redis->zScore($name, $member);
+  }
+
+  public static function zRank($name, $member){
+    if (empty(self::$redis)){
+      self::newInstance();
+    }
+    return self::$redis->zRank($name, $member);
+  }
+
+  public static function zRemRangeByScore($name, $begin, $end){
+    if (empty(self::$redis)){
+      self::newInstance();
+    }
+    return self::$redis->zRemRangeByScore($name, $begin, $end);
   }
 }
