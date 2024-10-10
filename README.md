@@ -36,6 +36,7 @@ Please install the following dependencies in order.
 
 - php-iconv
 - php-soap
+- php-ldap
 - [php-ews](https://github.com/Garethp/php-ews)(composer)
 
 ## Steps
@@ -55,7 +56,7 @@ The imported SQL file is located in ```./sql/tables.*.sql```.
 
 3.Configuration
 
-The configuration file ```config.inc.php``` needs to be created in the project ```/web``` directory. The template of the configuration file can be obtained from ```./web/config.inc.php-sample`` Copy.
+The configuration file ```config.inc.php``` needs to be created in the project ```/web``` directory. The template of the configuration file can be obtained from ```./web/config.inc.php-sample``` Copy.
 
 Necessary configuration items:
 

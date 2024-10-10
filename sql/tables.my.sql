@@ -275,6 +275,9 @@ ALTER TABLE mrbs_area ADD COLUMN  `wxwork_secret` varchar(255)  NULL DEFAULT '' 
 ALTER TABLE mrbs_room ADD COLUMN  `wxwork_sync_state` text  NULL DEFAULT ''   COMMENT '';
 ALTER TABLE mrbs_room ADD COLUMN  `battery_level` int NULL COMMENT '';
 
+
+### 2.0开始
+
 CREATE TABLE mrbs_system_variable(
   id                     int NOT NULL auto_increment,
   use_wxwork             tinyint NOT NULL DEFAULT 0 COMMENT 'whether use wxwork',
@@ -308,11 +311,10 @@ CREATE TABLE mrbs_device(
 ALTER TABLE mrbs_system_variable ADD COLUMN `redis_password` varchar(255) NULL DEFAULT '';
 
 INSERT INTO mrbs_users (level, name, display_name, email) values (1, 'exchange', 'exchange', '');
-
 INSERT INTO mrbs_users (level, name, display_name, email) values (2, 'admin', 'admin', '');
 
 ALTER TABLE mrbs_users ADD COLUMN  `disabled` tinyint  NOT NULL DEFAULT '0';
-ALTER TABLE mrbs_users ADD COLUMN `source` varchar(50) NOT NULL DEFAULT 1;
+ALTER TABLE mrbs_users ADD COLUMN `source` varchar(50) NOT NULL DEFAULT NULL COMMENT 'system/ad';
 ALTER TABLE mrbs_system_variable ADD COLUMN `AD_server` varchar(255) NULL DEFAULT '' COMMENT 'AD server address';
 ALTER TABLE mrbs_system_variable ADD COLUMN `AD_port` int NULL COMMENT 'AD port';
 ALTER TABLE mrbs_system_variable ADD COLUMN `AD_base_dn` varchar(255) NULL DEFAULT '' COMMENT '';
@@ -354,3 +356,40 @@ CREATE TABLE mrbs_room_group(
   group_id int NOT NULL,
   PRIMARY KEY (id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+### 用户组表
+CREATE TABLE `mrbs_user_group`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(511) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'group name',
+  `third_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'third group_id',
+  `third_parent_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL COMMENT 'third parent_id',
+  `source` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
+  `sync_state` int(11) NULL DEFAULT NULL COMMENT '0:no sync;1:sync',
+  `last_sync_time` int(13) NULL DEFAULT NULL COMMENT 'last sync timestamp',
+  `sync_version` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'sync version code',
+  `disabled` tinyint NULL DEFAULT 0,
+  `user_count` int(11) NULL DEFAULT 0 COMMENT 'users in this group',
+                                  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+
+### 组-组关系表
+CREATE TABLE `mrbs_g2g_map`  (
+   `id` int(11) NOT NULL AUTO_INCREMENT,
+   `group_id` int(11) NULL DEFAULT NULL,
+   `parent_id` int(11) NULL DEFAULT -1,
+   `source` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
+   PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+
+### 人-组关系表
+CREATE TABLE `mrbs_u2g_map`  (
+   `id` int(11) NOT NULL AUTO_INCREMENT,
+   `user_id` int(11) NULL DEFAULT NULL,
+   `parent_id` int(11) NULL DEFAULT -1,
+   `source` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
+   PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+
