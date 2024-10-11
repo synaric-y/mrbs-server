@@ -282,7 +282,6 @@ CREATE TABLE mrbs_system_variable(
   id                     int NOT NULL auto_increment,
   use_wxwork             tinyint NOT NULL DEFAULT 0 COMMENT 'whether use wxwork',
   use_exchange           tinyint NOT NULL DEFAULT 0 COMMENT 'whether use exchange',
-  exchange_server        varchar(255) NULL DEFAULT '' COMMENT 'only be used when use_exchange=1, this is exchange server ip or domain',
   corpid                 varchar(255) NULL DEFAULT '' COMMENT 'only be used when use_wxwork=1, get from wxwork',
   secret                 varchar(255) NULL DEFAULT '' COMMENT 'only be used when use_wxwork=1, get from wxwork',
   agentid                varchar(255) NULL DEFAULT '' COMMENT 'only be used when use_wxwork=1, get from wxwork',
@@ -329,7 +328,7 @@ ALTER TABLE mrbs_system_variable ADD COLUMN `Exchange_sync_type` varchar(30) NUL
 ALTER TABLE mrbs_system_variable ADD COLUMN `Exchange_sync_interval` int NULL COMMENT '';
 ALTER TABLE mrbs_system_variable ADD COLUMN `logo_dir` varchar(255) NULL DEFAULT '';
 ALTER TABLE mrbs_system_variable ADD COLUMN `app_logo_dir` varchar(255) NULL DEFAULT '';
-ALTER TABLE mrbs_system_variable ADD COLUMN `time_type` int NULL DEFAULT '';
+ALTER TABLE mrbs_system_variable ADD COLUMN `time_type` int NULL;
 ALTER TABLE mrbs_system_variable ADD COLUMN `now_version` varchar(100) NULL DEFAULT '';
 ALTER TABLE mrbs_system_variable ADD COLUMN `show_book` tinyint NULL DEFAULT 1;
 ALTER TABLE mrbs_system_variable ADD COLUMN `show_meeting_name` tinyint NULL DEFAULT 1;
