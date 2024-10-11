@@ -377,6 +377,7 @@ CREATE TABLE `mrbs_g2g_map`  (
    `id` int NOT NULL AUTO_INCREMENT,
    `group_id` int(11) NULL DEFAULT NULL,
    `parent_id` int(11) NULL DEFAULT -1,
+   `deep` tinyint NULL DEFAULT 1,
    `source` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
    PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
@@ -386,7 +387,7 @@ CREATE TABLE `mrbs_u2g_map`  (
    `id` int NOT NULL AUTO_INCREMENT,
    `user_id` int(11) NULL DEFAULT NULL,
    `parent_id` int(11) NULL DEFAULT -1,
-   `deep` int(11) NULL DEFAULT 1,
+   `deep` tinyint NULL DEFAULT 1,
    `source` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
    PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
