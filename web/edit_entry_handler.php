@@ -729,9 +729,7 @@ try {
     if ($result["new_details"][0]['id']) {
       foreach ($result["new_details"] as $d) {
         if ($edit_series) {
-          $fetch = db()->query("SELECT id FROM " . _tbl("entry") . " WHERE repeat_id = ?", array($d['id']));
-          while ($row = $fetch->next_row_keyed())
-            CalendarServerManager::createMeeting($row['id']);
+          CalendarServerManager::createRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
         }else{
           CalendarServerManager::createMeeting($d['id']);
         }
@@ -826,5 +824,5 @@ if ($result['valid_booking']) {
 }else if ($result['new_details'][0]['id'] != 0){
   ApiHelper::fail(get_vocab("entry_conflict"), ApiHelper::ENTRY_CONFLICT, $result['conflicts']);
 }else{
-  ApiHelper::fail(get_vocab("entry_conflict"), ApiHelper::ENTRY_CONFLICT, $reslut['conflicts']);
+  ApiHelper::fail(get_vocab("entry_conflict"), ApiHelper::ENTRY_CONFLICT, $result['conflicts']);
 }

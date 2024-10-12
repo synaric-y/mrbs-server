@@ -60,26 +60,61 @@ while (true) {
           }
         }
         foreach ($fmtChangeList["create"] as $create) {
-          $success = DBHelper::insert(\MRBS\_tbl("entry"), $create["data"]) ?? false;
-//          $result = MRBS\mrbsMakeBookings(array($create["data"]), null, false, $create["data"]["skip"], $room[""]);
-          foreach ($thirdCalendarService as $serviceName => $config) {
-            if (!$success && $create["from"] == $serviceName) {
-              $connector = CalendarServerManager::getServer($config, $area, $room);
-              $connector->declineMeeting($create['item'], "DB Failed");
-              break;
-            } else if (!$success && $create["from"] != $serviceName) {
+          if (!empty($create['data']['repeat_rule'])) {
+            $reps = $create['data']['repeat_rule']->getRepeatStartTimes($create['data']['start_time']);
+            $one = null;
+            foreach ($reps as $rep) {
+              $start = $rep;
+              $end = $rep + $create['data']['duration'] * 60;
+              $one = DBHelper::one(\MRBS\_tbl("entry"), "(room_id = {$create['data']['room_id']} AND (start_time <= {$start} AND end_time > {$start}) OR (start_time < {$end} AND end_time >= {$end}) OR (start_time >= {$start} AND start_time < {$end}) OR (end_time >= {$end} AND end_time < {$end}))");
+              if (!empty($one)) {
+                $connector = CalendarServerManager::getServer(array("connector" => "MRBS\CalendarServer\ExchangeCalendarServerConnector"), $area, $room);
+                $connector->declineMeeting($create['item'], "conflict with " . $one['name'] . " , id " . $one['id']);
+                break;
+              }
+            }
+            if (!empty($one)) {
               continue;
             }
-            if ($area[$config["switch"]] != 1)
-              continue;
+            $result = \MRBS\mrbsCreateRepeatingEntrys($create['data']);
+            if ($result['id'] == 0) {
+              $connector = CalendarServerManager::getServer(array("connector" => "MRBS\CalendarServer\ExchangeCalendarServerConnector"), $area, $room);
+              $connector->declineMeeting($create['item'], "Recurring Meeting create too many meetings or create no meetings");
+
+            } else {
+//              foreach ($thirdCalendarService as $serviceName => $config) {
+//                if ($area[$config["switch"]] != 1)
+//                  continue;
+//                $connector = CalendarServerManager::getServer($config, $area, $room);
+//                if ($create["from"] == $serviceName) {
+//                  $connector->acceptMeeting($create['item'], "");
+//                } else
+//                  $connector->createMeeting($create["data"]);
+//              }
+              $connector = CalendarServerManager::getServer(array("connector" => "MRBS\CalendarServer\ExchangeCalendarServerConnector"), $area, $room);
+              $connector->acceptMeeting($create['item'], "");
+            }
+          } else {
+            $success = DBHelper::insert(\MRBS\_tbl("entry"), $create["data"]) ?? false;
+            foreach ($thirdCalendarService as $serviceName => $config) {
+              if (!$success && $create["from"] == $serviceName) {
+                $connector = CalendarServerManager::getServer($config, $area, $room);
+                $connector->declineMeeting($create['item'], "DB Failed");
+                break;
+              } else if (!$success && $create["from"] != $serviceName) {
+                continue;
+              }
+              if ($area[$config["switch"]] != 1)
+                continue;
 //            if ($create["from"] == $serviceName) {
 //              continue;
 //            }
-            $connector = CalendarServerManager::getServer($config, $area, $room);
-            if ($create["from"] == $serviceName) {
-              $connector->acceptMeeting($create['item'], "");
-            } else
-              $connector->createMeeting($create["data"]);
+              $connector = CalendarServerManager::getServer($config, $area, $room);
+              if ($create["from"] == $serviceName) {
+                $connector->acceptMeeting($create['item'], "");
+              } else
+                $connector->createMeeting($create["data"]);
+            }
           }
         }
         foreach ($fmtChangeList["update"] as $update) {

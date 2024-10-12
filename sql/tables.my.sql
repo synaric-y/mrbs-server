@@ -329,7 +329,7 @@ ALTER TABLE mrbs_system_variable ADD COLUMN `Exchange_sync_type` varchar(30) NUL
 ALTER TABLE mrbs_system_variable ADD COLUMN `Exchange_sync_interval` int NULL COMMENT '';
 ALTER TABLE mrbs_system_variable ADD COLUMN `logo_dir` varchar(255) NULL DEFAULT '';
 ALTER TABLE mrbs_system_variable ADD COLUMN `app_logo_dir` varchar(255) NULL DEFAULT '';
-ALTER TABLE mrbs_system_variable ADD COLUMN `time_type` int NULL DEFAULT '';
+ALTER TABLE mrbs_system_variable ADD COLUMN `time_type` int NULL DEFAULT 24;
 ALTER TABLE mrbs_system_variable ADD COLUMN `now_version` varchar(100) NULL DEFAULT '';
 ALTER TABLE mrbs_system_variable ADD COLUMN `show_book` tinyint NULL DEFAULT 1;
 ALTER TABLE mrbs_system_variable ADD COLUMN `show_meeting_name` tinyint NULL DEFAULT 1;
@@ -377,6 +377,7 @@ CREATE TABLE `mrbs_g2g_map`  (
    `id` int(11) NOT NULL AUTO_INCREMENT,
    `group_id` int(11) NULL DEFAULT NULL,
    `parent_id` int(11) NULL DEFAULT -1,
+   `deep` int(11) NULL DEFAULT 1,
    `source` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
    PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
@@ -386,10 +387,13 @@ CREATE TABLE `mrbs_u2g_map`  (
    `id` int(11) NOT NULL AUTO_INCREMENT,
    `user_id` int(11) NULL DEFAULT NULL,
    `parent_id` int(11) NULL DEFAULT -1,
+   `deep` int(11) NULL DEFAULT 1,
    `source` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
    PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
-
+ALTER TABLE `mrbs_system_variable` ADD COLUMN `init_status` int NOT NULL DEFAULT 0;
+ALTER TABLE `mrbs_system_variable` ADD COLUMN `server_address` varchar(255) NULL DEFAULT '';
+ALTER TABLE `mrbs_system_variable` ADD COLUMN `theme_type` int NOT NULL DEFAULT 1;

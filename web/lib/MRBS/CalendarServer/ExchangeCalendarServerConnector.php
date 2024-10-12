@@ -10,8 +10,10 @@ use garethp\ews\API\Message\SyncFolderItemsResponseMessageType;
 use garethp\ews\API\Type\CalendarItemType;
 use MRBS\DBHelper;
 use MRBS\Intl\IntlDateFormatter;
+use MRBS\RepeatRule;
 use function MRBS\_tbl;
 use function MRBS\get_vocab;
+use function MRBS\mrbsCreateRepeatingEntrys;
 
 // A Connector that synchronizes bidirectionally with MicroSoft Exchange.
 class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
@@ -69,7 +71,6 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     $calendar = $this->getCalendar();
     $items = $calendar->getCalendarItems($searchCalendarStart, $searchCalendarEnd);
     $calendarItemList = $items->getItems()->getCalendarItem();
-
     // get recent change list
     $changesSinceLsatCheck = $calendar->listChanges($this->room["exchange_sync_state"] ?? null);
     if (!empty($calendarItemList)) {
@@ -150,6 +151,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
           $this->fmtChangeList["delete"][] = array("data" => $entry, "from" => "exchange");
           if (!empty($entry)) {
             DBHelper::delete(\MRBS\_tbl("entry"), array("exchange_id" => $di));
+            DBHelper::delete(\MRBS\_tbl("repeat"), array("exchange_id" => $di));
           }
         }
       }
@@ -161,6 +163,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
         }
         foreach ($create as $createItem) {
           $ci = $createItem->getCalendarItem();
+          $ci = $this -> getCalendar() -> getCalendarItem($ci->getItemId()->getId(), $ci->getItemId()->getChangeKey());
           $this->handleMeetingCreate($ci);
         }
       }
@@ -190,14 +193,177 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
       return;
     }
     if ($ci->getCalendarItemType() == "RecurringMaster") {
-      \MRBS\log_i($this::$TAG, "not support calendar type: RecurringMaster");
-      try {
-        $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
-      } catch (\Exception $e) {
-        \MRBS\log_i($this::$TAG, $e->getMessage());
-        \MRBS\log_i($this::$TAG, $e->getTraceAsString());
+//      try {
+//        $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
+//      } catch (\Exception $e) {
+//        \MRBS\log_i($this::$TAG, $e->getMessage());
+//        \MRBS\log_i($this::$TAG, $e->getTraceAsString());
+//      }
+//      return;
+      if ($ci->getRecurrence()->getWeeklyRecurrence() == null || $ci->getRecurrence()->getEndDateRecurrence() == null) {
+        \MRBS\log_i($this::$TAG, "not support calendar type: RecurringMaster");
+        try {
+          $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
+        } catch (\Exception $e) {
+          \MRBS\log_i($this::$TAG, $e->getMessage());
+          \MRBS\log_i($this::$TAG, $e->getTraceAsString());
+        }
+        return;
+      } else {
+        //TODO Weekly Recurrence
+        if ($ci->getRecurrence()->getEndDateRecurrence() !== null) {
+          $start_time = new DateTime($ci->getRecurrence()->getEndDateRecurrence()->getStartDate());
+          $end_time = $ci->getRecurrence()->getEndDateRecurrence()->getEndDate();
+          switch (intval(date("w", $start_time -> getTimestamp()))) {
+            case 0:
+              if (!strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Sunday")) {
+                \MRBS\log_i($this::$TAG, "today of week should be include");
+                try {
+                  $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
+                } catch (\Exception $e) {
+                  \MRBS\log_i($this::$TAG, $e->getMessage());
+                  \MRBS\log_i($this::$TAG, $e->getTraceAsString());
+                }
+                return;
+              }
+              break;
+            case 1:
+              if (!strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Monday")) {
+                \MRBS\log_i($this::$TAG, "today of week should be include");
+                try {
+                  $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
+                } catch (\Exception $e) {
+                  \MRBS\log_i($this::$TAG, $e->getMessage());
+                  \MRBS\log_i($this::$TAG, $e->getTraceAsString());
+                }
+                return;
+              }
+              break;
+            case 2:
+              if (!strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Tuesday")) {
+                \MRBS\log_i($this::$TAG, "today of week should be include");
+                try {
+                  $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
+                } catch (\Exception $e) {
+                  \MRBS\log_i($this::$TAG, $e->getMessage());
+                  \MRBS\log_i($this::$TAG, $e->getTraceAsString());
+                }
+                return;
+              }
+              break;
+            case 3:
+              if (!strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Wednesday")) {
+                \MRBS\log_i($this::$TAG, "today of week should be include");
+                try {
+                  $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
+                } catch (\Exception $e) {
+                  \MRBS\log_i($this::$TAG, $e->getMessage());
+                  \MRBS\log_i($this::$TAG, $e->getTraceAsString());
+                }
+                return;
+              }
+              break;
+            case 4:
+              if (!strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Thursday")) {
+                \MRBS\log_i($this::$TAG, "today of week should be include");
+                try {
+                  $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
+                } catch (\Exception $e) {
+                  \MRBS\log_i($this::$TAG, $e->getMessage());
+                  \MRBS\log_i($this::$TAG, $e->getTraceAsString());
+                }
+                return;
+              }
+              break;
+            case 5:
+              if (!strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Friday")) {
+                \MRBS\log_i($this::$TAG, "today of week should be include");
+                try {
+                  $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
+                } catch (\Exception $e) {
+                  \MRBS\log_i($this::$TAG, $e->getMessage());
+                  \MRBS\log_i($this::$TAG, $e->getTraceAsString());
+                }
+                return;
+              }
+              break;
+            case 6:
+              if (!strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Saturday")) {
+                \MRBS\log_i($this::$TAG, "today of week should be include");
+                try {
+                  $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
+                } catch (\Exception $e) {
+                  \MRBS\log_i($this::$TAG, $e->getMessage());
+                  \MRBS\log_i($this::$TAG, $e->getTraceAsString());
+                }
+                return;
+              }
+              break;
+            default:
+              \MRBS\log_i($this::$TAG, "today of week should be include");
+              try {
+                $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
+              } catch (\Exception $e) {
+                \MRBS\log_i($this::$TAG, $e->getMessage());
+                \MRBS\log_i($this::$TAG, $e->getTraceAsString());
+              }
+              return;
+          }
+          $rep_rule = new \MRBS\RepeatRule();
+          $rep_rule->setType(RepeatRule::WEEKLY);
+          $days_of_week = array();
+          if (strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Sunday") !== false){
+            $days_of_week[] = 0;
+          }
+          if (strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Monday") !== false){
+            $days_of_week[] = 1;
+          }
+          if (strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Tuesday") !== false){
+            $days_of_week[] = 2;
+          }
+          if (strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Wednesday") !== false){
+            $days_of_week[] = 3;
+          }
+          if (strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Thursday") !== false){
+            $days_of_week[] = 4;
+          }
+          if (strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Friday") !== false){
+            $days_of_week[] = 5;
+          }
+          if (strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Saturday") !== false){
+            $days_of_week[] = 6;
+          }
+          if (count($days_of_week) == 0){
+            \MRBS\log_i($this::$TAG, "day of week should not be empty");
+            try {
+              $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
+            } catch (\Exception $e) {
+              \MRBS\log_i($this::$TAG, $e->getMessage());
+              \MRBS\log_i($this::$TAG, $e->getTraceAsString());
+            }
+            return;
+          }
+          $rep_rule -> setDays($days_of_week);
+          $rep_rule -> setEndDate(new \MRBS\DateTime($end_time));
+          $rep_rule -> setInterval($ci->getRecurrence()->getWeeklyRecurrence()->getInterval());
+          $adapter = new CalendarAdapter(CalendarAdapter::$MODE_ADD);
+          $this -> fmtChangeList['create'][] = array(
+            "from" => "exchange",
+            "data" => $adapter->exchangeCalendarToRecurringEntry($ci, $rep_rule, $this -> room),
+            "item" => $ci
+          );
+          return;
+        } else {
+          \MRBS\log_i($this::$TAG, "temporarily not support NumberedRecurrence");
+          try {
+            $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
+          } catch (\Exception $e) {
+            \MRBS\log_i($this::$TAG, $e->getMessage());
+            \MRBS\log_i($this::$TAG, $e->getTraceAsString());
+          }
+          return;
+        }
       }
-      return;
     }
     $exchangeId = $ci->getItemId()->getId();
     // itemId maybe reused, so don't check itemId
@@ -247,18 +413,18 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
       "data" => $adapter->exchangeCalendarToEntry($ci, $this->room),
       "item" => $ci
     );
-    try {
+//    try {
 //      echo $ci->getItemId()->getId() . "\n";
 //      $this->getCalendar()->acceptMeeting($ci->getItemId(), "");
 //      echo 1;
 //      $this->getCalendar()->declineMeeting($ci->getItemId(), "test");
-    } catch (\Exception $e) {
+//    } catch (\Exception $e) {
 //      \MRBS\log_write($this::$TAG, $e->getMessage();
 //      \MRBS\log_write($this::$TAG, $e->getTraceAsString();
 //      $this->getCalendar()->declineMeeting($ci->getItemId(), "test");
 //      echo $e->getMessage();
 //      echo $e->getTraceAsString();
-    }
+//    }
   }
 
   private function handleMeetingUpdate(CalendarItemType $ui)
@@ -357,9 +523,9 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
 
   public function declineMeeting(CalendarItemType $i, string $msg)
   {
-    try{
+    try {
       $this->getCalendar()->declineMeeting($i->getItemId(), $msg);
-    }catch (\Exception $e){
+    } catch (\Exception $e) {
 //      echo $e->getMessage();
 //      echo $e->getTraceAsString();
     }
@@ -367,11 +533,30 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
 
   public function acceptMeeting(CalendarItemType $i, string $msg)
   {
-    try{
+    try {
       $this->getCalendar()->acceptMeeting($i->getItemId(), $msg);
-    }catch (\Exception $e){
+    } catch (\Exception $e) {
 //      echo $e->getMessage();
 //      echo $e->getTraceAsString();
     }
   }
+
+  public function createRepeatMeeting($entry, $end_date){
+    $id = $entry["id"];
+    $adapter = new CalendarAdapter(CalendarAdapter::$MODE_ADD);
+    $exchangeCalendar = $adapter->entryToExchangeCalendarRepeat($entry, $end_date);
+    try {
+      $createdItemIds = $this->getCalendar()->createCalendarItems($exchangeCalendar);
+      if ($createdItemIds) {
+        $exchange_id = $createdItemIds[0]->getId();
+        $exchange_key = $createdItemIds[0]->getChangeKey();
+        DBHelper::update(_tbl("repeat"), array("exchange_id" => $exchange_id, "exchange_key" => $exchange_key), "id = $id");
+      }
+    } catch (\Exception $e) {
+
+    }
+    \MRBS\log_i($this::$TAG, "createRepeatingMeeting: $id");
+  }
 }
+
+

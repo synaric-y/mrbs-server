@@ -1,8 +1,13 @@
 <?php
+
 namespace MRBS\CalendarServer;
 
+use Cassandra\Date;
 use DateTime;
 use garethp\ews\API\Type\CalendarItemType;
+use garethp\ews\API\Type\EndDateRecurrenceRangeType;
+use garethp\ews\API\Type\RecurrenceType;
+use garethp\ews\API\Type\WeeklyRecurrencePatternType;
 use MRBS\RepeatRule;
 use function MRBS\_tbl;
 use function MRBS\generate_global_uid;
@@ -37,12 +42,12 @@ class CalendarAdapter
 //    $result["skip"] = false;
 //    $result["edit_series"] = false;
     $repeat_rule = new RepeatRule();
-    $repeat_rule -> setType(RepeatRule::NONE);
+    $repeat_rule->setType(RepeatRule::NONE);
     if ($this->mode == $this::$MODE_UPDATE) {
       $result["modified_by"] = "admin";
     }
     if ($this->mode == $this::$MODE_ADD) {
-      $email = $calendarItem -> getOrganizer() ->getMailbox() -> getEmailAddress();
+      $email = $calendarItem->getOrganizer()->getMailbox()->getEmailAddress();
       $create_by = DBHelper::one(_tbl("users"), ["email" => $email]);
       $result["create_by"] = $create_by ?? "exchange";
       if ($calendarItem->getOrganizer()->getMailbox()->getName() == $calendarItem->getSubject()) {
@@ -57,11 +62,11 @@ class CalendarAdapter
       $result["ical_uid"] = generate_global_uid($result["name"]);
       $result["allow_registration"] = $allow_registration_default ? 1 : 0;
       $result["registrant_limit"] = $registrant_limit_default;
-      $result["registrant_limit_enabled"] = $registrant_limit_enabled_default  ? 1 : 0;
+      $result["registrant_limit_enabled"] = $registrant_limit_enabled_default ? 1 : 0;
       $result["registration_opens"] = $registration_opens_default;
-      $result["registration_opens_enabled"] = $registration_opens_enabled_default  ? 1 : 0;
+      $result["registration_opens_enabled"] = $registration_opens_enabled_default ? 1 : 0;
       $result["registration_closes"] = $registration_closes_default;
-      $result["registration_closes_enabled"] = $registration_closes_enabled_default  ? 1 : 0;
+      $result["registration_closes_enabled"] = $registration_closes_enabled_default ? 1 : 0;
       $result["exchange_id"] = $calendarItem->getItemId()->getId();
       $result["exchange_key"] = $calendarItem->getItemId()->getChangeKey();
       $result["create_source"] = "exchange";
@@ -79,20 +84,20 @@ class CalendarAdapter
   // Convert Entry to Exchange Calendar
   public function entryToExchangeCalendar($entry)
   {
-      $result = array();
-      $start = new DateTime();
-      $end = new DateTime();
-      $start->setTimestamp($entry["start_time"]);
-      $end->setTimestamp($entry["end_time"]);
+    $result = array();
+    $start = new DateTime();
+    $end = new DateTime();
+    $start->setTimestamp($entry["start_time"]);
+    $end->setTimestamp($entry["end_time"]);
 
-      $result["Subject"] = $entry["name"];
-      $result["Start"] = $start->format('c');
-      $result["End"] = $end->format('c');
+    $result["Subject"] = $entry["name"];
+    $result["Start"] = $start->format('c');
+    $result["End"] = $end->format('c');
 
-      return $result;
+    return $result;
   }
 
-  public function wxworkBookToCalendar($book, $room, $oldData = null) : array
+  public function wxworkBookToCalendar($book, $room, $oldData = null): array
   {
     global $allow_registration_default, $registrant_limit_default, $registrant_limit_enabled_default;
     global $registration_opens_default, $registration_opens_enabled_default, $registration_closes_default;
@@ -118,11 +123,11 @@ class CalendarAdapter
       $result["ical_uid"] = generate_global_uid($result["name"]);
       $result["allow_registration"] = $allow_registration_default ? 1 : 0;
       $result["registrant_limit"] = $registrant_limit_default;
-      $result["registrant_limit_enabled"] = $registrant_limit_enabled_default  ? 1 : 0;
+      $result["registrant_limit_enabled"] = $registrant_limit_enabled_default ? 1 : 0;
       $result["registration_opens"] = $registration_opens_default;
-      $result["registration_opens_enabled"] = $registration_opens_enabled_default  ? 1 : 0;
+      $result["registration_opens_enabled"] = $registration_opens_enabled_default ? 1 : 0;
       $result["registration_closes"] = $registration_closes_default;
-      $result["registration_closes_enabled"] = $registration_closes_enabled_default  ? 1 : 0;
+      $result["registration_closes_enabled"] = $registration_closes_enabled_default ? 1 : 0;
       $result["wxwork_bid"] = $book["booking_id"];
       $result["wxwork_sid"] = $book["schedule_id"];
       $result["create_source"] = "wxwork";
@@ -139,7 +144,8 @@ class CalendarAdapter
     return $dateTime->getTimestamp();
   }
 
-  public function exchangeCalendarToRecurringEntry(CalendarItemType $calendarItem, $room, RepeatRule $rep_rule ,$oldData = null) : array{
+  public function exchangeCalendarToRecurringEntry(CalendarItemType $calendarItem, RepeatRule $rep_rule, $room, $oldData = null): array
+  {
     global $allow_registration_default, $registrant_limit_default, $registrant_limit_enabled_default;
     global $registration_opens_default, $registration_opens_enabled_default, $registration_closes_default;
     global $registration_closes_enabled_default;
@@ -156,9 +162,9 @@ class CalendarAdapter
       $result["modified_by"] = "admin";
     }
     if ($this->mode == $this::$MODE_ADD) {
-      $email = $calendarItem -> getOrganizer() ->getMailbox() -> getEmailAddress();
+      $email = $calendarItem->getOrganizer()->getMailbox()->getEmailAddress();
       $create_by = DBHelper::one(_tbl("users"), ["email" => $email]);
-      $result["create_by"] = $create_by ?? "exchange";
+      $result["create_by"] = $create_by ? $create_by['name'] : "exchange";
       $result["name"] = $calendarItem->getSubject() ? get_vocab("ic_xs_meeting", $calendarItem->getSubject()) : "Unknown Meeting";
       $result["description"] = "";
       $result["book_by"] = $calendarItem->getOrganizer()->getMailbox()->getName() ?? "Unknown";
@@ -167,16 +173,16 @@ class CalendarAdapter
       $result["ical_uid"] = generate_global_uid($result["name"]);
       $result["allow_registration"] = $allow_registration_default ? 1 : 0;
       $result["registrant_limit"] = $registrant_limit_default;
-      $result["registrant_limit_enabled"] = $registrant_limit_enabled_default  ? 1 : 0;
+      $result["registrant_limit_enabled"] = $registrant_limit_enabled_default ? 1 : 0;
       $result["registration_opens"] = $registration_opens_default;
-      $result["registration_opens_enabled"] = $registration_opens_enabled_default  ? 1 : 0;
+      $result["registration_opens_enabled"] = $registration_opens_enabled_default ? 1 : 0;
       $result["registration_closes"] = $registration_closes_default;
-      $result["registration_closes_enabled"] = $registration_closes_enabled_default  ? 1 : 0;
+      $result["registration_closes_enabled"] = $registration_closes_enabled_default ? 1 : 0;
       $result["exchange_id"] = $calendarItem->getItemId()->getId();
       $result["exchange_key"] = $calendarItem->getItemId()->getChangeKey();
       $result["create_source"] = "exchange";
       $result["repeat_rule"] = $repeat_rule;
-      $result["duration"] = ($this->iOSTimeToTimeStamp($calendarItem->getStart()) - $this->iOSTimeToTimeStamp($calendarItem->getEnd())) / 60;
+      $result["duration"] = ($this->iOSTimeToTimeStamp($calendarItem->getEnd()) - $this->iOSTimeToTimeStamp($calendarItem->getStart())) / 60;
       $result["dur_units"] = "minutes";
       $result["private"] = false;
       $result["awaiting_approval"] = false;
@@ -192,5 +198,54 @@ class CalendarAdapter
 //    $result["awaiting_approval"] = false;
 //    $result["tentative"] = false;
     return $result;
+  }
+
+  public function entryToExchangeCalendarRepeat($entry, $end_date)
+  {
+    $calendarItem = new CalendarItemType();
+    $calendarItem->setSubject($entry["name"]);
+    $recurrence = new RecurrenceType();
+    $weeklyPattern = new WeeklyRecurrencePatternType();
+    $weeklyPattern->setInterval($entry['rep_interval']);
+    $endDateRecurrence = new EndDateRecurrenceRangeType();
+    $start = new DateTime();
+    $end = DateTime::createFromFormat("Y-m-d", $end_date);
+    $start->setTimestamp($entry['start_time']);
+    $endDateRecurrence->setStartDate($start);
+    $endDateRecurrence->setEndDate($end);
+    for ($i = 0; $i < strlen($entry['rep_opt']); $i++) {
+      if ($entry['rep_opt'][$i] == '1') {
+        switch ($i) {
+          case 0:
+            $days[] = "Sunday";
+            break;
+          case 1:
+            $days[] = "Monday";
+            break;
+          case 2:
+            $days[] = "Tuesday";
+            break;
+          case 3:
+            $days[] = "Wednesday";
+            break;
+          case 4:
+            $days[] = "Thursday";
+            break;
+          case 5:
+            $days[] = "Friday";
+            break;
+          case 6:
+            $days[] = "Saturday";
+            break;
+        }
+      }
+    }
+    $weeklyPattern->setDaysOfWeek($days);
+    $recurrence->setWeeklyRecurrence($weeklyPattern);
+    $recurrence->setEndDateRecurrence($endDateRecurrence);
+    $calendarItem->setRecurrence($recurrence);
+    $calendarItem->setIsRecurring(true);
+    $calendarItem->setCalendarItemType("RecurringMaster");
+    return $calendarItem;
   }
 }
