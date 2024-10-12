@@ -282,7 +282,6 @@ CREATE TABLE mrbs_system_variable(
   id                     int NOT NULL auto_increment,
   use_wxwork             tinyint NOT NULL DEFAULT 0 COMMENT 'whether use wxwork',
   use_exchange           tinyint NOT NULL DEFAULT 0 COMMENT 'whether use exchange',
-  exchange_server        varchar(255) NULL DEFAULT '' COMMENT 'only be used when use_exchange=1, this is exchange server ip or domain',
   corpid                 varchar(255) NULL DEFAULT '' COMMENT 'only be used when use_wxwork=1, get from wxwork',
   secret                 varchar(255) NULL DEFAULT '' COMMENT 'only be used when use_wxwork=1, get from wxwork',
   agentid                varchar(255) NULL DEFAULT '' COMMENT 'only be used when use_wxwork=1, get from wxwork',
@@ -357,9 +356,9 @@ CREATE TABLE mrbs_room_group(
   PRIMARY KEY (id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-### 用户组表
+### user group
 CREATE TABLE `mrbs_user_group`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(511) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'group name',
   `third_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'third group_id',
   `third_parent_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL COMMENT 'third parent_id',
@@ -372,9 +371,9 @@ CREATE TABLE `mrbs_user_group`  (
                                   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
-### 组-组关系表
+### group-group relationship
 CREATE TABLE `mrbs_g2g_map`  (
-   `id` int(11) NOT NULL AUTO_INCREMENT,
+   `id` int NOT NULL AUTO_INCREMENT,
    `group_id` int(11) NULL DEFAULT NULL,
    `parent_id` int(11) NULL DEFAULT -1,
    `deep` int(11) NULL DEFAULT 1,
@@ -382,9 +381,9 @@ CREATE TABLE `mrbs_g2g_map`  (
    PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
-### 人-组关系表
+### user-group relationship
 CREATE TABLE `mrbs_u2g_map`  (
-   `id` int(11) NOT NULL AUTO_INCREMENT,
+   `id` int NOT NULL AUTO_INCREMENT,
    `user_id` int(11) NULL DEFAULT NULL,
    `parent_id` int(11) NULL DEFAULT -1,
    `deep` int(11) NULL DEFAULT 1,
