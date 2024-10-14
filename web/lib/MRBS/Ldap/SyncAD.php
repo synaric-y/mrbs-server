@@ -26,8 +26,12 @@ function syncAD()
   $TABLE_U2G = "u2g_map";
   $TABLE_G2G = "g2g_map";
 
-  log_ad("start sync-----------------------------");
+  // A runtime k-v map cache to save query times
+  $localGroupList = [];
+  $localUserList = [];
 
+  log_ad("start sync-----------------------------");
+  log_ad("start time: " . time());
   $config = DBHelper::one(_tbl("system_variable"), "1=1");
   if (empty($config)) {
     log_ad("config is empty, stop sync");
@@ -96,7 +100,6 @@ function syncAD()
   }
   log_ad("handle user: ", $totalUser);
 
-  $localGroupList = [];
   $syncResult = new SyncLDAPResult();
 
   // 3.Merge Groups
@@ -140,7 +143,6 @@ function syncAD()
   log_ad("merge groups: ", count($fmtGroupList));
 
   // 4.Merge Users
-  $localUserList = [];
   foreach ($fmtUserList as $remoteUser) {
     $thirdId = $remoteUser['third_id'];
     if (empty($thirdId)) {
@@ -177,6 +179,8 @@ function syncAD()
   // 5.Resolve user-group and group-group relationship
   DBHelper::delete(_tbl($TABLE_G2G), "source = '$CREATE_SOURCE'");
   DBHelper::delete(_tbl($TABLE_U2G), "source = '$CREATE_SOURCE'");
+  // reindex cache to improve query performance
+  $localGroupList = array_values($localGroupList);
 
   foreach ($localGroupList as $key => $localGroup) {
     try {
@@ -240,6 +244,7 @@ function syncAD()
   $syncResult->user_unbind = $usUserResult['count'] ?? 0;
 
   log_ad(json_encode($syncResult));
+  log_ad("end time: " . time());
   log_ad("end sync-------------------------------");
 
   return $syncResult;
