@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection SqlDialectInspection */
 
 namespace MRBS\Ldap;
 
@@ -222,7 +222,18 @@ function syncAD()
   }
   log_ad("resolve u2g: ", count($localGroupList));
 
-  // 6.Query whether there are non-synchronized groups and users
+  // 6.Resolve user count
+  $updateUserCountSQL = "
+    update $TABLE_GROUP t1 join(
+      select parent_id, count(*) as count from $TABLE_U2G where parent_id in
+        (select id from $TABLE_GROUP)
+      GROUP BY parent_id
+    ) t2 on t1.id = t2.parent_id
+    set t1.user_count = t2.count
+  ";
+  DBHelper::exec($updateUserCountSQL);
+
+  // 7.Query whether there are non-synchronized groups and users
   $usGroupResult = DBHelper::query("select count(*) as count from " . _tbl($TABLE_GROUP) . " where sync_state = 1 and sync_version != '$SYNC_VERSION'");
   $usUserResult = DBHelper::query("select count(*) as count from " . _tbl($TABLE_USER) . " where sync_state = 1 and sync_version != '$SYNC_VERSION'");
   $syncResult->group_unbind = $usGroupResult['count'] ?? 0;
