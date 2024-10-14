@@ -622,6 +622,11 @@ $vocab["ic_tp_meeting"]                       = "临时会议";
 $vocab["fast_meeting_time"]                   = "确定要预约 %s - %s的快速会议吗？";
 $vocab["ic_recurring_decline"]                = "暂不支持周期性会议";
 
+// User Group
+$vocab["invalid_group_name"]                        = "用户组名无效";
+$vocab["invalid_parent"]                            = "上级用户组无效或不存在";
+$vocab["internal_database_error"]                   = "内部错误";
+
 $vocab["success"]            = "成功";
 $vocab["already_login"]      = "已经登录了";
 $vocab["invalid_username_or_password"] = "账户名或密码不正确";

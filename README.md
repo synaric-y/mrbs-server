@@ -92,7 +92,7 @@ Package ```web``` and ```image``` directories to the Web server.
 (Optional) Start a third-party Calendar scheduled synchronization task:
 
 ```
-nohup php /path-to-your-project/web/serverapi/sync_tpcs.php > /dev/null 2>&1 &
+nohup php /path-to-your-project/web/task/sync_tpcs.php > /dev/null 2>&1 &
 ```
 
 # Other

@@ -220,6 +220,11 @@ $vocab["ic_tp_meeting"]                       = "빠른 회의";
 $vocab["fast_meeting_time"]                   = "오후 %s - %s 간단한 회의를 예약하시겠습니까?";
 $vocab["ic_recurring_decline"]                = "정기 회의는 아직 지원되지 않습니다.";
 
+// User Group
+$vocab["invalid_group_name"]                        = "잘못된 사용자 그룹 이름";
+$vocab["invalid_parent"]                            = "상위 사용자 그룹이 유효하지 않거나 존재하지 않습니다";
+$vocab["internal_database_error"]                   = "내부 오류";
+
 $vocab["success"]           = "성공";
 $vocab["already_login"]    = "이미 로그인";
 $vocab["invalid_username_or_password"] = "계정 이름이나 비밀번호가 올바르지 않습니다.";

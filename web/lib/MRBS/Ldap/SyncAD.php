@@ -2,15 +2,6 @@
 
 namespace MRBS\Ldap;
 
-require dirname(__DIR__, 4) . '/vendor/autoload.php';
-require_once dirname(__DIR__, 3) . "/defaultincludes.inc";
-require_once dirname(__DIR__, 3) . "/functions_table.inc";
-require_once dirname(__DIR__, 3) . "/mrbs_sql.inc";
-
-ini_set('display_errors', 1);            //错误信息
-ini_set('display_startup_errors', 1);    //php启动错误信息
-error_reporting(E_ALL);
-
 use Exception;
 use LdapRecord\Container;
 use LdapRecord\Connection;
@@ -20,8 +11,6 @@ use MRBS\DBHelper;
 use function MRBS\_tbl;
 use function MRBS\log_ad;
 
-
-syncAD();
 
 /**
  * Synchronize User and Group from AD(LDAP).
@@ -33,7 +22,7 @@ function syncAD()
   $CREATE_SOURCE = "ad";
   $SYNC_VERSION = md5(uniqid('', true));
   $TABLE_GROUP = "user_group";
-  $TABLE_USER = "users1";
+  $TABLE_USER = "users";
   $TABLE_U2G = "u2g_map";
   $TABLE_G2G = "g2g_map";
 
