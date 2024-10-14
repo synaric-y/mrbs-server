@@ -1,7 +1,7 @@
 <?php
 
-use function MRBS\Ldap\syncAD;
-use function MRBS\log_ad;
+
+use MRBS\LDAP\SyncADManager;
 
 require dirname(__DIR__, 2) . '/vendor/autoload.php';
 require_once dirname(__DIR__) . "/defaultincludes.inc";
@@ -16,9 +16,5 @@ error_reporting(E_ALL);
  * A timing script for synchronizing AD(LDAP) data.
  * This script should be started by the timer and not called by the network request.
  */
-
-try {
-  syncAD();
-} catch (Exception $e) {
-  log_ad($e->getMessage());
-}
+$manager = new SyncADManager();
+$manager->syncAD();
