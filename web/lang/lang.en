@@ -717,6 +717,11 @@ $vocab["ic_tp_meeting"]                       = "Quick Meeting";
 $vocab["fast_meeting_time"]                   = "Are you sure you want to book a quick meeting between %s - %s？";
 $vocab["ic_recurring_decline"]                = "Periodic meetings are not supported yet.";
 
+// User Group
+$vocab["invalid_group_name"]                        = "Invalid group name";
+$vocab["invalid_parent"]                            = "Invalid parent";
+$vocab["internal_database_error"]                   = "Internal database error";
+
 $vocab["success"]           = "success";
 $vocab["already_login"]     = "already login";
 $vocab["invalid_username_or_password"] = "invalid username or password";

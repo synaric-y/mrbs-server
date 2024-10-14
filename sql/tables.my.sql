@@ -373,7 +373,7 @@ CREATE TABLE `mrbs_user_group`  (
 
 ### group-group relationship
 CREATE TABLE `mrbs_g2g_map`  (
-   `id` int NOT NULL AUTO_INCREMENT,
+   `id` bigint NOT NULL AUTO_INCREMENT,
    `group_id` int(11) NULL DEFAULT NULL,
    `parent_id` int(11) NULL DEFAULT -1,
    `deep` int(11) NULL DEFAULT 1,
@@ -383,7 +383,7 @@ CREATE TABLE `mrbs_g2g_map`  (
 
 ### user-group relationship
 CREATE TABLE `mrbs_u2g_map`  (
-   `id` int NOT NULL AUTO_INCREMENT,
+   `id` bigint NOT NULL AUTO_INCREMENT,
    `user_id` int(11) NULL DEFAULT NULL,
    `parent_id` int(11) NULL DEFAULT -1,
    `deep` int(11) NULL DEFAULT 1,
@@ -397,6 +397,7 @@ CREATE TABLE `mrbs_u2g_map`  (
 ALTER TABLE mrbs_users ADD COLUMN `third_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'third group_id';
 ALTER TABLE mrbs_users ADD COLUMN `third_parent_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL COMMENT 'third parent_id';
 ALTER TABLE mrbs_users ADD COLUMN `sync_state` int(11) NULL DEFAULT NULL COMMENT '0:no sync;1:sync';
+ALTER TABLE mrbs_users ADD COLUMN `sync_version` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'sync version code';
 ALTER TABLE mrbs_users ADD COLUMN `last_sync_time` int(13) NULL DEFAULT NULL COMMENT 'last sync timestamp';
 
 ALTER TABLE `mrbs_system_variable` ADD COLUMN `init_status` int NOT NULL DEFAULT 0;

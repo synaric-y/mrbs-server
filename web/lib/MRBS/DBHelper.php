@@ -13,8 +13,19 @@ class DBHelper
 //      echo DBHelper::$TAG, $sql, PHP_EOL;
       db()->command($sql);
     } catch (\Exception $e) {
-      echo $e->getTraceAsString(), PHP_EOL;
+      echo $e->getMessage(), PHP_EOL;
     }
+  }
+
+  static public function query($sql)
+  {
+    try {
+//      echo DBHelper::$TAG, $sql, PHP_EOL;
+      return db()->query_array($sql);
+    } catch (\Exception $e) {
+      echo $e->getMessage(), PHP_EOL;
+    }
+    return array();
   }
 
   static public function update($table, $data, $where)
@@ -59,7 +70,7 @@ class DBHelper
 //      echo DBHelper::$TAG, $sql, PHP_EOL;
       db()->command($sql);
     } catch (Exception $e) {
-      echo $e->getTraceAsString(), PHP_EOL;
+      echo $e->getMessage(), PHP_EOL;
       return false;
     }
 
@@ -87,7 +98,7 @@ class DBHelper
 //      echo DBHelper::$TAG, $sql, PHP_EOL;
       db()->command($sql);
     } catch (\Exception $e) {
-      echo $e->getTraceAsString(), PHP_EOL;
+      echo $e->getMessage(), PHP_EOL;
       return false;
     }
 
