@@ -2851,3 +2851,69 @@ function get_bookings_in_series(?int $repeat_id) : array
 
   return $bookings;
 }
+
+function insert_group($group, $parent_id): int
+{
+  db()->begin();
+  db()->command("INSERT INTO " . _tbl('user_group') . "(name, third_id, third_parent_id, source, disabled) VALUES (?, ?, ?, ?, ?)", array($group['name'], $group['third_id'] ?? "", $group['third_parent_id'] ?? "", $group['source'], $group['disabled']));
+  $group_id = db()->insert_id(_tbl("user_group"), "id");
+  // if a group without parent, then we only need add a relation into the table
+  if ($parent_id == -1){
+    db()->command("INSERT INTO " . _tbl("g2g_map") . "(group_id, parent_id, deep, source) VALUES (?, ?, ?, ?)", array($group_id, $parent_id, 1, $group['source']));
+    db()->commit();
+    return $group_id;
+  }
+  // else we need to add all relations into the table according to parent
+  $result = db()->query("SELECT * FROM " . _tbl("g2g_map") . " WHERE group_id = ?", array($parent_id));
+  $maps = array();
+  $maps[] = array($group_id, $parent_id, 1, $group['source']);
+  while($row = $result -> next_row_keyed()){
+    $maps[] = array($group_id, $row['parent_id'], $row['deep'] + 1, $group['source']);
+  }
+  $i = 0;
+  $batch = 0;
+  $sql = "INSERT INTO " . _tbl("g2g_map") . "(group_id, parent_id, deep, source) VALUES ";
+  $params = array();
+  while($i < count($maps)){
+    for (;$i - $batch * 10000 < min(count($maps) - $batch * 10000, 10000); $i++){
+      $sql .= "(?, ?, ?, ?)";
+      if ($i != count($maps) - 1){
+        $sql .= ", ";
+      }
+      $params = array_merge($params, $maps[$i]);
+    }
+    db()->command($sql, $params);
+    $batch++;
+  }
+  db()->commit();
+  return $group_id;
+}
+
+function bind_user_to_group($user_id, $group_id, $source): bool
+{
+  db()->begin();
+  $result = db()->query("SELECT * FROM " . _tbl("g2g_map") . " WHERE group_id = ? AND parent_id > -1", array($group_id));
+  $maps = array();
+  $maps[] = array($user_id, $group_id, 1, $source);
+  $params = array();
+  while($row = $result -> next_row_keyed()){
+    $maps[] = array($user_id, $row['parent_id'], $row['deep'] + 1, $row['source']);
+  }
+  $sql = "INSERT INTO " . _tbl("u2g_map") . "(user_id, parent_id, deep, source) VALUES ";
+  $i = 0;
+  $batch = 0;
+  while($i < count($maps)){
+    for (;$i - $batch * 10000 < min(count($maps) - $batch * 10000, 10000); $i++){
+      $sql .= "(?, ?, ?, ?)";
+      if ($i != count($maps) - 1){
+        $sql .= ", ";
+      }
+      $params = array_merge($params, $maps[$i]);
+    }
+    db()->command($sql, $params);
+    $batch++;
+  }
+  db()->commit();
+  return true;
+}
+
