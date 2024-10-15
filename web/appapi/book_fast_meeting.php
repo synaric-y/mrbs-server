@@ -5,20 +5,33 @@ declare(strict_types=1);
 namespace MRBS;
 use MRBS\CalendarServer\CalendarServerManager;
 
-require_once "../mrbs_sql.inc";
-require "../defaultincludes.inc";
-require_once "api_helper.php";
-
 global $allow_registration_default, $registrant_limit_default, $registrant_limit_enabled_default;
 global $registration_opens_default, $registration_opens_enabled_default, $registration_closes_default;
 global $registration_closes_enabled_default;
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-$roomId = intval($data['room_id']);
-$confirm = intval($data['confirm']);
+$device_id = $_POST['device_id'];
+$begin_time = $_POST['begin_time'];
+$end_time = $_POST['end_time'];
+$is_charge = $_POST['is_charge'];
+$battery_level = $_POST['battery_level'];
+$booker = $_POST['booker'];
+$theme = $_POST['theme'];
 
-$now = time();
+if (!empty($is_charge) || !empty($battery_level)) {
+  if (!empty($device_id)) {
+    $sql = "UPDATE " . _tbl("device") . " SET ";
+    if (!empty($battery_level) && empty($is_charge)) {
+      $sql .= "battery_level = ? WHERE device_id = ?";
+      db()->command($sql, [$battery_level, $device_id]);
+    }else if (empty($battery_level) && !empty($is_charge)) {
+      $sql .= "is_charge = ? WHERE device_id = ?";
+      db()->command($sql, [$is_charge, $device_id]);
+    }else {
+      $sql .= "battery_level = ?, is_charge = ? WHERE device_id = ?";
+      db()->command($sql, [$battery_level, $is_charge, $device_id]);
+    }
+  }
+}
 
 //if ($now > $startTime) {
 //  ApiHelper::fail();
@@ -29,33 +42,19 @@ $now = time();
 //  return;
 //}
 
-if (floor($now / 1800) * 1800 === floor(($now + 300) / 1800) * 1800){
-  $startTime = floor($now / 1800) * 1800;
-}else{
-  $startTime = floor($now / 1800) * 1800 + 1800;
+$result = db() -> query("SELECT * FROM " . _tbl("device") . " WHERE device_id = ?", array($device_id));
+if($result -> count() == 0){
+  ApiHelper::fail(get_vocab("device_not_exist"), ApiHelper::DEVICE_NOT_EXIST);
 }
-
-$endTime = $startTime + 1800;
-
-if ($confirm == 0){
-  $str1 = date("h:i A", intval($startTime));
-  $str2 = date("h:i A", intval($endTime));
-  $response = array(
-    "code" => 0,
-    "message" => "success",
-    "data" => array()
-  );
-  $response['data']['time'] = get_vocab("fast_meeting_time", $str1, $str2);
-  echo json_encode($response);
-  return;
-}else if (!isset($confirm) || $confirm != 1){
-  ApiHelper::fail(get_vocab("invalid_confirm"), -3);
+$row = $result -> next_row_keyed();
+if (empty($row['room_id'])){
+  ApiHelper::fail(get_vocab("device_not_bind"), ApiHelper::DEVICE_NOT_BIND);
 }
-
+$roomId = $row['room_id'];
 $qSQL = "room_id = $roomId and
-    (($startTime >= start_time and $startTime < end_time)
-    or ($endTime > start_time and $endTime <= end_time)
-    or ($startTime <= start_time and $endTime >= end_time))
+    (($begin_time >= start_time and $begin_time < end_time)
+    or ($end_time > start_time and $end_time <= end_time)
+    or ($begin_time <= start_time and $end_time >= end_time))
     ";
 
 $roomExist = DBHelper::one(_tbl("room"), "id = $roomId");
@@ -80,13 +79,13 @@ if (!empty($queryOne)) {
 }
 
 $result = array();
-$result["start_time"] = $startTime;
-$result["end_time"] = $endTime;
+$result["start_time"] = $begin_time;
+$result["end_time"] = $end_time;
 $result["entry_type"] = 99;
 $result["room_id"] = $roomId;
-$result["create_by"] = "admin";
+$result["create_by"] = $booker ?? "admin";
 $result["name"] = get_vocab("ic_tp_meeting");
-$result["description"] = get_vocab("ic_tp_meeting");
+$result["description"] = $theme ??get_vocab("ic_tp_meeting");
 $result["book_by"] = "/";
 $result["type"] = "I";
 $result["status"] = 0;

@@ -66,6 +66,17 @@ class ApiHelper
   public const INVALID_GROUP_PARENT = -202;
 
   public const NO_AREA = -47;
+  public const INVALID_ROOM_ID = -48;
+  public const DEVICE_EXISTS = -49;
+  public const DEVICE_NOT_BIND = -50;
+  public const VERSION_NOT_EXIST = -51;
+  public const VERSION_IS_DELETED = -52;
+  public const FILE_NOT_EXIST = -53;
+  public const UNSUPPORT_FILE_TYPE = -54;
+  public const INVALID_FILE_NAME = -55;
+  public const UNABLE_TO_OPEN_ZIP = -56;
+  public const FAIL_TO_UPLOAD = -57;
+  public const VERSION_EXISTS = -58;
   static function value($key)
   {
     return $_POST[$key];

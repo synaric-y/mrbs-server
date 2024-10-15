@@ -355,7 +355,7 @@ CREATE TABLE mrbs_system_variable(
 
   PRIMARY KEY (id)
 )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='system variables';
-
+INSERT INTO mrbs_system_variable(init_status) VALUES (0);
 
 CREATE TABLE mrbs_device(
   id            int NOT NULL auto_increment,
@@ -434,7 +434,8 @@ CREATE TABLE `mrbs_version` (
   `publish_time` int(11) NULL COMMENT 'when the version was published',
   `update_time` int(11) DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'when the version was updated',
   `is_delete` tinyint NULL DEFAULT 0 COMMENT 'whether the files of the version has been deleted',
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  UNIQUE KEY (version)
 )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='table of all versions';
 
 

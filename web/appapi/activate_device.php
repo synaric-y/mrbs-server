@@ -7,7 +7,6 @@ namespace MRBS;
 
 global $now_version;
 
-use function GuzzleHttp\describe_type;
 
 $device_id = $_POST['device_id'];
 $version = $now_version;
@@ -22,11 +21,12 @@ if ($room_id === false){
 }else
   $status = 1;
 
-if (empty($device_id)){
-
+$result = db()->query1("SELECT COUNT(*) FROM " . _tbl("device") . " WHERE device_id = ?", array($device_id));
+if ($result > 0){
+  ApiHelper::fail(get_vocab("device_exists"), ApiHelper::DEVICE_EXISTS);
 }
 
 $sql = "INSERT INTO " . _tbl("device") . "(device_id, version, description, resolution, is_charge, battery_level, status, room_id) VALUES (?, ?, ?, ?, ?, ?)";
-db() -> command($sql, array($device_id, $version, $description, $resolution, $is_charge, $battery_level, $status, $room_id));
+db() -> command($sql, array($device_id, $version, $description, $resolution, $is_charge, $battery_level, $status, $room_id === false ? null : $room_id));
 
 ApiHelper::success(null);
