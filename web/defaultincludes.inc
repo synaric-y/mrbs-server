@@ -36,5 +36,5 @@ require_once 'mrbs_auth.inc';
 require_once 'init.inc';
 require_once 'upgrade.inc';
 require 'standard_vars.inc.php';
-require_once 'check.php';
+require_once 'serverapi/check.php';
 

@@ -3,11 +3,6 @@ declare(strict_types=1);
 namespace MRBS;
 
 
-require_once "defaultincludes.inc";
-require_once "functions_table.inc";
-require_once "mrbs_sql.inc";
-require_once './appapi/api_helper.php';
-
 global $datetime_formats;
 
 /*

@@ -3,10 +3,6 @@ declare(strict_types=1);
 
 namespace MRBS;
 
-require_once "defaultincludes.inc";
-require_once "mrbs_sql.inc";
-require_once './appapi/api_helper.php';
-
 /*
  * 用于编辑会议的接口
  * @Params

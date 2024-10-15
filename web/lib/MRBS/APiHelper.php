@@ -65,6 +65,7 @@ class ApiHelper
 
   public const INVALID_GROUP_PARENT = -202;
 
+  public const NO_AREA = -47;
   static function value($key)
   {
     return $_POST[$key];

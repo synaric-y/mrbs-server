@@ -13,10 +13,7 @@ use MRBS\CalendarServer\CalendarServerManager;
 // means that $id is the id of an entry in the repeat table.   This
 // should be fixed sometime.]
 
-require_once "defaultincludes.inc";
-require_once "mrbs_sql.inc";
-require_once "functions_mail.inc";
-require_once './appapi/api_helper.php';
+require_once "../../functions_mail.inc";
 
 /*
  * 用于删除会议，支持删除普通会议以及周期会议

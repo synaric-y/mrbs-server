@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace MRBS;
 
-require_once "defaultincludes.inc";
-require_once "mrbs_sql.inc";
-require_once './appapi/api_helper.php';
 
 /*
  * 查询自己创建的会议

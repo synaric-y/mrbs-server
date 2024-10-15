@@ -5,8 +5,6 @@ namespace MRBS;
 
 use MRBS\CalendarServer\CalendarServerManager;
 
-require_once "defaultincludes.inc";
-require_once './appapi/api_helper.php';
 
 /*
  * 用于判断删除区域或者房间的接口，如果删除放进，则会将该房间下的所有会议删除，但是如果删除区域，则必须保证该
