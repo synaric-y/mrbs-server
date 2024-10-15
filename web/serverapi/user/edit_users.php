@@ -35,7 +35,6 @@ global $max_level;
  * \*****************************************************************************/
 
 require_once "defaultincludes.inc";
-require_once './appapi/api_helper.php';
 require_once "mrbs_sql.inc";
 
 /*

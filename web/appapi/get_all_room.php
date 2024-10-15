@@ -4,7 +4,6 @@ namespace MRBS;
 
 require_once "../defaultincludes.inc";
 require_once "../mrbs_sql.inc";
-require_once "api_helper.php";
 
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);

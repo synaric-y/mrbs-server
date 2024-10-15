@@ -7,7 +7,6 @@ use MRBS\CalendarServer\CalendarServerManager;
 
 require_once "../mrbs_sql.inc";
 require "../defaultincludes.inc";
-require_once "api_helper.php";
 
 global $allow_registration_default, $registrant_limit_default, $registrant_limit_enabled_default;
 global $registration_opens_default, $registration_opens_enabled_default, $registration_closes_default;

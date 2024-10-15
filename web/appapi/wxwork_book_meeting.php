@@ -7,7 +7,6 @@ global $allow_registration_default, $registrant_limit_default, $registrant_limit
 
 require_once "../mrbs_sql.inc";
 require "../defaultincludes.inc";
-require_once "api_helper.php";
 
 
 if (!checkAuth()){

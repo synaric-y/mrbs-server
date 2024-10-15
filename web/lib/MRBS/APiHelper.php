@@ -56,7 +56,7 @@ class ApiHelper
   public const FAIL_TO_CREATE_USER = -44;
   public const INVALID_SECRET = -45;
   public const INVALID_CORPID = -46;
-
+  public const NO_AREA = -47;
   /*
    * User Group Start
    * */
@@ -65,7 +65,8 @@ class ApiHelper
 
   public const INVALID_GROUP_PARENT = -202;
 
-  public const NO_AREA = -47;
+  public const GROUP_NOT_EXIST = -203;
+
   static function value($key)
   {
     return $_POST[$key];

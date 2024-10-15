@@ -13,7 +13,6 @@ error_reporting(E_ALL);
 include_once dirname(__DIR__, 1) . "/defaultincludes.inc";
 include_once dirname(__DIR__, 1) ."/functions_table.inc";
 include_once dirname(__DIR__, 1) ."/mrbs_sql.inc";
-include_once __DIR__ . "/api_helper.php";
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 function FD($key)

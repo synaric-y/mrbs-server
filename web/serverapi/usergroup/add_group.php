@@ -18,16 +18,16 @@ if (getLevel($_SESSION['user']) < 2){
 }
 
 $name = $_POST['name'];
-$parentId = $_POST['parent_id'];
+$parent_id = $_POST['parent_id'];
 
 if (empty($name)) {
   ApiHelper::fail(get_vocab("invalid_group_name"), ApiHelper::INVALID_GROUP_NAME);
 }
-if (empty($parentId)) {
+if (empty($parent_id)) {
   ApiHelper::fail(get_vocab("invalid_parent"), ApiHelper::INVALID_GROUP_PARENT);
 }
 
-$parentGroup = DBHelper::one(_tbl("user_group"), "id = $parentId");
+$parentGroup = DBHelper::one(_tbl("user_group"), "id = $parent_id");
 if (empty($parentGroup) || $parentGroup['source'] != 'system' || $parentGroup['sync_state'] != 0) {
   ApiHelper::fail(get_vocab("invalid_parent"), ApiHelper::INVALID_GROUP_PARENT);
 }
@@ -37,7 +37,7 @@ $insertGroup['name'] = $name;
 $insertGroup['source'] = 'system';
 $insertGroup['disabled'] = 0;
 $insertGroup['user_count'] = 0;
-insert_group($insertGroup, $parentId);
+insert_group($insertGroup, $parent_id);
 
 $result = array();
 ApiHelper::success($result);

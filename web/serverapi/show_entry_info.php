@@ -5,7 +5,6 @@ namespace MRBS;
 
 require_once "defaultincludes.inc";
 require_once "mrbs_sql.inc";
-require_once './appapi/api_helper.php';
 
 /*
  * 根据id查询会议信息
