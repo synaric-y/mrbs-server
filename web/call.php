@@ -36,4 +36,4 @@ include_once "mrbs_sql.inc";
 
 $act = $_GET["act"];
 
-include_once "./" . $act . ".php";
+include_once "./serverapi/" . $act . ".php";

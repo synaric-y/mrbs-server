@@ -10,8 +10,6 @@ require_once "./mrbs_sql.inc";
 require_once "./lib/Wxwork/api/src/CorpAPI.class.php";
 require_once "./lib/Wxwork/api/src/Utils.php";
 
-use MRBS\ApiHelper;
-
 /*
  * 企业微信登录接口，通过企业微信获取登陆人（GET），通常通过email字段进行比对，如果email字段没有比对成功
  * 则会新创建一个用户
@@ -26,11 +24,11 @@ global $corpid, $secret, $default_password_hash;
 $corpid = "ww09d67060e82cbfa5";
 $secret = "4kQjzoLSa1uBR5Ow5UWItaiI7CCSzjFYqzYTgKuR4IA";
 if (isset($_SESSION) && !empty($_SESSION['user'])){
-  \MRBS\ApiHelper::fail(\MRBS\get_vocab('already_login'), \MRBS\ApiHelper::ALREADY_LOGIN);
+  MRBS\ApiHelper::fail(\MRBS\get_vocab('already_login'), MRBS\ApiHelper::ALREADY_LOGIN);
 }
 
 if (!isset($_GET) || empty($_GET["code"])) {
-  \MRBS\ApiHelper::fail(get_vocab("invalid_code"), \MRBS\ApiHelper::INVALID_CODE);
+  MRBS\ApiHelper::fail(get_vocab("invalid_code"), MRBS\ApiHelper::INVALID_CODE);
 }
 
 $retry = 0;
@@ -112,7 +110,7 @@ if ($result -> count() < 1){
     }
   }catch (\Exception $e){
     \MRBS\db()->rollback();
-    \MRBS\ApiHelper::fail(\MRBS\get_vocab("fail_to_create_user"), \MRBS\ApiHelper::FAIL_TO_CREATE_USER);
+    MRBS\ApiHelper::fail(\MRBS\get_vocab("fail_to_create_user"), MRBS\ApiHelper::FAIL_TO_CREATE_USER);
   }
 }else{
   $row = $result->next_row_keyed();
@@ -120,6 +118,6 @@ if ($result -> count() < 1){
 }
 
 session_write_close();
-\MRBS\ApiHelper::success(null);
+MRBS\ApiHelper::success(null);
 
 

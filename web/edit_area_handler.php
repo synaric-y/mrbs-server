@@ -7,8 +7,6 @@ require_once "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 require_once './appapi/api_helper.php';
 
-use MRBS\ApiHelper;
-
 /*
  * 用于编辑会议的接口
  * @Params

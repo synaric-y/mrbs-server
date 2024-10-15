@@ -28,12 +28,12 @@ $corpid = "ww09d67060e82cbfa5";
 $secret = "4kQjzoLSa1uBR5Ow5UWItaiI7CCSzjFYqzYTgKuR4IA";
 if (isset($_SESSION) && !empty($_SESSION['user'])){
   error_log(\MRBS\get_vocab('already_login') . "\n", 3, "./log/wxwork_log.log");
-  \MRBS\ApiHelper::success(\MRBS\get_vocab('already_login'));
+  MRBS\ApiHelper::success(\MRBS\get_vocab('already_login'));
 }
 
 if (!isset($_GET) || empty($_GET["code"])) {
   error_log(\MRBS\get_vocab("invalid_code") . "\n", 3, "./log/wxwork_log.log");
-  \MRBS\ApiHelper::fail(\MRBS\get_vocab("invalid_code"), \MRBS\ApiHelper::INVALID_CODE);
+  MRBS\ApiHelper::fail(\MRBS\get_vocab("invalid_code"), MRBS\ApiHelper::INVALID_CODE);
 }
 
 $retry = 0;
@@ -138,7 +138,7 @@ if ($result -> count() < 1){
   }catch (\Exception $e){
     \MRBS\db()->rollback();
     error_log($e->getMessage() . $e->getTraceAsString() . "\n", 3, "./log/wxwork_log.log");
-    \MRBS\ApiHelper::fail(\MRBS\get_vocab("fail_to_create_user"), \MRBS\ApiHelper::FAIL_TO_CREATE_USER);
+    MRBS\ApiHelper::fail(\MRBS\get_vocab("fail_to_create_user"), MRBS\ApiHelper::FAIL_TO_CREATE_USER);
   }
 }else{
   $row = $result->next_row_keyed();
@@ -148,6 +148,6 @@ if ($result -> count() < 1){
 
 session_write_close();
 error_log("success\n", 3, "./log/wxwork_log.log");
-\MRBS\ApiHelper::success(null);
+MRBS\ApiHelper::success(null);
 
 

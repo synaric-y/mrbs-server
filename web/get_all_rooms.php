@@ -8,8 +8,6 @@ require_once "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 require_once './appapi/api_helper.php';
 
-use MRBS\ApiHelper;
-
 /*
  * 获取所有房间信息
  * @Params

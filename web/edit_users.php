@@ -4,16 +4,6 @@ namespace MRBS;
 
 global $max_level;
 
-use MRBS\Form\ElementFieldset;
-use MRBS\Form\ElementInputSubmit;
-use MRBS\Form\ElementP;
-use MRBS\Form\FieldInputEmail;
-use MRBS\Form\FieldInputPassword;
-use MRBS\Form\FieldInputSubmit;
-use MRBS\Form\FieldInputText;
-use MRBS\Form\FieldSelect;
-use MRBS\Form\Form;
-
 /*****************************************************************************\
  *                                                                            *
  *   File name     edit_users.php                                             *

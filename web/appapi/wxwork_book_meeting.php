@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace MRBS;
 global $allow_registration_default, $registrant_limit_default, $registrant_limit_enabled_default, $registration_opens_default, $registration_opens_enabled_default, $registration_closes_default, $registration_closes_enabled_default;
 
-use MRBS\CalendarServer\CalendarServerManager;
-use MRBS\ApiHelper;
-
 require_once "../mrbs_sql.inc";
 require "../defaultincludes.inc";
 require_once "api_helper.php";

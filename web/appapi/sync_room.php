@@ -5,8 +5,6 @@ namespace MRBS;
 
 global $datetime_formats;
 
-use DateTimeZone;
-
 require_once "../defaultincludes.inc";
 require_once "api_helper.php";
 

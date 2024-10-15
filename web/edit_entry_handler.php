@@ -11,7 +11,6 @@ require_once 'functions_ical.inc';
 require_once 'functions_mail.inc';
 require_once './appapi/api_helper.php';
 
-use MRBS\ApiHelper;
 use MRBS\CalendarServer\CalendarServerManager;
 
 global $min_booking_admin_level;

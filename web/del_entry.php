@@ -3,9 +3,8 @@ declare(strict_types=1);
 namespace MRBS;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
+
 use MRBS\CalendarServer\CalendarServerManager;
-use MRBS\Form\Form;
-use MRBS\ApiHelper;
 
 // Deletes an entry, or a series.    The $id is always the id of
 // an individual entry.   If $series is set then the entire series

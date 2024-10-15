@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace MRBS;
 
 use MRBS\CalendarServer\CalendarServerManager;
-use MRBS\ApiHelper;
 
 require_once "defaultincludes.inc";
 require_once './appapi/api_helper.php';
