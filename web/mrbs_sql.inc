@@ -2919,18 +2919,61 @@ function bind_user_to_group($user_id, $group_id, $source): bool
 
 function unbind_user_to_group($user_id, $group_id): bool
 {
-  db()->begin();
-  $result = db()->query("SELECT * FROM " . _tbl("g2g_map") . " WHERE group_id = ? AND parent_id > -1", array($group_id));
-  $maps = array();
-  $maps[] = array($user_id, $group_id);
-  while($row = $result -> next_row_keyed()){
-    $maps[] = array(intval($user_id), intval($row['parent_id']));
-  }
-  $sql = "delete from " . _tbl("u2g_map") . " where user_id = ? and parent_id = ?";
-  foreach ($maps as $d_row) {
-    db()->command($sql, $d_row);
-  }
-  db()->commit();
+  $sql = "DELETE FROM " . _tbl("u2g_map") . " WHERE user_id = ? AND parent_id = ? AND deep = 1";
+  db()->command($sql, array($user_id, $group_id));
+
+  // Resolve User-Group relationship
+  resolve_u2g($user_id);
   return true;
 }
 
+function resolve_u2g($user_id)
+{
+  db()->begin();
+  $sql = "DELETE FROM " . _tbl("u2g_map") . " WHERE user_id = ? AND deep > 1";
+  db()->command($sql, array($user_id));
+
+  $sql = "SELECT parent_id FROM " . _tbl("u2g_map") . " WHERE user_id = ? AND deep = 1";
+  $result = db()->query($sql, array($user_id));
+  $directParentIds = [];
+  while($row = $result -> next_row_keyed()){
+    $directParentIds[] = $row['group_id'];
+  }
+  $directParentIdsJoin = join(",", $directParentIds);
+//  $sql = "
+//    WITH RECURSIVE sub_tree AS (
+//        SELECT group_id, parent_id, deep
+//        FROM " . _tbl("u2g_map") . "
+//        WHERE group_id IN (?)
+//        UNION ALL
+//        SELECT yt.group_id, yt.parent_id, yt.deep
+//        FROM " . _tbl("u2g_map") . " yt
+//        INNER JOIN sub_tree st ON yt.group_id = st.parent_id
+//    )
+//    SELECT * FROM sub_tree;
+//  ";
+//  db()->command($sql, array($directParentIdsJoin));
+  $result = db()->query("SELECT * FROM " . _tbl("g2g_map") . " WHERE group_id in (?) AND parent_id > -1", array($directParentIdsJoin));
+  $maps = array();
+  $params = array();
+  while($row = $result -> next_row_keyed()){
+    $maps[] = array($user_id, $row['parent_id'], $row['deep'] + 1, $row['source']);
+  }
+  $sql = "INSERT INTO " . _tbl("u2g_map") . "(user_id, parent_id, deep, source) VALUES ";
+  $i = 0;
+  $batch = 0;
+  while($i < count($maps)){
+    for (;$i - $batch * 10000 < min(count($maps) - $batch * 10000, 10000); $i++){
+      $sql .= "(?, ?, ?, ?)";
+      if ($i != count($maps) - 1){
+        $sql .= ", ";
+      }
+      $params = array_merge($params, $maps[$i]);
+    }
+    db()->command($sql, $params);
+    $batch++;
+  }
+
+  db()->commit();
+  return true;
+}
