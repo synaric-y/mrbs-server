@@ -2917,3 +2917,20 @@ function bind_user_to_group($user_id, $group_id, $source): bool
   return true;
 }
 
+function unbind_user_to_group($user_id, $group_id): bool
+{
+  db()->begin();
+  $result = db()->query("SELECT * FROM " . _tbl("g2g_map") . " WHERE group_id = ? AND parent_id > -1", array($group_id));
+  $maps = array();
+  $maps[] = array($user_id, $group_id);
+  while($row = $result -> next_row_keyed()){
+    $maps[] = array(intval($user_id), intval($row['parent_id']));
+  }
+  $sql = "delete from " . _tbl("u2g_map") . " where user_id = ? and parent_id = ?";
+  foreach ($maps as $d_row) {
+    db()->command($sql, $d_row);
+  }
+  db()->commit();
+  return true;
+}
+

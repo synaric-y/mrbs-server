@@ -722,6 +722,7 @@ $vocab["invalid_group_name"]                        = "Invalid group name";
 $vocab["invalid_parent"]                            = "Invalid parent";
 $vocab["internal_database_error"]                   = "Internal database error";
 $vocab["group_not_exist"]                           = "User Group not exist";
+$vocab["group_cannot_unbind"]                       = "User Group cannot unbind";
 
 $vocab["success"]           = "success";
 $vocab["already_login"]     = "already login";

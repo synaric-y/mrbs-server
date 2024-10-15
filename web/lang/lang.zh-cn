@@ -627,6 +627,7 @@ $vocab["invalid_group_name"]                        = "用户组名无效";
 $vocab["invalid_parent"]                            = "上级用户组无效或不存在";
 $vocab["internal_database_error"]                   = "内部错误";
 $vocab["group_not_exist"]                           = "用户组不存在";
+$vocab["group_cannot_unbind"]                       = "用户组无法解绑";
 
 $vocab["success"]            = "成功";
 $vocab["already_login"]      = "已经登录了";

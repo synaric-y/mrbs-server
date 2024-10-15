@@ -67,6 +67,8 @@ class ApiHelper
 
   public const GROUP_NOT_EXIST = -203;
 
+  public const GROUP_CANNOT_UNBIND = -204;
+
   static function value($key)
   {
     return $_POST[$key];

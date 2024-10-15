@@ -1,13 +1,6 @@
 <?php
 
-use MRBS\ApiHelper;
-use MRBS\DBHelper;
-use function MRBS\_tbl;
-use function MRBS\bind_user_to_group;
-use function MRBS\checkAuth;
-use function MRBS\get_vocab;
-use function MRBS\getLevel;
-
+namespace MRBS;
 
 
 if (!checkAuth()){
