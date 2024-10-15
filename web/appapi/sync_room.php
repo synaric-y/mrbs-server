@@ -3,10 +3,9 @@
 declare(strict_types=1);
 namespace MRBS;
 
-global $datetime_formats;
 
-require_once "../defaultincludes.inc";
-require_once "api_helper.php";
+global $datetime_formats, $show_book, $show_meeting_name;
+
 
 function getTimeZoneByRoom($roomId)
 {
@@ -18,14 +17,18 @@ function getTimeZoneByRoom($roomId)
 }
 
 //$room_id = intval(ApiHelper::value("room_id"));
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-$roomId = intval($data['room_id']);
-$timezone = getTimeZoneByRoom($roomId);
-$device_info = $data["device_info"];
-$device_id = $data["device_id"];
-$battery_level = $data["battery_level"];
-$battery_charge = $data["battery_charge"];
+$device_id = $_POST['device_id'];
+$result = db() -> query("SELECT * FROM " . _tbl("device") . " WHERE device_id = ?", array($device_id));
+if($result -> count() == 0){
+  ApiHelper::fail(get_vocab("not_activate"), ApiHelper::NOT_ACTIVATE);
+}
+$row = $result -> next_row_keyed();
+if (empty($row['room_id'])){
+  ApiHelper::fail(get_vocab("not_bind"), ApiHelper::NOT_BIND);
+}
+$timezone = getTimeZoneByRoom($row['room_id']);
+
+RedisConnect::zADD("heart_beat", $device_id, time());
 
 if (!empty($timezone)) {
   date_default_timezone_set($timezone);
@@ -34,14 +37,14 @@ if (!empty($timezone)) {
 $interval_start = strtotime("today");
 $interval_end = strtotime("tomorrow");
 
-$room = get_room_details($roomId);
+$room = get_room_details($row['room_id']);
 unset($room["exchange_server"]);
 unset($room["exchange_username"]);
 unset($room["exchange_password"]);
 
 $area = get_area_details($room["area_id"]);
 
-$entries = get_entries_by_room($roomId, $interval_start, $interval_end);
+$entries = get_entries_by_room($row['room_id'], $interval_start, $interval_end);
 
 $now = time();
 $now_entry = null;
@@ -53,22 +56,40 @@ foreach ($entries as $entry) {
   }
 }
 
-foreach ($entries as $entry){
-  if ($entry['entry_type'] == 99)
-    $entry['name'] = get_vocab('ic_tp_meeting');
+if(!$show_meeting_name){
+  foreach ($entries as $entry) {
+    if ($entry['entry_type'] == 99)
+      $entry['name'] = get_vocab('ic_tp_meeting');
+  }
+}else{
+  foreach ($entries as $entry) {
+    unset($entry['name']);
+  }
 }
 if (isset($now_entry)) {
   if ($now_entry['entry_type'] == 99)
     $now_entry['name'] = get_vocab('ic_tp_meeting');
 }
+if (isset($now_entry) && !$show_meeting_name){
+  unset($now_entry['name']);
+}
+
+if(!$show_book){
+  unset($now_entry['create_by']);
+  foreach ($entries as &$entry) {
+    unset($entry['create_by']);
+  }
+}
 
 $display_day = datetime_format($datetime_formats['view_day'], $now);
-$now_time = date("h:iA");
+$now_time = date("h:iA", $now);
 //$dateTime = new DateTime();
 //$timeZone = new DateTimeZone($area["timezone"]);
 //$dateTime->setTimeZone($timeZone);
 //$now_time = $dateTime->format('h:iA');
 //$display_day =  $dateTime->format('Y');
+
+
 
 $result = array();
 $result["now_time"] = $now_time;
@@ -78,9 +99,5 @@ $result["area"] = $area;
 $result["now_entry"] = $now_entry;
 $result["entries"] = $entries;
 $result["room"] = $room;
-
-
-db() -> query("UPDATE " . _tbl("room") . " SET battery_level = ? WHERE id = ?", array($battery_level, $roomId));
-
 
 ApiHelper::success($result);

@@ -3,9 +3,6 @@ declare(strict_types=1);
 
 namespace MRBS;
 
-require_once "defaultincludes.inc";
-require_once './appapi/api_helper.php';
-require_once "mrbs_sql.inc";
 
 /*
  * 用于获取所有管理员名称的接口

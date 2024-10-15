@@ -4,12 +4,9 @@ declare(strict_types=1);
 namespace MRBS;
 
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
-require_once 'defaultincludes.inc';
-require_once 'mrbs_sql.inc';
-require_once 'functions_ical.inc';
-require_once 'functions_mail.inc';
-require_once './appapi/api_helper.php';
+require_once dirname(__DIR__, 3) . '/vendor/autoload.php';
+require_once '../../functions_ical.inc';
+require_once '../../functions_mail.inc';
 
 use MRBS\CalendarServer\CalendarServerManager;
 

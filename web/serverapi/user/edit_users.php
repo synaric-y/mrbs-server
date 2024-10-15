@@ -184,7 +184,7 @@ if (!empty($action) && ($action == "edit")){
   try{
     db()->query($sql, $params);
   }catch(\Exception $e){
-    echo $e -> getMessage() . $e -> getTraceAsString();
+    echo $e->getMessage() . $e->getTraceAsString();
   }
   ApiHelper::success(null);
 }else if (!empty($action) && ($action == "add")){
