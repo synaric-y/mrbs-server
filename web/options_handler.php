@@ -5,6 +5,11 @@
  * 对于所有的POST请求，将所有的POST请求体解析至超全局参数$_POST中
  */
 
+
+function removeJsonComments($json) {
+  return preg_replace('/\/\/.*$/m', '', $json);
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 //  header('Access-Control-Allow-Origin: *');
   header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
@@ -27,5 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $_GET["act"] != 'wxwork_login' && $
 }
 
 $json = file_get_contents('php://input');
+$json = removeJsonComments($json);
 $data = json_decode($json, true);
 $_POST = $data;

@@ -1,12 +1,6 @@
 <?php
 
-use MRBS\ApiHelper;
-use MRBS\DBHelper;
-use function MRBS\_tbl;
-use function MRBS\checkAuth;
-use function MRBS\get_vocab;
-use function MRBS\getLevel;
-use function MRBS\insert_group;
+namespace MRBS;
 
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
@@ -27,9 +21,11 @@ if (empty($parent_id)) {
   ApiHelper::fail(get_vocab("invalid_parent"), ApiHelper::INVALID_GROUP_PARENT);
 }
 
-$parentGroup = DBHelper::one(_tbl("user_group"), "id = $parent_id");
-if (empty($parentGroup) || $parentGroup['source'] != 'system' || $parentGroup['sync_state'] != 0) {
-  ApiHelper::fail(get_vocab("invalid_parent"), ApiHelper::INVALID_GROUP_PARENT);
+if ($parent_id != -1) {
+  $parentGroup = DBHelper::one(_tbl("user_group"), "id = $parent_id");
+  if (empty($parentGroup) || $parentGroup['source'] != 'system' || $parentGroup['sync_state'] != 0) {
+    ApiHelper::fail(get_vocab("invalid_parent"), ApiHelper::INVALID_GROUP_PARENT);
+  }
 }
 
 $insertGroup = array();
