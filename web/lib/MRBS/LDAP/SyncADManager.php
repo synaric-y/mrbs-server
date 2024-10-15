@@ -211,7 +211,7 @@ class SyncADManager
         if (empty($parentNodeList)) {
           continue;
         }
-        log_ad("handle u2g: {$localUser['name']}, parent: {$localUser['third_parent_id']}");
+        // log_ad("handle u2g: {$localUser['name']}, parent: {$localUser['third_parent_id']}");
         foreach ($parentNodeList as $pNode) {
           $insertU2G = array();
           $insertU2G['user_id'] = $localUser['id'];
@@ -254,14 +254,20 @@ class SyncADManager
   {
     $pidString = $node['third_parent_id'];
     $pidList = explode(",", $pidString);
-    if (empty($pidList)) {
-      return;
-    }
     if ($deep != 0) {
       $resultList[] = array(
         'deep' => $deep,
         'node' => $node
       );
+    }
+    if (empty($pidString) || empty($pidList)) {
+      $resultList[] = array(
+        'deep' => $deep + 1,
+        'node' => array(
+          'id' => -1
+        )
+      );
+      return;
     }
     foreach ($pidList as $pid) {
       if (empty($pid)) {
