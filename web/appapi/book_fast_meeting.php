@@ -71,10 +71,13 @@ if (!$area || $area['disabled'] == 1) {
   ApiHelper::fail(get_vocab("area_disabled"));
   return;
 }
+if($roomExist['temporary_meeting'] != 1){
+  ApiHelper::fail(get_vocab("unsupport_fast_meeting"));
+}
 
 $queryOne = DBHelper::one(_tbl("entry"), $qSQL);
 if (!empty($queryOne)) {
-  ApiHelper::fail(get_vocab("entry_conflict") , -2);
+  ApiHelper::fail(get_vocab("entry_conflict") , ApiHelper::ENTRY_CONFLICT);
   return;
 }
 

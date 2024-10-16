@@ -767,3 +767,4 @@ $vocab["invalid_file_name"]            = "File name should be the same with the 
 $vocab["unable_to_open_zip"]           = "Failed to open zip file, please check if the file is corrupted";
 $vocab["fail_to_upload"]               = "Failed to upload file";
 $vocab["version_exists"]               = "This version exists";
+$vocab["unsupport_fast_meeting"]       = "This room is not allowed to book fask meeting";

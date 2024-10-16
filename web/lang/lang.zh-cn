@@ -678,3 +678,4 @@ $vocab["unsupport_file_type"]         = "不支持上传这种类型的文件";
 $vocab["unable_to_open_zip"]          = "无法打开文件，请检查文件是否损坏";
 $vocab["fail_to_upload"]              = "上传失败";
 $vocab["version_exists"]              = "该版本已存在";
+$vocab["unsupport_fast_meeting"]      = "该房间不允许预定快速会议";
