@@ -1,9 +1,9 @@
 {
     "require": {
-        "garethp/php-ews": "^0.9.6",
+      "garethp/php-ews": "^0.9.6",
       "ext-json": "*",
       "ext-redis": "*",
       "ext-gd": "*",
-        "gregwar/captcha": "^1.2"
+      "ext-zip": "*"
     }
 }
