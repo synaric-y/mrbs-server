@@ -69,7 +69,7 @@ class ApiHelper
 
   public const GROUP_CANNOT_UNBIND = -204;
 
-  public const GROUP_CANNOT_DELETE = -205;
+  public const GROUP_CANNOT_DEL_OR_UPDATE = -205;
 
   public const NO_AREA = -47;
   public const INVALID_ROOM_ID = -48;

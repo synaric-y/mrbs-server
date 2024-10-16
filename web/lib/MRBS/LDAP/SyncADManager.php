@@ -113,7 +113,7 @@ class SyncADManager
         if (empty($thirdId)) {
           continue;
         }
-        $localGroup = DBHelper::one(_tbl($TABLE_GROUP), "third_id = '$thirdId'");
+        $localGroup = DBHelper::one(_tbl($TABLE_GROUP), "third_id = '$thirdId' and source = '$CREATE_SOURCE'");
 
         $mergedGroup = array_merge($remoteGroup);
         unset($mergedGroup['_third_parent_id']);
@@ -131,7 +131,7 @@ class SyncADManager
           $syncResult->group_insert += 1;
         } else {
           // Merge and update existing data
-          DBHelper::update(_tbl($TABLE_GROUP), $mergedGroup, "third_id = '$thirdId'");
+          DBHelper::update(_tbl($TABLE_GROUP), $mergedGroup, "third_id = '$thirdId'  and source = '$CREATE_SOURCE'");
           $localGroupList[$localGroup['third_id']] = $localGroup;
           if ($mergedGroup['disabled'] != $localGroup['disabled']) {
             $syncResult->group_delete += 1;
@@ -151,7 +151,7 @@ class SyncADManager
       if (empty($thirdId)) {
         continue;
       }
-      $localUser = DBHelper::one(_tbl($TABLE_USER), "third_id = '$thirdId'");
+      $localUser = DBHelper::one(_tbl($TABLE_USER), "third_id = '$thirdId'  and source = '$CREATE_SOURCE'");
 
       $mergedUser = array_merge($remoteUser);
       unset($mergedUser['_third_parent_id']);
@@ -168,7 +168,7 @@ class SyncADManager
         $localUserList[$mergedUser['third_id']] = $mergedUser;
         $syncResult->user_insert += 1;
       } else {
-        DBHelper::update(_tbl($TABLE_USER), $mergedUser, "third_id = '$thirdId'");
+        DBHelper::update(_tbl($TABLE_USER), $mergedUser, "third_id = '$thirdId'  and source = '$CREATE_SOURCE'");
         $localUserList[$localUser['third_id']] = $localUser;
         if ($mergedUser['disabled'] != $localUser['disabled']) {
           $syncResult->user_delete += 1;
