@@ -38,6 +38,7 @@ foreach ($user_ids as $user_id) {
 
   $success = bind_user_to_group($user_id, $group_id, "system");
 }
+resolve_user_group_count();
 
 $result = array();
 ApiHelper::success($result);

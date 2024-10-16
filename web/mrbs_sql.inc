@@ -2941,6 +2941,11 @@ function get_user_group_members($group_id, $page)
     return $users;
 }
 
+/**
+ * Bind One User to User Group.
+ * It is usually be called in FOR LOOP, so bind_user_to_group() won't resolve user_count.
+ * Remember always to call resolve_user_group_count() after bind_user_to_group().
+ */
 function bind_user_to_group($user_id, $group_id, $source): bool
 {
   db()->begin();
@@ -2965,8 +2970,6 @@ function bind_user_to_group($user_id, $group_id, $source): bool
     db()->command($sql, $params);
     $batch++;
   }
-  // Resolve all user count
-  resolve_user_group_count();
   db()->commit();
   return true;
 }
@@ -3027,7 +3030,6 @@ function resolve_u2g($user_id)
     db()->command($sql, $params);
     $batch++;
   }
-  resolve_user_group_count();
   db()->commit();
   return true;
 }

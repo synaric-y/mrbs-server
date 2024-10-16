@@ -41,5 +41,7 @@ foreach ($user_ids as $user_id) {
   $success = unbind_user_to_group($user_id, $group_id);
 }
 
+resolve_user_group_count();
+
 $result = array();
 ApiHelper::success($result);
