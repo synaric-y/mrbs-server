@@ -2913,6 +2913,15 @@ function bind_user_to_group($user_id, $group_id, $source): bool
     db()->command($sql, $params);
     $batch++;
   }
+  // Resolve all user count
+  $sql = "
+      update "._tbl("user_group")." t1 join(
+        select parent_id, count(*) as count from "._tbl("u2g_map")." where parent_id in
+          (select id from "._tbl("user_group").")
+      ) t2 on t1.id = t2.parent_id
+      set t1.user_count = t2.count
+    ";
+  db()->command($sql);
   db()->commit();
   return true;
 }
@@ -2973,7 +2982,15 @@ function resolve_u2g($user_id)
     db()->command($sql, $params);
     $batch++;
   }
-
+  // Resolve all user count
+  $sql = "
+      update "._tbl("user_group")." t1 join(
+        select parent_id, count(*) as count from "._tbl("u2g_map")." where parent_id in
+          (select id from "._tbl("user_group").")
+      ) t2 on t1.id = t2.parent_id
+      set t1.user_count = t2.count
+    ";
+  db()->command($sql);
   db()->commit();
   return true;
 }
