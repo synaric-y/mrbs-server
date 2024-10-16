@@ -225,7 +225,8 @@ $vocab["invalid_group_name"]                        = "잘못된 사용자 그�
 $vocab["invalid_parent"]                            = "상위 사용자 그룹이 유효하지 않거나 존재하지 않습니다";
 $vocab["internal_database_error"]                   = "내부 오류";
 $vocab["group_not_exist"]                           = "사용자 그룹이 존재하지 않습니다";
-$vocab["group_cannot_unbind"]                       = "사용자 그룹은 바인딩을 해제할 수 없습니다.";
+$vocab["group_cannot_unbind"]                       = "사용자 그룹은 바인딩을 해제할 수 없습니다";
+$vocab["group_cannot_delete"]                       = "사용자 그룹은 삭제할 수 없습니다";
 
 $vocab["success"]           = "성공";
 $vocab["already_login"]    = "이미 로그인";

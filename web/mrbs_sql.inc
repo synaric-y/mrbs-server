@@ -2890,9 +2890,19 @@ function add_user_group($group, $parent_id): int
   return $group_id;
 }
 
-function edit_user_group()
+function edit_user_group($group)
 {
 
+}
+
+function del_user_group($group_id)
+{
+  db()->begin();
+  db()->command("DELETE FROM " . _tbl("user_group") . " WHERE id = ?", array($group_id));
+  db()->command("DELETE FROM " . _tbl("g2g_map") . " WHERE parent_id = ? OR group_id = ? ", array($group_id, $group_id));
+  db()->command("DELETE FROM " . _tbl("u2g_map") . " WHERE parent_id = ?", array($group_id));
+  resolve_user_group_count();
+  db()->commit();
 }
 
 function get_user_group_tree($group_id, $source, $page = 1)
