@@ -34,7 +34,7 @@ $insertGroup['source'] = 'system';
 $insertGroup['disabled'] = 0;
 $insertGroup['sync_state'] = 0;
 $insertGroup['user_count'] = 0;
-insert_group($insertGroup, $parent_id);
+add_user_group($insertGroup, $parent_id);
 
 $result = array();
 ApiHelper::success($result);

@@ -10,6 +10,7 @@ use LdapRecord\Models\ActiveDirectory\Group;
 use MRBS\DBHelper;
 use function MRBS\_tbl;
 use function MRBS\log_ad;
+use function MRBS\resolve_user_group_count;
 
 class SyncADManager
 {
@@ -227,15 +228,7 @@ class SyncADManager
     log_ad("resolve u2g: ", count($localGroupList));
 
     // 6.Resolve user count
-    $updateUserCountSQL = "
-      update "._tbl($TABLE_GROUP)." t1 join(
-        select parent_id, count(*) as count from "._tbl($TABLE_U2G)." where parent_id in
-          (select id from "._tbl($TABLE_GROUP).")
-        GROUP BY parent_id
-      ) t2 on t1.id = t2.parent_id
-      set t1.user_count = t2.count
-    ";
-    DBHelper::exec($updateUserCountSQL);
+    resolve_user_group_count();
 
     // 7.Query whether there are non-synchronized groups and users
     $usGroupResult = DBHelper::query("select count(*) as count from " . _tbl($TABLE_GROUP) . " where sync_state = 1 and sync_version != '$SYNC_VERSION'");

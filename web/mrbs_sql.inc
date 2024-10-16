@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection SqlDialectInspection */
+
 namespace MRBS;
 
 use MRBS\ICalendar\RFC5545;
@@ -2852,7 +2853,7 @@ function get_bookings_in_series(?int $repeat_id) : array
   return $bookings;
 }
 
-function insert_group($group, $parent_id): int
+function add_user_group($group, $parent_id): int
 {
   db()->begin();
   db()->command("INSERT INTO " . _tbl('user_group') . "(name, third_id, third_parent_id, source, disabled) VALUES (?, ?, ?, ?, ?)", array($group['name'], $group['third_id'] ?? "", $group['third_parent_id'] ?? "", $group['source'], $group['disabled']));
@@ -2889,6 +2890,40 @@ function insert_group($group, $parent_id): int
   return $group_id;
 }
 
+function edit_user_group()
+{
+
+}
+
+function get_user_group($group_id, $source)
+{
+  $group = array();
+  if ($group_id != -1) {
+    $result = db()->query("SELECT name, third_id, disabled, user_count FROM " . _tbl("user_group") . " WHERE id = ? AND source = ?",
+      array($group_id, $source)
+    );
+    $group = $result->next_row_keyed();
+    if (empty($group)) {
+      return null;
+    }
+  }
+
+  $sql = "
+    SELECT t1.id, t1.name, t1.third_id, t1.disabled, t1.user_count FROM " . _tbl("g2g_map") . " t2
+    LEFT JOIN " . _tbl("user_group") . " t1 ON t1.id = t2.group_id
+    WHERE t2.parent_id = ? AND t2.deep = 1 AND t2.source = ? GROUP BY t1.id
+  ";
+  $result = db()->query($sql,
+    array($group_id, $source)
+  );
+  $child_groups = [];
+  while ($row = $result->next_row_keyed()) {
+    $child_groups[] = $row;
+  }
+  $group['child_groups'] = $child_groups;
+  return $group;
+}
+
 function bind_user_to_group($user_id, $group_id, $source): bool
 {
   db()->begin();
@@ -2914,14 +2949,7 @@ function bind_user_to_group($user_id, $group_id, $source): bool
     $batch++;
   }
   // Resolve all user count
-  $sql = "
-      update "._tbl("user_group")." t1 join(
-        select parent_id, count(*) as count from "._tbl("u2g_map")." where parent_id in
-          (select id from "._tbl("user_group").")
-      ) t2 on t1.id = t2.parent_id
-      set t1.user_count = t2.count
-    ";
-  db()->command($sql);
+  resolve_user_group_count();
   db()->commit();
   return true;
 }
@@ -2982,15 +3010,20 @@ function resolve_u2g($user_id)
     db()->command($sql, $params);
     $batch++;
   }
-  // Resolve all user count
+  resolve_user_group_count();
+  db()->commit();
+  return true;
+}
+
+function resolve_user_group_count()
+{
   $sql = "
       update "._tbl("user_group")." t1 join(
-        select parent_id, count(*) as count from "._tbl("u2g_map")." where parent_id in
+        select parent_id, count(distinct user_id) as count from "._tbl("u2g_map")." where parent_id in
           (select id from "._tbl("user_group").")
+        group by parent_id
       ) t2 on t1.id = t2.parent_id
       set t1.user_count = t2.count
     ";
   db()->command($sql);
-  db()->commit();
-  return true;
 }
