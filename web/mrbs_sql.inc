@@ -2895,9 +2895,10 @@ function edit_user_group()
 
 }
 
-function get_user_group($group_id, $source)
+function get_user_group_tree($group_id, $source, $page = 1)
 {
   $group = array();
+  $start = ($page-1) * 10;
   if ($group_id != -1) {
     $result = db()->query("SELECT name, third_id, disabled, user_count FROM " . _tbl("user_group") . " WHERE id = ? AND source = ?",
       array($group_id, $source)
@@ -2911,7 +2912,7 @@ function get_user_group($group_id, $source)
   $sql = "
     SELECT t1.id, t1.name, t1.third_id, t1.disabled, t1.user_count FROM " . _tbl("g2g_map") . " t2
     LEFT JOIN " . _tbl("user_group") . " t1 ON t1.id = t2.group_id
-    WHERE t2.parent_id = ? AND t2.deep = 1 AND t2.source = ? GROUP BY t1.id
+    WHERE t2.parent_id = ? AND t2.deep = 1 AND t2.source = ? GROUP BY t1.id LIMIT $start, 10
   ";
   $result = db()->query($sql,
     array($group_id, $source)
@@ -2922,6 +2923,22 @@ function get_user_group($group_id, $source)
   }
   $group['child_groups'] = $child_groups;
   return $group;
+}
+
+function get_user_group_members($group_id, $page)
+{
+    $start = ($page-1) * 10;
+    $sql = "
+      SELECT t1.id, t1.display_name, t1.name, t1.email, t1.timestamp, t1.disabled, t1.source, t1.third_id
+      FROM " . _tbl("users") . " t1 LEFT JOIN " . _tbl("u2g_map") . " t2
+      ON t1.id = t2.user_id WHERE parent_id = ? GROUP BY t1.id LIMIT $start, 10
+    ";
+    $users = [];
+    $result = db()->query($sql, array($group_id));
+    while($row = $result->next_row_keyed()) {
+      $users[] = $row;
+    }
+    return $users;
 }
 
 function bind_user_to_group($user_id, $group_id, $source): bool

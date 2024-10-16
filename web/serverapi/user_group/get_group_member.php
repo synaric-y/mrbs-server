@@ -12,11 +12,9 @@ if (getLevel($_SESSION['user']) < 2){
 }
 
 $group_id = $_POST['group_id'];
-$group = get_user_group($group_id, "system");
-if (empty($group)) {
-  ApiHelper::fail(get_vocab("group_not_exist"), ApiHelper::GROUP_NOT_EXIST);
-}
+$page = intval($_POST['page']);
+$users = get_user_group_members($group_id, $page);
 
 $result = array();
-$result['group'] = $group;
+$result['users'] = $users;
 ApiHelper::success($result);
