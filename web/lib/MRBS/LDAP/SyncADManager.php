@@ -2,6 +2,7 @@
 
 namespace MRBS\LDAP;
 
+use Error;
 use Exception;
 use LdapRecord\Container;
 use LdapRecord\Connection;
@@ -27,7 +28,18 @@ class SyncADManager
    * @return SyncLDAPResult|null
    * @throws Exception
    */
-  public function syncAD($sync_version)
+  public function syncAD($sync_version) {
+    try {
+      $this->_syncAD($sync_version);
+    } catch (\Throwable $e) {
+      log_ad($e->getMessage());
+      log_ad($e->getTraceAsString());
+
+      $this->_reportFail();
+    }
+  }
+
+  public function _syncAD($sync_version)
   {
     $CREATE_SOURCE = "ad";
     $this->sync_version = $sync_version ?? md5(uniqid('', true));
@@ -92,6 +104,7 @@ class SyncADManager
       $temp++;
       $this->_reportProgress(0, $temp, count($groupList));
     }
+    $this->_reportProgress(0, count($groupList), count($groupList));
     log_ad("handle group: ", $totalGroup);
 
     $userAccountName = '';
@@ -115,12 +128,13 @@ class SyncADManager
           $fmtUserList[] = $fmtUser;
         }
 
-      } catch (Exception $e) {
+      } catch (Error $e) {
         log_ad($e->getMessage());
       }
       $temp++;
       $this->_reportProgress(1, $temp, count($userList));
     }
+    $this->_reportProgress(1, count($userList), count($userList));
     log_ad("handle user: ", $totalUser);
 
     // 4.Merge Groups
@@ -160,11 +174,12 @@ class SyncADManager
             $syncResult->group_update += 1;
           }
         }
-      } catch (Exception $e) {
+      } catch (Error $e) {
         log_ad($e->getMessage());
       }
       $this->_reportProgress(2, $temp, count($fmtGroupList));
     }
+    $this->_reportProgress(2, count($fmtGroupList), count($fmtGroupList));
     db()->commit();
     log_ad("merge groups: ", count($fmtGroupList));
 
@@ -177,7 +192,8 @@ class SyncADManager
       if (empty($thirdId)) {
         continue;
       }
-      $localUser = DBHelper::one(_tbl($TABLE_USER), "third_id = '$thirdId'  and source = '$CREATE_SOURCE'");
+      $rName = $remoteUser['name'];
+      $localUser = DBHelper::one(_tbl($TABLE_USER), "third_id = '$thirdId' or name = '$rName'");
 
       $mergedUser = array_merge($remoteUser);
       unset($mergedUser['_third_parent_id']);
@@ -194,7 +210,7 @@ class SyncADManager
         $localUserList[$mergedUser['third_id']] = $mergedUser;
         $syncResult->user_insert += 1;
       } else {
-        DBHelper::update(_tbl($TABLE_USER), $mergedUser, "third_id = '$thirdId'  and source = '$CREATE_SOURCE'");
+        DBHelper::update(_tbl($TABLE_USER), $mergedUser, "third_id = '$thirdId' or name = '$rName'");
         $localUserList[$localUser['third_id']] = $localUser;
         if ($mergedUser['disabled'] != $localUser['disabled']) {
           $syncResult->user_delete += 1;
@@ -205,6 +221,7 @@ class SyncADManager
 
       $this->_reportProgress(3, $temp, count($fmtUserList));
     }
+    $this->_reportProgress(3,  count($fmtUserList), count($fmtUserList));
     db()->commit();
     log_ad("merge users: ", count($fmtUserList));
 
@@ -231,11 +248,12 @@ class SyncADManager
           $insertG2G['source'] = $CREATE_SOURCE;
           DBHelper::insert(_tbl($TABLE_G2G), $insertG2G);
         }
-      } catch (Exception $e) {
+      } catch (Error $e) {
         log_ad($e->getMessage());
       }
       $this->_reportProgress(4, $temp, count($localGroupList));
     }
+    $this->_reportProgress(4, count($localGroupList), count($localGroupList));
     db()->commit();
     log_ad("resolve g2g: ", count($localGroupList));
 
@@ -258,11 +276,12 @@ class SyncADManager
           $insertU2G['source'] = $CREATE_SOURCE;
           DBHelper::insert(_tbl($TABLE_U2G), $insertU2G);
         }
-      } catch (Exception $e) {
+      } catch (Error $e) {
         log_ad($e->getMessage());
       }
       $this->_reportProgress(5, $temp, count($localUserList));
     }
+    $this->_reportProgress(5, count($localUserList), count($localUserList));
     db()->commit();
     log_ad("resolve u2g: ", count($localGroupList));
 
@@ -279,7 +298,7 @@ class SyncADManager
     log_ad(json_encode($syncResult));
     log_ad("end time: " . time());
     log_ad("end sync-------------------------------");
-    RedisConnect::del('CURRENT_SYNC_AD_TASK');
+    $this->_reportSuccess();
 
     return $syncResult;
   }
@@ -388,17 +407,40 @@ class SyncADManager
     if (empty($this->progress[$step])) {
       $this->progress[] = array();
     }
-    $p =  $this->progress[$step];
+    $p = $this->progress[$step];
     if (empty($p['total'])) {
       $this->progress[$step]['total'] = $total;
     }
-    if (empty($p['current']) || $p['current'] == 0 || $current - $this->report_interval > $p['current']) {
+    if (empty($p['current']) || $p['current'] == 0
+      || $current - $this->report_interval > $p['current']
+      || $current == $total) {
       $this->progress[$step]['current'] = $current;
       $result = array(
         'sync_version' => $this->sync_version,
-        'progress' => $this->progress
+        'progress' => $this->progress,
+        'complete' => 0
       );
       RedisConnect::setex('CURRENT_SYNC_AD_TASK', json_encode($result), 3600);
+    }
+  }
+
+  function _reportFail()
+  {
+    $task = RedisConnect::get('CURRENT_SYNC_AD_TASK');
+    if (!empty($task)) {
+      $task = json_decode($task, true);
+      $task['complete'] = -1;
+      RedisConnect::setex('CURRENT_SYNC_AD_TASK', 3600);
+    }
+  }
+
+  function _reportSuccess()
+  {
+    $task = RedisConnect::get('CURRENT_SYNC_AD_TASK');
+    if (!empty($task)) {
+      $task = json_decode($task, true);
+      $task['complete'] = 1;
+      RedisConnect::setex('CURRENT_SYNC_AD_TASK', 3600);
     }
   }
 }

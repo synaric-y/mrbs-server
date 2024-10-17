@@ -15,12 +15,8 @@ use MRBS\LDAP\SyncADManager;
 
 $sync_version = $_POST['sync_version'];
 
-try {
-  $manager = new SyncADManager();
-  $manager->syncAD($sync_version);
-} catch (\Error $e) {
-  RedisConnect::del('CURRENT_SYNC_AD_TASK');
-}
+$manager = new SyncADManager();
+$manager->syncAD($sync_version);
 
 $result = array();
 ApiHelper::success($result);
