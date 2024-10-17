@@ -16,6 +16,12 @@ use function MRBS\resolve_user_group_count;
 
 class SyncADManager
 {
+
+  private $progress = [];
+  private $report_interval = "200";
+
+  private $sync_version = "";
+
   /**
    * Synchronize User and Group from AD(LDAP).
    * @return SyncLDAPResult|null
@@ -24,7 +30,7 @@ class SyncADManager
   public function syncAD($sync_version)
   {
     $CREATE_SOURCE = "ad";
-    $SYNC_VERSION = $sync_version ?? md5(uniqid('', true));
+    $this->sync_version = $sync_version ?? md5(uniqid('', true));
     $TABLE_GROUP = "user_group";
     $TABLE_USER = "users";
     $TABLE_U2G = "u2g_map";
@@ -33,6 +39,8 @@ class SyncADManager
     // A runtime k-v map cache to save query times
     $localGroupList = [];
     $localUserList = [];
+    $syncResult = new SyncLDAPResult();
+    $this->_initProgress(7);
 
     log_ad("start sync-----------------------------");
     log_ad("start time: " . time());
@@ -57,15 +65,8 @@ class SyncADManager
     $totalGroup = 0;
     $fmtGroupList = [];
     $entries = Group::query()->select(['name'])->paginate();
-    $result = $entries->all();
-    foreach ($result as $group) {
-      $fmtGroup = $this->_handleGroup($group, $totalGroup);
-      if (!empty($fmtGroup)) {
-        $fmtGroupList[$fmtGroup['third_id']] = $fmtGroup;
-      }
-    }
-
-    log_ad("handle group: ", $totalGroup);
+    $groupList = $entries->all();
+    log_ad("query group: ", count($groupList));
 
     // 2.Query Users
     $totalUser = 0;
@@ -78,6 +79,20 @@ class SyncADManager
       ])
       ->paginate();
     $userList = $entries->all();
+    log_ad("query user: ", count($userList));
+
+
+    // 3.Format Data
+    $temp = 0;
+    foreach ($groupList as $group) {
+      $fmtGroup = $this->_handleGroup($group, $totalGroup);
+      if (!empty($fmtGroup)) {
+        $fmtGroupList[$fmtGroup['third_id']] = $fmtGroup;
+      }
+      $temp++;
+      $this->_reportProgress(0, $temp, count($groupList));
+    }
+    log_ad("handle group: ", $totalGroup);
 
     $userAccountName = '';
     if (!empty($userList)) {
@@ -90,6 +105,7 @@ class SyncADManager
         $userAccountName = 'name';
       }
     }
+    $temp = 0;
     foreach ($userList as $p) {
       try {
         $option = array();
@@ -102,14 +118,16 @@ class SyncADManager
       } catch (Exception $e) {
         log_ad($e->getMessage());
       }
+      $temp++;
+      $this->_reportProgress(1, $temp, count($userList));
     }
     log_ad("handle user: ", $totalUser);
 
-    $syncResult = new SyncLDAPResult();
-
-    // 3.Merge Groups
+    // 4.Merge Groups
     db()->begin();
+    $temp = 0;
     foreach ($fmtGroupList as $remoteGroup) {
+      $temp++;
       // Query exist data
       try {
         $thirdId = $remoteGroup['third_id'];
@@ -123,7 +141,7 @@ class SyncADManager
         $mergedGroup['source'] = $CREATE_SOURCE;
         $mergedGroup['sync_state'] = 1;
         $mergedGroup['last_sync_time'] = time();
-        $mergedGroup['sync_version'] = $SYNC_VERSION;
+        $mergedGroup['sync_version'] = $this->sync_version;
 
         if (empty($localGroup)) {
           // Insert new data, since third_id not exists
@@ -145,13 +163,16 @@ class SyncADManager
       } catch (Exception $e) {
         log_ad($e->getMessage());
       }
+      $this->_reportProgress(2, $temp, count($fmtGroupList));
     }
     db()->commit();
     log_ad("merge groups: ", count($fmtGroupList));
 
-    // 4.Merge Users
+    // 5.Merge Users
     db()->begin();
+    $temp = 0;
     foreach ($fmtUserList as $remoteUser) {
+      $temp++;
       $thirdId = $remoteUser['third_id'];
       if (empty($thirdId)) {
         continue;
@@ -163,7 +184,7 @@ class SyncADManager
       $mergedUser['source'] = $CREATE_SOURCE;
       $mergedUser['sync_state'] = 1;
       $mergedUser['last_sync_time'] = time();
-      $mergedUser['sync_version'] = $SYNC_VERSION;
+      $mergedUser['sync_version'] = $this->sync_version;
       $mergedUser['password_hash'] = $config['default_password_hash'];
 
       if (empty($localUser)) {
@@ -181,16 +202,20 @@ class SyncADManager
           $syncResult->user_update += 1;
         }
       }
+
+      $this->_reportProgress(3, $temp, count($fmtUserList));
     }
     db()->commit();
     log_ad("merge users: ", count($fmtUserList));
 
-    // 5.Resolve user-group and group-group relationship
+    // 6.Resolve user-group and group-group relationship
     DBHelper::delete(_tbl($TABLE_G2G), "source = '$CREATE_SOURCE'");
     DBHelper::delete(_tbl($TABLE_U2G), "source = '$CREATE_SOURCE'");
 
     db()->begin();
+    $temp = 0;
     foreach ($localGroupList as $key => $localGroup) {
+      $temp++;
       try {
         $parentNodeList = [];
         $this->recursiveGetParentList($localGroupList, $localGroup, $parentNodeList, 0);
@@ -209,12 +234,15 @@ class SyncADManager
       } catch (Exception $e) {
         log_ad($e->getMessage());
       }
+      $this->_reportProgress(4, $temp, count($localGroupList));
     }
     db()->commit();
     log_ad("resolve g2g: ", count($localGroupList));
 
     db()->begin();
+    $temp = 0;
     foreach ($localUserList as $key => $localUser) {
+      $temp++;
       try {
         $parentNodeList = [];
         $this->recursiveGetParentList($localGroupList, $localUser, $parentNodeList, 0);
@@ -233,16 +261,18 @@ class SyncADManager
       } catch (Exception $e) {
         log_ad($e->getMessage());
       }
+      $this->_reportProgress(5, $temp, count($localUserList));
     }
     db()->commit();
     log_ad("resolve u2g: ", count($localGroupList));
 
-    // 6.Resolve user count
+    // 7.Resolve user count
     resolve_user_group_count();
+    $this->_reportProgress(6, 1, 1);
 
-    // 7.Query whether there are non-synchronized groups and users
-    $usGroupResult = DBHelper::query("select count(*) as count from " . _tbl($TABLE_GROUP) . " where sync_state = 1 and sync_version != '$SYNC_VERSION'");
-    $usUserResult = DBHelper::query("select count(*) as count from " . _tbl($TABLE_USER) . " where sync_state = 1 and sync_version != '$SYNC_VERSION'");
+    // 8.Query whether there are non-synchronized groups and users
+    $usGroupResult = DBHelper::query("select count(*) as count from " . _tbl($TABLE_GROUP) . " where sync_state = 1 and sync_version != '$this->sync_version'");
+    $usUserResult = DBHelper::query("select count(*) as count from " . _tbl($TABLE_USER) . " where sync_state = 1 and sync_version != '$this->sync_version'");
     $syncResult->group_unbind = $usGroupResult['count'] ?? 0;
     $syncResult->user_unbind = $usUserResult['count'] ?? 0;
 
@@ -341,5 +371,34 @@ class SyncADManager
   {
     $unpacked = unpack('Va/v2b/n2c/Nd', $binary_guid);
     return sprintf('%08X-%04X-%04X-%04X-%04X%08X', $unpacked['a'], $unpacked['b1'], $unpacked['b2'], $unpacked['c1'], $unpacked['c2'], $unpacked['d']);
+  }
+
+  function _initProgress($steps)
+  {
+    for ($i = 0; $i < $steps; $i++) {
+      $this->progress[] = array(
+        'total' => 0,
+        'current' => 0
+      );
+    }
+  }
+
+  function _reportProgress($step, $current, $total)
+  {
+    if (empty($this->progress[$step])) {
+      $this->progress[] = array();
+    }
+    $p =  $this->progress[$step];
+    if (empty($p['total'])) {
+      $this->progress[$step]['total'] = $total;
+    }
+    if (empty($p['current']) || $p['current'] == 0 || $current - $this->report_interval > $p['current']) {
+      $this->progress[$step]['current'] = $current;
+      $result = array(
+        'sync_version' => $this->sync_version,
+        'progress' => $this->progress
+      );
+      RedisConnect::set('CURRENT_SYNC_AD_TASK', json_encode($result));
+    }
   }
 }

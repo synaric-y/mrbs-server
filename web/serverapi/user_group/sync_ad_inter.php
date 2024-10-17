@@ -18,7 +18,7 @@ $sync_version = $_POST['sync_version'];
 try {
   $manager = new SyncADManager();
   $manager->syncAD($sync_version);
-} catch (\Exception $e) {
+} catch (\Error $e) {
   RedisConnect::del('CURRENT_SYNC_AD_TASK');
 }
 
