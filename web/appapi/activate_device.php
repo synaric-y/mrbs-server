@@ -26,7 +26,7 @@ if ($result > 0){
   ApiHelper::fail(get_vocab("device_exists"), ApiHelper::DEVICE_EXISTS);
 }
 
-$sql = "INSERT INTO " . _tbl("device") . "(device_id, version, description, resolution, is_charge, battery_level, status, room_id) VALUES (?, ?, ?, ?, ?, ?)";
+$sql = "INSERT INTO " . _tbl("device") . "(device_id, version, description, resolution, is_charging, battery_level, is_set, room_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 db() -> command($sql, array($device_id, $version, $description, $resolution, $is_charge, $battery_level, $status, $room_id === false ? null : $room_id));
 
 ApiHelper::success(null);

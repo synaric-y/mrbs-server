@@ -18,10 +18,29 @@ function getTimeZoneByRoom($roomId)
 
 //$room_id = intval(ApiHelper::value("room_id"));
 $device_id = $_POST['device_id'];
+$is_charge = $_POST['is_charge'];
+$battery_level = $_POST['battery_level'];
 $result = db() -> query("SELECT * FROM " . _tbl("device") . " WHERE device_id = ?", array($device_id));
 if($result -> count() == 0){
   ApiHelper::fail(get_vocab("not_activate"), ApiHelper::NOT_ACTIVATE);
 }
+
+if (!empty($is_charge) || !empty($battery_level)) {
+  if (!empty($device_id)) {
+    $sql = "UPDATE " . _tbl("device") . " SET ";
+    if (!empty($battery_level) && empty($is_charge)) {
+      $sql .= "battery_level = ? WHERE device_id = ?";
+      db()->command($sql, [$battery_level, $device_id]);
+    }else if (empty($battery_level) && !empty($is_charge)) {
+      $sql .= "is_charging = ? WHERE device_id = ?";
+      db()->command($sql, [$is_charge, $device_id]);
+    }else {
+      $sql .= "battery_level = ?, is_charging = ? WHERE device_id = ?";
+      db()->command($sql, [$battery_level, $is_charge, $device_id]);
+    }
+  }
+}
+
 $row = $result -> next_row_keyed();
 if (empty($row['room_id'])){
   ApiHelper::fail(get_vocab("not_bind"), ApiHelper::NOT_BIND);
@@ -37,14 +56,14 @@ if (!empty($timezone)) {
 $interval_start = strtotime("today");
 $interval_end = strtotime("tomorrow");
 
-$room = get_room_details($row['room_id']);
+$room = get_room_details(intval($row['room_id']));
 unset($room["exchange_server"]);
 unset($room["exchange_username"]);
 unset($room["exchange_password"]);
 
 $area = get_area_details($room["area_id"]);
 
-$entries = get_entries_by_room($row['room_id'], $interval_start, $interval_end);
+$entries = get_entries_by_room(intval($row['room_id']), $interval_start, $interval_end);
 
 $now = time();
 $now_entry = null;

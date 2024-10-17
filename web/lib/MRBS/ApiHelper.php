@@ -77,6 +77,8 @@ class ApiHelper
   public const UNABLE_TO_OPEN_ZIP = -56;
   public const FAIL_TO_UPLOAD = -57;
   public const VERSION_EXISTS = -58;
+  public const NOT_ACTIVATE = -59;
+  public const NOT_BIND = -60;
   static function value($key)
   {
     return $_POST[$key];

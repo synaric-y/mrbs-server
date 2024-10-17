@@ -20,13 +20,16 @@ $password = $_POST['password'];
 if (!empty($_SESSION) && isset($_SESSION['user'])) {
   ApiHelper::fail(get_vocab("already_login"), ApiHelper::ALREADY_LOGIN);
 }
-setcookie("session_id", "", time() - 3600, "/web/");
+setcookie("session_id", "", time() - 3600, "/web/appapi/");
 $result = auth() -> validateUser($username, $password);
 if (!$result) {
   ApiHelper::fail(get_vocab("invalid_username_or_password"), ApiHelper::INVALID_USERNAME_OR_PASSWORD);
 }
+if (getLevel($username) < 2){
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
+}
 $_SESSION['user'] = $username;
-setcookie("session_id", session_id(), time() + 24 * 60 * 60, "/web/", "", false, true);
+setcookie("session_id", session_id(), time() + 24 * 60 * 60, "/web/appapi/", "", false, true);
 $result = db() -> query("SELECT level, display_name FROM " . _tbl("users") . " WHERE name = ?", array($username));
 $row = $result -> next_row_keyed();
 $data = array(

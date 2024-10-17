@@ -106,19 +106,19 @@ class RedisConnect
     return self::$redis->zREM($name, $member);
   }
 
-  public static function zRange($name, $begin, $end, $withscore = false){
+  public static function zRange($name, $begin, $end, $option = ["withscore" => false]){
     if (empty(self::$redis)){
       self::newInstance();
     }
-    return self::$redis->zRange($name, $begin, $end, $withscore);
+    return self::$redis->zRange($name, $begin, $end, $option);
 
   }
 
-  public static function zRangeByScore($name, $begin, $end, $withscore = false){
+  public static function zRangeByScore($name, $begin, $end, $option = ["withscore" => false]){
     if (empty(self::$redis)){
       self::newInstance();
     }
-    return self::$redis->zRangeByScore($name, $begin, $end, $withscore);
+    return self::$redis->zRangeByScore($name, $begin, $end, $option);
   }
 
   public static function zScore($name, $member){

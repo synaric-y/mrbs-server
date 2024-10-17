@@ -34,10 +34,6 @@ global $max_level;
  *                                                                            *
  * \*****************************************************************************/
 
-require_once "defaultincludes.inc";
-require_once './appapi/api_helper.php';
-require_once "mrbs_sql.inc";
-
 /*
  * 编辑用户接口
  * @Params
@@ -77,12 +73,12 @@ $id = $_POST['id'] ?? "";
 
 $email = $_POST['email'] ?? "";
 $name = $_POST['name'];
-$password0 = $_POST['password0'] ?? "";
-$password1 = $_POST['password1'] ?? "";
 $level = $_POST['level'] ?? null;
 $display_name = $_POST['display_name'] ?? null;
+$password = $_POST['password'] ?? null;
+$remark = $_POST['remark'] ?? null;
 
-if (!isset($action) || ($action != 'edit' && $action != 'add' && $action != 'delete')) {
+if (!isset($action) || ($action != 'edit' && $action != 'add' && $action != 'delete') ) {
   ApiHelper::fail(get_vocab("wrong_type"), ApiHelper::WRONG_TYPE);
 }
 
@@ -137,17 +133,6 @@ if (!isset($name) || empty($name)) {
   ApiHelper::fail(get_vocab("empty_name"), ApiHelper::EMPTY_NAME);
 }
 
-
-// Now do any password error messages
-
-if ($password0 != $password1) {
-  $pwd_not_match = "true";
-}
-
-if (!empty($pwd_not_match)) {
-  ApiHelper::fail(get_vocab("passwords_not_eq"), ApiHelper::PASSWORDS_NOT_EQ);
-}
-
 ///*---------------------------------------------------------------------------*\
 //|             Edit a given entry - 2nd phase: Update the database.            |
 //\*---------------------------------------------------------------------------*/
@@ -164,9 +149,7 @@ if (!empty($action) && ($action == "edit")){
   $user["name"] = $name;
   $user["display_name"] = $display_name;
   $user["email"] = $email;
-  if (!empty($password0) && !empty($password1)) {
-    $user["password_hash"] = password_hash($password1, PASSWORD_DEFAULT);
-  }
+  $user["remark"] = $remark;
 //  db() -> query("UPDATE " . _tbl("users") . " SET name = ?, display_name = ?, email = ?, password_hash = ? WHERE id = ?", array($user['name']
 //    , $user["display_name"], $user["email"], $user["password"], $user["id"]));
   $sql = "UPDATE " . _tbl("users") . " SET ";
@@ -189,12 +172,13 @@ if (!empty($action) && ($action == "edit")){
   ApiHelper::success(null);
 }else if (!empty($action) && ($action == "add")){
   $user = $result -> next_row_keyed();
+  $password_hash = password_hash($password, PASSWORD_DEFAULT);
   $user["name"] = $name;
   $user["display_name"] = $display_name;
   $user["email"] = $email;
-  $user["password_hash"] = password_hash($password0, PASSWORD_DEFAULT);
   $user["level"] = $level;
-  db() -> query("INSERT INTO " . _tbl("users") . "(level, name, display_name, email, password_hash) VALUES (?, ?, ?, ?, ?)", array($user["level"], $user["name"], $user["display_name"], $user["email"], $user["password_hash"]));
+  $user["password_hash"] = $password_hash;
+  db() -> query("INSERT INTO " . _tbl("users") . "(level, name, display_name, email, password_hash, remark, create_time) VALUES (?, ?, ?, ?, ?, ?, ?)", array($user["level"], $user["name"], $user["display_name"], $user["email"], $user["password_hash"], $remark, time()));
   ApiHelper::success(null);
 }
 
@@ -210,7 +194,7 @@ if (!empty($action) && ($action == "delete")){
     ApiHelper::fail(get_vocab("delete_yourself"), ApiHelper::DELETE_YOURSELF);
   }
 
-  $result = db() -> query("DELETE FROM " . _tbl("users") . " WHERE name = ?", array($name));
+  $result = db() -> command("DELETE FROM " . _tbl("users") . " WHERE name = ?", array($name));
   if (!$result) {
     ApiHelper::fail("", ApiHelper::UNKOWN_ERROR);
 //    $response["code"] = -7;
