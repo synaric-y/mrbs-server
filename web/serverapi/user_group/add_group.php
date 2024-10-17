@@ -13,6 +13,7 @@ if (getLevel($_SESSION['user']) < 2){
 
 $name = $_POST['name'];
 $parent_id = $_POST['parent_id'];
+$third_id = $_POST['third_id'];
 
 if (empty($name)) {
   ApiHelper::fail(get_vocab("invalid_group_name"), ApiHelper::INVALID_GROUP_NAME);
@@ -34,6 +35,7 @@ $insertGroup['source'] = 'system';
 $insertGroup['disabled'] = 0;
 $insertGroup['sync_state'] = 0;
 $insertGroup['user_count'] = 0;
+$insertGroup['third_id'] = $third_id;
 add_user_group($insertGroup, $parent_id);
 
 $result = array();

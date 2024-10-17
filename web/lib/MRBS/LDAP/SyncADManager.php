@@ -430,7 +430,7 @@ class SyncADManager
     if (!empty($task)) {
       $task = json_decode($task, true);
       $task['complete'] = -1;
-      RedisConnect::setex('CURRENT_SYNC_AD_TASK', 3600);
+      RedisConnect::setex('CURRENT_SYNC_AD_TASK', json_encode($task), 3600);
     }
   }
 
@@ -440,7 +440,7 @@ class SyncADManager
     if (!empty($task)) {
       $task = json_decode($task, true);
       $task['complete'] = 1;
-      RedisConnect::setex('CURRENT_SYNC_AD_TASK', 3600);
+      RedisConnect::setex('CURRENT_SYNC_AD_TASK', json_encode($task), 3600);
     }
   }
 }

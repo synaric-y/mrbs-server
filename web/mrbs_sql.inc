@@ -2553,30 +2553,54 @@ function add_user_group($group, $parent_id): int
   if ($parent_id == -1) {
     db()->command("INSERT INTO " . _tbl("g2g_map") . "(group_id, parent_id, deep, source) VALUES (?, ?, ?, ?)", array($group_id, $parent_id, 1, $group['source']));
     db()->commit();
-    return $group_id;
-  }
-  // else we need to add all relations into the table according to parent
-  $result = db()->query("SELECT * FROM " . _tbl("g2g_map") . " WHERE group_id = ?", array($parent_id));
-  $maps = array();
-  $maps[] = array($group_id, $parent_id, 1, $group['source']);
-  while ($row = $result->next_row_keyed()) {
-    $maps[] = array($group_id, $row['parent_id'], $row['deep'] + 1, $group['source']);
-  }
-  $i = 0;
-  $batch = 0;
-  $sql = "INSERT INTO " . _tbl("g2g_map") . "(group_id, parent_id, deep, source) VALUES ";
-  $params = array();
-  while ($i < count($maps)) {
-    for (; $i - $batch * 10000 < min(count($maps) - $batch * 10000, 10000); $i++) {
-      $sql .= "(?, ?, ?, ?)";
-      if ($i != count($maps) - 1) {
-        $sql .= ", ";
-      }
-      $params = array_merge($params, $maps[$i]);
+  } else {
+    // else we need to add all relations into the table according to parent
+    $result = db()->query("SELECT * FROM " . _tbl("g2g_map") . " WHERE group_id = ?", array($parent_id));
+    $maps = array();
+    $maps[] = array($group_id, $parent_id, 1, $group['source']);
+    while ($row = $result->next_row_keyed()) {
+      $maps[] = array($group_id, $row['parent_id'], $row['deep'] + 1, $group['source']);
     }
-    db()->command($sql, $params);
-    $batch++;
+    $i = 0;
+    $batch = 0;
+    $sql = "INSERT INTO " . _tbl("g2g_map") . "(group_id, parent_id, deep, source) VALUES ";
+    $params = array();
+    while ($i < count($maps)) {
+      for (; $i - $batch * 10000 < min(count($maps) - $batch * 10000, 10000); $i++) {
+        $sql .= "(?, ?, ?, ?)";
+        if ($i != count($maps) - 1) {
+          $sql .= ", ";
+        }
+        $params = array_merge($params, $maps[$i]);
+      }
+      db()->command($sql, $params);
+      $batch++;
+    }
   }
+
+
+  if ($group['third_id']) {
+    $result = db()->query("SELECT * FROM " . _tbl("user_group") . " WHERE third_id = ? AND source = 'ad' ", array($group['third_id']));
+    $targetGroup = $result->next_row_keyed();
+    if (empty($targetGroup)) {
+      return false;
+    }
+    db()->command("UPDATE " . _tbl("user_group") .
+      " SET name = :name, third_id = :third_id, third_parent_id = :third_parent_id, sync_state = 1 WHERE id = :id",
+      array(
+        ':id' => $group_id,
+        ':name' => $group['name'],
+        ':third_id' => $targetGroup['third_id'],
+        ':third_parent_id' => $targetGroup['third_parent_id'],
+      ));
+    $sql = "
+      INSERT INTO "._tbl("u2g_map")." (user_id, parent_id, deep, source)
+      SELECT DISTINCT user_id, ?, 1, 'system' FROM " . _tbl("u2g_map") . " WHERE parent_id = ?
+    ";
+    db()->command($sql, array($group_id, $targetGroup['id']));
+    resolve_user_group_count();
+  }
+
   db()->commit();
   return $group_id;
 }
@@ -2586,7 +2610,7 @@ function edit_user_group($group): bool
   $group_id = $group['group_id'];
   db()->begin();
   if ($group['third_id']) {
-    $result = db()->query("SELECT * FROM " . _tbl("user_group") . " WHERE third_id = ? ", array($group['third_id']));
+    $result = db()->query("SELECT * FROM " . _tbl("user_group") . " WHERE third_id = ? AND source = 'ad' ", array($group['third_id']));
     $targetGroup = $result->next_row_keyed();
     if (empty($targetGroup)) {
       return false;
