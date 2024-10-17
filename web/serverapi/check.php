@@ -26,3 +26,21 @@ function getLevel($name)
   $row = $result -> next_row_keyed();
   return intval($row['level']);
 }
+
+function user_can_book($name, $room)
+{
+  if (empty($room['group_ids'])){
+    return true;
+  }
+
+  $user = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE name = ?", array($name)) ->next_row_keyed();
+
+  $data = json_decode($room['group_ids'], true);
+  foreach ($data as $group_id) {
+    $exist = db() -> query1("SELECT COUNT(*) FROM " . _tbl("u2g_map") . " WHERE user_id = ? AND parent_id = ?", array($user['id'], $group_id));
+    if ($exist > 1){
+      return true;
+    }
+  }
+  return false;
+}

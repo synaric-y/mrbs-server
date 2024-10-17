@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 
+
 require_once './appapi/api.php';
 require_once '../vendor/autoload.php';
 require_once "./defaultincludes.inc";
@@ -9,6 +10,8 @@ require_once "./functions_table.inc";
 require_once "./mrbs_sql.inc";
 require_once "./lib/Wxwork/api/src/CorpAPI.class.php";
 require_once "./lib/Wxwork/api/src/Utils.php";
+
+use MRBS\ApiHelper;
 
 /*
  * 企业微信登录接口，通过企业微信获取登陆人（GET），通常通过email字段进行比对，如果email字段没有比对成功
@@ -32,6 +35,7 @@ if (!isset($_GET) || empty($_GET["code"])) {
 }
 
 $retry = 0;
+
 while ($retry < 2){
   $access_token = get_access_token($corpid, $secret);
   $code = $_GET['code'];
@@ -45,7 +49,8 @@ while ($retry < 2){
     if (flock($file, LOCK_EX | LOCK_NB)){
       try{
         $result = refresh_access_token($corpid, $secret);
-        if($result === false || $result === -1) throw new Exception("internal error");
+        if($result === false || $result === -1)
+          \MRBS\ApiHelper::fail(get_vocab("unkown_error"), \MRBS\ApiHelper::UNKOWN_ERROR);
       }catch (\Exception $e){
         throw new Exception("internal error");
       } finally {

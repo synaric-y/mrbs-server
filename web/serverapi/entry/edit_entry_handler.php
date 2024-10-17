@@ -32,9 +32,9 @@ if (!checkAuth()){
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
-//if (getLevel($_SESSION['user']) < $min_booking_admin_level){
-//  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
-//}
+if (getLevel($_SESSION['user']) < $min_booking_admin_level){
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
+}
 
 //$sessionData = "";
 //session_decode($sessionData);
@@ -208,6 +208,11 @@ if (false === ($end_date_split = split_iso_date($end_date))) {
 }
 list($end_year, $end_month, $end_day) = $end_date_split;
 
+$result = db() -> query("SELECT * FROM " . _tbl("room") . " WHERE room_id = ?", $rooms);
+$room = $result -> next_row_keyed();
+if (!user_can_book($mrbs_username, $room)){
+  ApiHelper::fail(get_vocab("group_limit", $room['group_ids']), ApiHelper::GROUP_LIMIT);
+}
 
 // Get custom form variables
 $custom_fields = array();

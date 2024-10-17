@@ -105,7 +105,7 @@ CREATE TABLE mrbs_room
   exchange_password   varchar(255) NULL DEFAULT '' COMMENT 'exchange password',
   exchange_sync_state varchar(1024) NULL DEFAULT '' COMMENT '',
   icon                varchar(255) NULL DEFAULT '' COMMENT 'room icon',
-  wxwork_sync_state   text NULL DEFAULT '' COMMENT '',
+  wxwork_sync_state   text NULL COMMENT '',
   show_book           tinyint NULL DEFAULT 1 COMMENT '"0" means do not show booker in tablet, "1" means show booker in tablet',
   show_meeting_name   tinyint NULL DEFAULT 1 COMMENT '"0" means do not show meeting name in tablet, "1" means show meeting name int tablet',
   temporary_meeting   tinyint NULL DEFAULT 1 COMMENT '"0" means this room cannot book fast meetings, "1" means this room can book fast meeeting',
@@ -287,7 +287,7 @@ CREATE TABLE mrbs_users
   reset_key_hash    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   reset_key_expiry  int DEFAULT 0 NOT NULL,
   disabled          tinyint NOT NULL DEFAULT '0',
-  source            varchar(50) NOT NULL DEFAULT NULL COMMENT 'system/ad/wxwork',
+  source            varchar(50) NOT NULL DEFAULT '' COMMENT 'system/ad/wxwork',
   remark            text NULL DEFAULT NULL,
 
   PRIMARY KEY (id),
@@ -434,7 +434,7 @@ CREATE TABLE `mrbs_version` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `version` varchar(255) NULL DEFAULT '',
   `publish_time` int(11) NULL COMMENT 'when the version was published',
-  `update_time` int(11) DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'when the version was updated',
+  `update_time` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'when the version was updated',
   `is_delete` tinyint NULL DEFAULT 0 COMMENT 'whether the files of the version has been deleted',
   PRIMARY KEY (id),
   UNIQUE KEY (version)

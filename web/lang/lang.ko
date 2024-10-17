@@ -285,3 +285,5 @@ $vocab["unable_to_open_zip"]          = "파일을 열 수 없습니다. 파일�
 $vocab["fail_to_upload"]              = "파일 업로드 실패";
 $vocab["version_exists"]              = "이 버전이 이미 존재합니다";
 $vocab["unsupport_fast_meeting"]      = "이 방에서는 간단한 회의가 허용되지 않습니다";
+$vocab["group_limit"]                 = "이 객실은 %s 그룹만 예약할 수 있습니다";
+$vocab["exchange_disconnect"]         = "Exchange 서버에 연결할 수 없습니다";
