@@ -14,7 +14,7 @@ ini_set('display_errors', 1);            //错误信息
 ini_set('display_startup_errors', 1);    //php启动错误信息
 error_reporting(E_ALL);
 
-global $thirdCalendarService;
+global $thirdCalendarService, $exchange_server, $exchange_sync_interval;
 $tag = "[sync_exchange] ";
 $areas = \MRBS\get_area_names();
 
@@ -35,7 +35,7 @@ while (true) {
         );
         foreach ($thirdCalendarService as $serviceName => $config) {
           if ($area[$config["switch"]] == 1) {
-            $connector = CalendarServerManager::getServer($config, $area, $room);
+            $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
             $changeList = $connector->pullCalendarUpdate();
             if (!empty($changeList["create"])) {
               $fmtChangeList["create"] = array_merge($fmtChangeList["create"], $changeList["create"]);
@@ -55,7 +55,7 @@ while (true) {
             if ($delete["from"] == $serviceName) {
               continue;
             }
-            $connector = CalendarServerManager::getServer($config, $area, $room);
+            $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
             $connector->deleteMeeting($delete["data"]);
           }
         }
@@ -68,7 +68,7 @@ while (true) {
               $end = $rep + $create['data']['duration'] * 60;
               $one = DBHelper::one(\MRBS\_tbl("entry"), "(room_id = {$create['data']['room_id']} AND (start_time <= {$start} AND end_time > {$start}) OR (start_time < {$end} AND end_time >= {$end}) OR (start_time >= {$start} AND start_time < {$end}) OR (end_time >= {$end} AND end_time < {$end}))");
               if (!empty($one)) {
-                $connector = CalendarServerManager::getServer(array("connector" => "MRBS\CalendarServer\ExchangeCalendarServerConnector"), $area, $room);
+                $connector = CalendarServerManager::getServer(array("connector" => "MRBS\CalendarServer\ExchangeCalendarServerConnector"), $exchange_server, $area['timezone'], $room);
                 $connector->declineMeeting($create['item'], "conflict with " . $one['name'] . " , id " . $one['id']);
                 break;
               }
@@ -78,7 +78,7 @@ while (true) {
             }
             $result = \MRBS\mrbsCreateRepeatingEntrys($create['data']);
             if ($result['id'] == 0) {
-              $connector = CalendarServerManager::getServer(array("connector" => "MRBS\CalendarServer\ExchangeCalendarServerConnector"), $area, $room);
+              $connector = CalendarServerManager::getServer(array("connector" => "MRBS\CalendarServer\ExchangeCalendarServerConnector"), $exchange_server, $area['timezone'], $room);
               $connector->declineMeeting($create['item'], "Recurring Meeting create too many meetings or create no meetings");
 
             } else {
@@ -91,14 +91,14 @@ while (true) {
 //                } else
 //                  $connector->createMeeting($create["data"]);
 //              }
-              $connector = CalendarServerManager::getServer(array("connector" => "MRBS\CalendarServer\ExchangeCalendarServerConnector"), $area, $room);
+              $connector = CalendarServerManager::getServer(array("connector" => "MRBS\CalendarServer\ExchangeCalendarServerConnector"), $exchange_server, $area['timezone'], $room);
               $connector->acceptMeeting($create['item'], "");
             }
           } else {
             $success = DBHelper::insert(\MRBS\_tbl("entry"), $create["data"]) ?? false;
             foreach ($thirdCalendarService as $serviceName => $config) {
               if (!$success && $create["from"] == $serviceName) {
-                $connector = CalendarServerManager::getServer($config, $area, $room);
+                $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
                 $connector->declineMeeting($create['item'], "DB Failed");
                 break;
               } else if (!$success && $create["from"] != $serviceName) {
@@ -109,7 +109,7 @@ while (true) {
 //            if ($create["from"] == $serviceName) {
 //              continue;
 //            }
-              $connector = CalendarServerManager::getServer($config, $area, $room);
+              $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
               if ($create["from"] == $serviceName) {
                 $connector->acceptMeeting($create['item'], "");
               } else
@@ -127,7 +127,7 @@ while (true) {
             if ($update["from"] == $serviceName) {
               continue;
             }
-            $connector = CalendarServerManager::getServer($config, $area, $room);
+            $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
             $connector->updateMeeting($update["data"]);
           }
         }
@@ -143,8 +143,6 @@ while (true) {
     }
   }
   \MRBS\log_i($tag, "done!");
-  sleep(10);
+  sleep($exchange_sync_interval);
 }
-
-
 

@@ -771,3 +771,5 @@ $vocab["unable_to_open_zip"]           = "Failed to open zip file, please check 
 $vocab["fail_to_upload"]               = "Failed to upload file";
 $vocab["version_exists"]               = "This version exists";
 $vocab["unsupport_fast_meeting"]       = "This room is not allowed to book fask meeting";
+$vocab["group_limit"]                  = "This room can only be used by %s";
+$vocab["exchange_disconnect"]          = "Fail to connect to exchange server";

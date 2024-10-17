@@ -12,11 +12,12 @@ use function MRBS\get_room_details;
 class CalendarServerManager
 {
 
-  public static function getServer($config, $area, $room)
+  public static function getServer($config, $server, $timezone, $room)
   {
     $connectorName = $config["connector"];
     return new $connectorName(
-      $area,
+      $server,
+      $timezone,
       $room,
     );
   }
@@ -26,7 +27,7 @@ class CalendarServerManager
     if (empty($id)) {
       return;
     }
-    global $thirdCalendarService;
+    global $thirdCalendarService, $exchange_server;
     $entry = get_entry_by_id($id);
     foreach ($thirdCalendarService as $serviceName => $config) {
       if ($config["sync"] == "two-way") {
@@ -34,7 +35,7 @@ class CalendarServerManager
         $area = get_area_details($room["area_id"]);
         if ($area[$config['switch']] != 1)
           continue;
-        $connector = CalendarServerManager::getServer($config, $area, $room);
+        $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
         $connector->createMeeting($entry);
       }
     }
@@ -45,7 +46,7 @@ class CalendarServerManager
     if (empty($id)) {
       return;
     }
-    global $thirdCalendarService;
+    global $thirdCalendarService, $exchange_server;
     $entry = get_entry_by_id($id);
     foreach ($thirdCalendarService as $serviceName => $config) {
       if ($config["sync"] == "two-way") {
@@ -53,7 +54,7 @@ class CalendarServerManager
         $area = get_area_details($room["area_id"]);
         if ($area[$config['switch']] != 1)
           continue;
-        $connector = CalendarServerManager::getServer($config, $area, $room);
+        $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
         $connector->deleteMeeting($entry);
       }
     }
@@ -65,7 +66,7 @@ class CalendarServerManager
     if (empty($id)) {
       return;
     }
-    global $thirdCalendarService;
+    global $thirdCalendarService, $exchange_server;
     $entry = get_entry_by_id($id);
     foreach ($thirdCalendarService as $serviceName => $config) {
       if ($config["sync"] == "two-way") {
@@ -73,7 +74,7 @@ class CalendarServerManager
         $area = get_area_details($room["area_id"]);
         if ($area[$config['switch']] != 1)
           continue;
-        $connector = CalendarServerManager::getServer($config, $area, $room);
+        $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
         $connector->updateMeeting($entry);
       }
     }
@@ -83,7 +84,7 @@ class CalendarServerManager
     if (empty($id)) {
       return;
     }
-    global $thirdCalendarService;
+    global $thirdCalendarService, $exchange_server;
     $entry = get_repeat($id);
     foreach ($thirdCalendarService as $serviceName => $config) {
       if ($config["sync"] == "two-way") {
@@ -91,7 +92,7 @@ class CalendarServerManager
         $area = get_area_details($room["area_id"]);
         if ($area[$config['switch']] != 1)
           continue;
-        $connector = CalendarServerManager::getServer($config, $area, $room);
+        $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
         $connector->createMeeting($entry, $end_date);
       }
     }

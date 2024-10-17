@@ -85,6 +85,7 @@ class ApiHelper
   public const VERSION_EXISTS = -58;
   public const NOT_ACTIVATE = -59;
   public const NOT_BIND = -60;
+  public const GROUP_LIMIT = -61;
   static function value($key)
   {
     return $_POST[$key];

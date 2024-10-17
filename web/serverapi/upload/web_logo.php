@@ -21,7 +21,7 @@ $file = $_FILES['logo'];
 if($file['error'] === UPLOAD_ERR_OK){
   $name = $file['name'];
   $fileInfo = pathinfo($name);
-  if (strtolower($fileInfo['extension']) !== 'zip'){
+  if (strtolower($fileInfo['extension']) !== 'jpg' && strtolower($fileInfo['extension']) !== 'png'){
     ApiHelper::fail(get_vocab("unsupport_file_type"), ApiHelper::UNSUPPORT_FILE_TYPE);
   }
   $dir = dirname(__DIR__, 3) . "/logo/" . $_SESSION['user'] . "/logo." . strtolower($fileInfo['extension']);

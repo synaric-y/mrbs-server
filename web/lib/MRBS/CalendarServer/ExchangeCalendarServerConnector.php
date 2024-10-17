@@ -33,12 +33,12 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
   );
 
 
-  public function __construct($area, $room)
+  public function __construct($server, $timezone, $room)
   {
-    $this->server = $area["exchange_server"];
+    $this->server = $server;
     $this->account = $room["exchange_username"];
     $this->password = $room["exchange_password"];
-    $this->timezone = $area["timezone"];
+    $this->timezone = $timezone;
     $this->room = $room;
   }
 
