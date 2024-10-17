@@ -19,9 +19,9 @@ use function MRBS\resolve_user_group_count;
 class SyncADManager
 {
 
+  static $TASK_OUTDATE_SECONDS = 3600;
+  static $REPORT_INTERVAL = 200;
   private $progress = [];
-  private $report_interval = "200";
-
   private $sync_version = "";
 
   /**
@@ -434,7 +434,7 @@ class SyncADManager
       $this->progress[$step]['total'] = $total;
     }
     if (empty($p['current']) || $p['current'] == 0
-      || $current - $this->report_interval > $p['current']
+      || $current - self::$REPORT_INTERVAL > $p['current']
       || $current == $total) {
       $this->progress[$step]['current'] = $current;
       $result = array(
@@ -442,7 +442,7 @@ class SyncADManager
         'progress' => $this->progress,
         'complete' => 0
       );
-      RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($result), 3600);
+      RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($result), self::$TASK_OUTDATE_SECONDS);
     }
   }
 
@@ -452,7 +452,7 @@ class SyncADManager
     if (!empty($task)) {
       $task = json_decode($task, true);
       $task['complete'] = -1;
-      RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), 3600);
+      RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), self::$TASK_OUTDATE_SECONDS);
     }
   }
 
@@ -462,7 +462,7 @@ class SyncADManager
     if (!empty($task)) {
       $task = json_decode($task, true);
       $task['complete'] = 1;
-      RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), 3600);
+      RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), self::$TASK_OUTDATE_SECONDS);
     }
   }
 }

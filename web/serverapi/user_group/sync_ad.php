@@ -2,6 +2,8 @@
 
 namespace MRBS;
 
+use MRBS\LDAP\SyncADManager;
+
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
@@ -30,7 +32,7 @@ $sync_version = md5(uniqid('', true));
 $task = array(
   'sync_version' => $sync_version
 );
-RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), 3600);
+RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), SyncADManager::$TASK_OUTDATE_SECONDS);
 post_url_no_result("$server_address/web/call.php?act=user_group/sync_ad_inter",
   array("sync_version" => $sync_version));
 
