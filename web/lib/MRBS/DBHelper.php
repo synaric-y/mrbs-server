@@ -17,11 +17,26 @@ class DBHelper
     }
   }
 
-  static public function query($sql)
+  static public function query_array($sql)
   {
     try {
 //      echo DBHelper::$TAG, $sql, PHP_EOL;
       return db()->query_array($sql);
+    } catch (\Exception $e) {
+      echo $e->getMessage(), PHP_EOL;
+    }
+    return array();
+  }
+
+  static public function query($sql)
+  {
+    try {
+      $result = array();
+      $r = db()->query($sql);
+      while ($row = $r->next_row_keyed()) {
+        $result[] = $row;
+      }
+      return $result;
     } catch (\Exception $e) {
       echo $e->getMessage(), PHP_EOL;
     }

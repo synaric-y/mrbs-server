@@ -26,7 +26,7 @@ $checkSQL = "
     select user_id from " . _tbl("u2g_map") . " where parent_id = $group_id GROUP BY user_id
   )
 ";
-$foundUsers = DBHelper::query($checkSQL);
+$foundUsers = DBHelper::query_array($checkSQL);
 if (empty($foundUsers) || count($foundUsers) < count($user_ids)) {
   ApiHelper::fail(get_vocab("user_not_exist"), ApiHelper::USER_NOT_EXIST);
 }

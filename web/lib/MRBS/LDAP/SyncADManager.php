@@ -52,7 +52,7 @@ class SyncADManager
     $localGroupList = [];
     $localUserList = [];
     $syncResult = new SyncLDAPResult();
-    $this->_initProgress(7);
+    $this->_initProgress(8);
 
     log_ad("start sync-----------------------------");
     log_ad("start time: " . time());
@@ -285,13 +285,36 @@ class SyncADManager
     db()->commit();
     log_ad("resolve u2g: ", count($localGroupList));
 
-    // 7.Resolve user count
-    resolve_user_group_count();
-    $this->_reportProgress(6, 1, 1);
+    // 7.Synchronize AD members into system-created groups
+    $sysRelatedGroups = DBHelper::query("SELECT id, third_id FROM " . _tbl($TABLE_GROUP) . " WHERE sync_state = 1 AND source = 'system'");
+    db()->begin();
+    $temp = 0;
+    foreach ($sysRelatedGroups as $sysRelatedGroup) {
+      $temp++;
+      $third_id = $sysRelatedGroup['third_id'];
+      $targetGroup = $localGroupList[$third_id];
+      if (empty($targetGroup)) {
+        continue;
+      }
+      db()->command("DELETE FROM " . _tbl("u2g_map") . " WHERE parent_id = ?", array($sysRelatedGroup['id']));
+      $sql = "
+        INSERT INTO "._tbl("u2g_map")." (user_id, parent_id, deep, source)
+        SELECT DISTINCT user_id, ?, 1, 'system' FROM " . _tbl("u2g_map") . " WHERE parent_id = ?
+      ";
+      db()->command($sql, array($sysRelatedGroup['id'], $targetGroup['id']));
 
-    // 8.Query whether there are non-synchronized groups and users
-    $usGroupResult = DBHelper::query("select count(*) as count from " . _tbl($TABLE_GROUP) . " where sync_state = 1 and sync_version != '$this->sync_version'");
-    $usUserResult = DBHelper::query("select count(*) as count from " . _tbl($TABLE_USER) . " where sync_state = 1 and sync_version != '$this->sync_version'");
+      $this->_reportProgress(6, $temp, count($sysRelatedGroups));
+    }
+    db()->commit();
+    $this->_reportProgress(6, count($sysRelatedGroups), count($sysRelatedGroups));
+
+    // 8.Resolve user count
+    resolve_user_group_count();
+    $this->_reportProgress(7, 1, 1);
+
+    // 9.Query whether there are non-synchronized groups and users
+    $usGroupResult = DBHelper::query_array("SELECT count(*) as count FROM " . _tbl($TABLE_GROUP) . " WHERE sync_state = 1 AND sync_version != '$this->sync_version'");
+    $usUserResult = DBHelper::query_array("SELECT count(*) as count FROM " . _tbl($TABLE_USER) . " WHERE sync_state = 1 AND sync_version != '$this->sync_version'");
     $syncResult->group_unbind = $usGroupResult['count'] ?? 0;
     $syncResult->user_unbind = $usUserResult['count'] ?? 0;
 
