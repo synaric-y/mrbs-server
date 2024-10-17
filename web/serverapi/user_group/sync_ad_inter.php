@@ -9,7 +9,7 @@ use MRBS\LDAP\SyncADManager;
 $sync_version = $_POST['sync_version'];
 
 // Safe check
-$task = RedisConnect::get('CURRENT_SYNC_AD_TASK');
+$task = RedisConnect::get(RedisKeys::$CURRENT_SYNC_AD_TASK);
 if (empty($sync_version) || empty($task)) {
   $result = array();
   ApiHelper::success($result);

@@ -37,4 +37,5 @@ require_once 'init.inc';
 require_once 'upgrade.inc';
 require 'standard_vars.inc.php';
 require_once 'serverapi/check.php';
+require_once 'redis_keys.php';
 

@@ -10,6 +10,7 @@ use LdapRecord\Models\ActiveDirectory\User;
 use LdapRecord\Models\ActiveDirectory\Group;
 use MRBS\DBHelper;
 use MRBS\RedisConnect;
+use MRBS\RedisKeys;
 use function MRBS\_tbl;
 use function MRBS\db;
 use function MRBS\log_ad;
@@ -25,8 +26,6 @@ class SyncADManager
 
   /**
    * Synchronize User and Group from AD(LDAP).
-   * @return SyncLDAPResult|null
-   * @throws Exception
    */
   public function syncAD($sync_version) {
     try {
@@ -443,17 +442,17 @@ class SyncADManager
         'progress' => $this->progress,
         'complete' => 0
       );
-      RedisConnect::setex('CURRENT_SYNC_AD_TASK', json_encode($result), 3600);
+      RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($result), 3600);
     }
   }
 
   function _reportFail()
   {
-    $task = RedisConnect::get('CURRENT_SYNC_AD_TASK');
+    $task = RedisConnect::get(RedisKeys::$CURRENT_SYNC_AD_TASK);
     if (!empty($task)) {
       $task = json_decode($task, true);
       $task['complete'] = -1;
-      RedisConnect::setex('CURRENT_SYNC_AD_TASK', json_encode($task), 3600);
+      RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), 3600);
     }
   }
 
@@ -463,7 +462,7 @@ class SyncADManager
     if (!empty($task)) {
       $task = json_decode($task, true);
       $task['complete'] = 1;
-      RedisConnect::setex('CURRENT_SYNC_AD_TASK', json_encode($task), 3600);
+      RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), 3600);
     }
   }
 }

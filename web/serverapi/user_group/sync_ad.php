@@ -11,7 +11,7 @@ if (getLevel($_SESSION['user']) < 2){
   ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
-$task = RedisConnect::get('CURRENT_SYNC_AD_TASK');
+$task = RedisConnect::get(RedisKeys::$CURRENT_SYNC_AD_TASK);
 if (!empty($task)) {
   $task = json_decode($task, true);
   $result = array(
@@ -30,7 +30,7 @@ $sync_version = md5(uniqid('', true));
 $task = array(
   'sync_version' => $sync_version
 );
-RedisConnect::setex('CURRENT_SYNC_AD_TASK', json_encode($task), 3600);
+RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), 3600);
 post_url_no_result("$server_address/web/call.php?act=user_group/sync_ad_inter",
   array("sync_version" => $sync_version));
 
