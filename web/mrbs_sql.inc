@@ -2655,12 +2655,16 @@ function del_user_group($group_id)
   return true;
 }
 
-function get_user_group_tree($group_id, $source, $page = 1)
+function get_user_group_tree($group_id, $search, $source, $page = 1)
 {
   $group = array();
   $start = ($page - 1) * 10;
+  $searchSQL = "";
+  if (!empty($search)) {
+    $searchSQL  = " AND (name like '%$search%') ";
+  }
   if ($group_id != -1) {
-    $result = db()->query("SELECT name, third_id, disabled, user_count FROM " . _tbl("user_group") . " WHERE id = ? AND source = ?",
+    $result = db()->query("SELECT name, third_id, disabled, user_count FROM " . _tbl("user_group") . " WHERE id = ? $searchSQL AND source = ?",
       array($group_id, $source)
     );
     $group = $result->next_row_keyed();

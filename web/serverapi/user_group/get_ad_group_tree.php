@@ -14,7 +14,8 @@ if (getLevel($_SESSION['user']) < 2){
 
 $group_id = $_POST['group_id'];
 $page = intval($_POST['page']) ?? 1;
-$group = get_user_group_tree($group_id, "ad", $page);
+$search = $_POST['search'];
+$group = get_user_group_tree($group_id, $search, "ad", $page);
 if (empty($group)) {
   ApiHelper::fail(get_vocab("group_not_exist"), ApiHelper::GROUP_NOT_EXIST);
 }
