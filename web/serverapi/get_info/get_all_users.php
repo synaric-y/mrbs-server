@@ -23,9 +23,44 @@ $username = $_SESSION['user'];
 
 session_write_close();
 
-$sql = "SELECT id, level, name, display_name, email FROM " . _tbl("users");
-$result = db() -> query($sql);
+$vars = array(
+  "name",
+  "display_name",
+  "disabled",
+  "level"
+);
 
+$count = 0;
+foreach ($vars as $var) {
+  if (!empty($_POST[$var])){
+    $count++;
+    $$var = $_POST[$var];
+  }
+}
+
+$pagesize = intval($_POST["pagesize"]);
+$pagenum = intval($_POST["pagenum"]);
+
+$params = array();
+$sql = "SELECT id, level, name, display_name, email, create_time, disabled FROM " . _tbl("users");
+if ($count > 0){
+  $sql .= " WHERE ";
+  for ($i = 0; $i < $count; $i++){
+    $var = $vars[$i];
+    $sql .= $vars[$i] . " = ?";
+    $params[] = $$var;
+    if ($i < $count - 1){
+      $sql .= " AND ";
+    }
+  }
+}
+$start_num = ($pagenum - 1) * $pagesize;
+$sql .= " LIMIT ?, ?";
+$params[] = $start_num;
+$params[] = $pagesize;
+$result = db() -> query($sql, $params);
+$sql = str_replace("id, level, name, display_name, email, create_time, disabled", "COUNT(*)", $sql);
+$total_num = db() -> query1($sql, $params);
 if ($result -> count() == 0){
   ApiHelper::fail(get_vocab("user_not_exist"), ApiHelper::USER_NOT_EXIST);
 }else{
@@ -37,5 +72,8 @@ if ($result -> count() == 0){
     }
     $data1[] = $row;
   }
-  ApiHelper::success($data1);
+  if ($total_num != 0){
+    $data1['total_num'] = $total_num;
+  }
+  ApiHelper::success($data1 ?? null);
 }

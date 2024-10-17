@@ -20,12 +20,12 @@ if ($result ->count() == 0){
 }
 
 $devices = $result -> all_rows_keyed();
-$down_set = RedisConnect::zRangeByScore("heart_beat", 0, time() - 30);
+$down_set = RedisConnect::zRangeByScore("heart_beat", time() - 30, time());
 foreach ($devices as &$device){
   if (in_array($device['id'], $down_set)){
-    $device['status'] = 0;
-  }else{
     $device['status'] = 1;
+  }else{
+    $device['status'] = 0;
   }
 }
 

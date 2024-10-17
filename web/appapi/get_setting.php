@@ -15,7 +15,7 @@ $device_id = $_POST['device_id'];
 $battery_level = $_POST['battery_level'];
 $is_charge = $_POST['is_charge'];
 
-db()->command("UPDATE " . _tbl("device") . " SET battery_level = ?, is_charge = ? WHERE device_id = ?", array($battery_level, $is_charge, $device_id));
+db()->command("UPDATE " . _tbl("device") . " SET battery_level = ?, is_charging = ? WHERE device_id = ?", array($battery_level, $is_charge, $device_id));
 
 $result = db()->query("SELECT * FROM " . _tbl("device") . " WHERE device_id = ?", array($device_id));
 if ($result -> count() == 0){

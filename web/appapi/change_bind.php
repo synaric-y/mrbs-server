@@ -20,6 +20,6 @@ if ($result < 1){
   ApiHelper::fail(get_vocab("device_not_exist"), ApiHelper::DEVICE_NOT_EXIST);
 }
 
-db()->command("UPDATE " . _tbl("device") . " SET room_id = ?, is_charging = ?, battery_level = ? WHERE device_id = ?", array($room_id, $is_charging, $battery_level, $device_id));
+db()->command("UPDATE " . _tbl("device") . " SET room_id = ?, is_charging = ?, battery_level = ?, is_set = ? WHERE device_id = ?", array($room_id, $is_charging, $battery_level, empty($room_id) ? 0 : 1, $device_id));
 
 ApiHelper::success(null);

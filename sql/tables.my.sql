@@ -281,12 +281,14 @@ CREATE TABLE mrbs_users
   display_name      varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'the name used to be displayed',
   password_hash     varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   email             varchar(75) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  create_time       int NULL DEFAULT NULL COMMENT 'create time',
   timestamp         timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   last_login        int DEFAULT '0' NOT NULL,
   reset_key_hash    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   reset_key_expiry  int DEFAULT 0 NOT NULL,
   disabled          tinyint NOT NULL DEFAULT '0',
   source            varchar(50) NOT NULL DEFAULT NULL COMMENT 'system/ad/wxwork',
+  remark            text NULL DEFAULT NULL,
 
   PRIMARY KEY (id),
   UNIQUE KEY uq_name (name)
