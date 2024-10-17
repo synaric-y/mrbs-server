@@ -18,3 +18,4 @@ $manager->syncAD();
 
 $result = array();
 ApiHelper::success($result);
+

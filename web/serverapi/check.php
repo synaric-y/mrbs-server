@@ -1,8 +1,6 @@
 <?php
 namespace MRBS;
 
-require_once "mrbs_sql.inc";
-
 /*
  * 由于前端发送请求后，后端会根据前端的cookie自动查询解析session，所以只需要判断session中是否有用户
  * 数据就可以判断用户是否登录了。

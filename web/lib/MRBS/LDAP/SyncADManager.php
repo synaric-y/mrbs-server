@@ -9,6 +9,7 @@ use LdapRecord\Models\ActiveDirectory\User;
 use LdapRecord\Models\ActiveDirectory\Group;
 use MRBS\DBHelper;
 use function MRBS\_tbl;
+use function MRBS\db;
 use function MRBS\log_ad;
 use function MRBS\resolve_user_group_count;
 
@@ -106,6 +107,7 @@ class SyncADManager
     $syncResult = new SyncLDAPResult();
 
     // 3.Merge Groups
+    db()->begin();
     foreach ($fmtGroupList as $remoteGroup) {
       // Query exist data
       try {
@@ -143,9 +145,11 @@ class SyncADManager
         log_ad($e->getMessage());
       }
     }
+    db()->commit();
     log_ad("merge groups: ", count($fmtGroupList));
 
     // 4.Merge Users
+    db()->begin();
     foreach ($fmtUserList as $remoteUser) {
       $thirdId = $remoteUser['third_id'];
       if (empty($thirdId)) {
@@ -177,12 +181,14 @@ class SyncADManager
         }
       }
     }
+    db()->commit();
     log_ad("merge users: ", count($fmtUserList));
 
     // 5.Resolve user-group and group-group relationship
     DBHelper::delete(_tbl($TABLE_G2G), "source = '$CREATE_SOURCE'");
     DBHelper::delete(_tbl($TABLE_U2G), "source = '$CREATE_SOURCE'");
 
+    db()->begin();
     foreach ($localGroupList as $key => $localGroup) {
       try {
         $parentNodeList = [];
@@ -203,8 +209,10 @@ class SyncADManager
         log_ad($e->getMessage());
       }
     }
+    db()->commit();
     log_ad("resolve g2g: ", count($localGroupList));
 
+    db()->begin();
     foreach ($localUserList as $key => $localUser) {
       try {
         $parentNodeList = [];
@@ -225,6 +233,7 @@ class SyncADManager
         log_ad($e->getMessage());
       }
     }
+    db()->commit();
     log_ad("resolve u2g: ", count($localGroupList));
 
     // 6.Resolve user count
