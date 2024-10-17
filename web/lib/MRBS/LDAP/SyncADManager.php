@@ -8,6 +8,7 @@ use LdapRecord\Connection;
 use LdapRecord\Models\ActiveDirectory\User;
 use LdapRecord\Models\ActiveDirectory\Group;
 use MRBS\DBHelper;
+use MRBS\RedisConnect;
 use function MRBS\_tbl;
 use function MRBS\db;
 use function MRBS\log_ad;
@@ -20,10 +21,10 @@ class SyncADManager
    * @return SyncLDAPResult|null
    * @throws Exception
    */
-  public function syncAD()
+  public function syncAD($sync_version)
   {
     $CREATE_SOURCE = "ad";
-    $SYNC_VERSION = md5(uniqid('', true));
+    $SYNC_VERSION = $sync_version ?? md5(uniqid('', true));
     $TABLE_GROUP = "user_group";
     $TABLE_USER = "users";
     $TABLE_U2G = "u2g_map";
@@ -248,6 +249,7 @@ class SyncADManager
     log_ad(json_encode($syncResult));
     log_ad("end time: " . time());
     log_ad("end sync-------------------------------");
+    RedisConnect::del('CURRENT_SYNC_AD_TASK');
 
     return $syncResult;
   }
