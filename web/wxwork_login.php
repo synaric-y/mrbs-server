@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 
-require_once './appapi/api_helper.php';
 require_once '../vendor/autoload.php';
 require_once "./defaultincludes.inc";
 require_once "./functions_table.inc";

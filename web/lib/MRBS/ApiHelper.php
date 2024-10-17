@@ -65,6 +65,12 @@ class ApiHelper
 
   public const INVALID_GROUP_PARENT = -202;
 
+  public const GROUP_NOT_EXIST = -203;
+
+  public const GROUP_CANNOT_UNBIND = -204;
+
+  public const GROUP_CANNOT_DEL_OR_UPDATE = -205;
+
   public const NO_AREA = -47;
   public const INVALID_ROOM_ID = -48;
   public const DEVICE_EXISTS = -49;

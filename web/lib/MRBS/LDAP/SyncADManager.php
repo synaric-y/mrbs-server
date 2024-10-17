@@ -10,6 +10,7 @@ use LdapRecord\Models\ActiveDirectory\Group;
 use MRBS\DBHelper;
 use function MRBS\_tbl;
 use function MRBS\log_ad;
+use function MRBS\resolve_user_group_count;
 
 class SyncADManager
 {
@@ -112,7 +113,7 @@ class SyncADManager
         if (empty($thirdId)) {
           continue;
         }
-        $localGroup = DBHelper::one(_tbl($TABLE_GROUP), "third_id = '$thirdId'");
+        $localGroup = DBHelper::one(_tbl($TABLE_GROUP), "third_id = '$thirdId' and source = '$CREATE_SOURCE'");
 
         $mergedGroup = array_merge($remoteGroup);
         unset($mergedGroup['_third_parent_id']);
@@ -130,7 +131,7 @@ class SyncADManager
           $syncResult->group_insert += 1;
         } else {
           // Merge and update existing data
-          DBHelper::update(_tbl($TABLE_GROUP), $mergedGroup, "third_id = '$thirdId'");
+          DBHelper::update(_tbl($TABLE_GROUP), $mergedGroup, "third_id = '$thirdId'  and source = '$CREATE_SOURCE'");
           $localGroupList[$localGroup['third_id']] = $localGroup;
           if ($mergedGroup['disabled'] != $localGroup['disabled']) {
             $syncResult->group_delete += 1;
@@ -150,7 +151,7 @@ class SyncADManager
       if (empty($thirdId)) {
         continue;
       }
-      $localUser = DBHelper::one(_tbl($TABLE_USER), "third_id = '$thirdId'");
+      $localUser = DBHelper::one(_tbl($TABLE_USER), "third_id = '$thirdId'  and source = '$CREATE_SOURCE'");
 
       $mergedUser = array_merge($remoteUser);
       unset($mergedUser['_third_parent_id']);
@@ -167,7 +168,7 @@ class SyncADManager
         $localUserList[$mergedUser['third_id']] = $mergedUser;
         $syncResult->user_insert += 1;
       } else {
-        DBHelper::update(_tbl($TABLE_USER), $mergedUser, "third_id = '$thirdId'");
+        DBHelper::update(_tbl($TABLE_USER), $mergedUser, "third_id = '$thirdId'  and source = '$CREATE_SOURCE'");
         $localUserList[$localUser['third_id']] = $localUser;
         if ($mergedUser['disabled'] != $localUser['disabled']) {
           $syncResult->user_delete += 1;
@@ -227,15 +228,7 @@ class SyncADManager
     log_ad("resolve u2g: ", count($localGroupList));
 
     // 6.Resolve user count
-    $updateUserCountSQL = "
-      update "._tbl($TABLE_GROUP)." t1 join(
-        select parent_id, count(*) as count from "._tbl($TABLE_U2G)." where parent_id in
-          (select id from "._tbl($TABLE_GROUP).")
-        GROUP BY parent_id
-      ) t2 on t1.id = t2.parent_id
-      set t1.user_count = t2.count
-    ";
-    DBHelper::exec($updateUserCountSQL);
+    resolve_user_group_count();
 
     // 7.Query whether there are non-synchronized groups and users
     $usGroupResult = DBHelper::query("select count(*) as count from " . _tbl($TABLE_GROUP) . " where sync_state = 1 and sync_version != '$SYNC_VERSION'");

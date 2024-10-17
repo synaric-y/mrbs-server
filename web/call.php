@@ -31,7 +31,6 @@ error_reporting(E_ALL);
 include_once "defaultincludes.inc";
 include_once "functions_table.inc";
 include_once "mrbs_sql.inc";
-include_once 'appapi/api_helper.php';
 
 
 
