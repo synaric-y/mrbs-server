@@ -398,7 +398,7 @@ class SyncADManager
         'sync_version' => $this->sync_version,
         'progress' => $this->progress
       );
-      RedisConnect::set('CURRENT_SYNC_AD_TASK', json_encode($result));
+      RedisConnect::setex('CURRENT_SYNC_AD_TASK', json_encode($result), 3600);
     }
   }
 }
