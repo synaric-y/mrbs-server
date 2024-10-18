@@ -19,7 +19,9 @@ use function MRBS\resolve_user_group_count;
 class SyncADManager
 {
 
-  static $TASK_OUTDATE_SECONDS = 3600;
+  // Expire time for redis key which caches current task info
+  static int $TASK_EXPIRE_SECONDS = 3600;
+  // Batch count to report task progress
   static $REPORT_INTERVAL = 200;
   private $progress = [];
   private $sync_version = "";
@@ -442,7 +444,7 @@ class SyncADManager
         'progress' => $this->progress,
         'complete' => 0
       );
-      RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($result), self::$TASK_OUTDATE_SECONDS);
+      RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($result), self::$TASK_EXPIRE_SECONDS);
     }
   }
 
@@ -452,7 +454,7 @@ class SyncADManager
     if (!empty($task)) {
       $task = json_decode($task, true);
       $task['complete'] = -1;
-      RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), self::$TASK_OUTDATE_SECONDS);
+      RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), self::$TASK_EXPIRE_SECONDS);
     }
   }
 
@@ -462,7 +464,7 @@ class SyncADManager
     if (!empty($task)) {
       $task = json_decode($task, true);
       $task['complete'] = 1;
-      RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), self::$TASK_OUTDATE_SECONDS);
+      RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), self::$TASK_EXPIRE_SECONDS);
     }
   }
 }

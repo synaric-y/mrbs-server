@@ -32,7 +32,7 @@ $sync_version = md5(uniqid('', true));
 $task = array(
   'sync_version' => $sync_version
 );
-RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), SyncADManager::$TASK_OUTDATE_SECONDS);
+RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), SyncADManager::$TASK_EXPIRE_SECONDS);
 post_url_no_result("$server_address/web/call.php?act=user_group/sync_ad_inter",
   array("sync_version" => $sync_version));
 
