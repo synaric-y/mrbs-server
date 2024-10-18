@@ -14,7 +14,8 @@ if (getLevel($_SESSION['user']) < 2){
 $group_id = $_POST['group_id'];
 $page = intval($_POST['page']) ?? 1;
 $search = $_POST['search'];
-$users = get_user_group_members($group_id, $search, $page);
+$source = $_POST['source'];
+$users = get_user_group_members($group_id, $search, $source, $page);
 
 $result = array();
 $result['users'] = $users;

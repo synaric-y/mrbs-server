@@ -2691,17 +2691,21 @@ function get_user_group_tree($group_id, $search, $source, $page = 1)
   return $group;
 }
 
-function get_user_group_members($group_id, $search, $page)
+function get_user_group_members($group_id, $search, $source, $page)
 {
   $start = ($page - 1) * 10;
   $searchSQL = "";
+  $sourceSQL = "";
   if (!empty($search)) {
     $searchSQL  = " AND (display_name like '%$search%' OR name like '%$search%') ";
+  }
+  if (!empty($source)) {
+    $sourceSQL = " AND t1.source = '$source'";
   }
   $sql = "
       SELECT t1.id, t1.display_name, t1.name, t1.email, t1.timestamp, t1.disabled, t1.source, t1.third_id
       FROM " . _tbl("users") . " t1 LEFT JOIN " . _tbl("u2g_map") . " t2
-      ON t1.id = t2.user_id WHERE parent_id = ? $searchSQL GROUP BY t1.id LIMIT $start, 10
+      ON t1.id = t2.user_id WHERE parent_id = ? $searchSQL $sourceSQL GROUP BY t1.id LIMIT $start, 10
     ";
   $users = [];
   $result = db()->query($sql, array($group_id));
