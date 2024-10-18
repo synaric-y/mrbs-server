@@ -2,6 +2,15 @@
 
 namespace MRBS;
 
+/*
+ * Synchronize User Groups and users structure from AD.
+ * @Param
+ * No params
+ * @Return
+ * status:    Return pending_start if idle. Return already_running if a task exists.
+ * task_id:   Current running task id.
+ */
+
 use MRBS\LDAP\SyncADManager;
 
 if (!checkAuth()){

@@ -2,6 +2,14 @@
 
 namespace MRBS;
 
+/*
+ * Unbind User to User Group.
+ * @Param
+ * user_ids:    Specify the list of user IDs to be unbound.
+ * group_id:    Specify the parent group id.
+ * @Return
+ * No Return
+ */
 
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");

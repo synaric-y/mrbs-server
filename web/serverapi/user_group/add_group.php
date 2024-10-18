@@ -2,6 +2,16 @@
 
 namespace MRBS;
 
+/*
+ * Add a user group.
+ * @Param
+ * name:        Name of the User Group
+ * parent_id:   Specify the parent group id, or -1 if you are creating the top-level group.
+ * third_id:    Bind third-party ID. Only empty groups with parent_id == -1 && source == 'system' can be bound to third-party groups.
+ * @Return
+ * Added User Group info
+ */
+
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);

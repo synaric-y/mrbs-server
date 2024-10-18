@@ -2,6 +2,16 @@
 
 namespace MRBS;
 
+/*
+ * Get sync AD state.
+ * @Param
+ * No params
+ * @Return
+ * task:       Task state.
+ *              sync_version:   Current task id.
+ *              progress:       A sub-task progress list.
+ *              complete:       0: running; 1: complete; -1: failed
+ */
 
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");

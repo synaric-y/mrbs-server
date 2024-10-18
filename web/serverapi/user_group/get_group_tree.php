@@ -2,6 +2,17 @@
 
 namespace MRBS;
 
+/*
+ * Query the first-level system-created groups under the specified User Group.
+ * @Param
+ * group_id:    Specify the group to be queried. If you need to return all top-level groups, pass -1
+ * page:        Page number, start from 1.
+ * search:      Search by name.
+ * @Return
+ * group:       A User Group info, with a child_groups property which contains
+ *              all the first-level groups under this group.
+ */
+
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
