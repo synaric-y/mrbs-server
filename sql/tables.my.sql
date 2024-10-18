@@ -392,42 +392,45 @@ CREATE TABLE mrbs_room_group(
   PRIMARY KEY (id)
 )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='table of the relation between room and group';
 
-### 用户组表
-
+-- User Group
 CREATE TABLE `mrbs_user_group`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(511) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'group name',
-  `third_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'third group_id',
-  `third_parent_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL COMMENT 'third parent_id',
-  `source` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
-  `sync_state` int(11) NULL DEFAULT NULL COMMENT '0:no sync;1:sync',
-  `last_sync_time` int(13) NULL DEFAULT NULL COMMENT 'last sync timestamp',
-  `sync_version` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'sync version code',
-  `disabled` tinyint NULL DEFAULT 0,
-  `user_count` int(11) NULL DEFAULT 0 COMMENT 'users in this group',
-                                  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+                                  `id` int NOT NULL AUTO_INCREMENT,
+                                  `name` varchar(511) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'group name',
+                                  `third_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'third group_id',
+                                  `third_parent_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL COMMENT 'third parent_id',
+                                  `source` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
+                                  `sync_state` int NULL DEFAULT NULL COMMENT '0:no sync;1:sync',
+                                  `last_sync_time` int NULL DEFAULT NULL COMMENT 'last sync timestamp',
+                                  `sync_version` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'sync version code',
+                                  `disabled` tinyint NULL DEFAULT 0,
+                                  `user_count` int NULL DEFAULT 0 COMMENT 'users in this group',
+                                  PRIMARY KEY (`id`) USING BTREE,
+                                  INDEX `n_name`(`name` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2530 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = DYNAMIC;
 
-### 组-组关系表
+-- Group-Group relationship
+CREATE TABLE `mrbs_g2g_map`
+(
+  `id`        bigint NOT NULL AUTO_INCREMENT,
+  `group_id`  int NULL DEFAULT NULL,
+  `parent_id` int NULL DEFAULT -1,
+  `deep`      int NULL DEFAULT 1,
+  `source`    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX       `n_group_id`(`group_id` ASC) USING BTREE,
+  INDEX       `n_parent_id`(`parent_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 111300 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = DYNAMIC;
 
-CREATE TABLE `mrbs_g2g_map`  (
-   `id` bigint NOT NULL AUTO_INCREMENT,
-   `group_id` int(11) NULL DEFAULT NULL,
-   `parent_id` int(11) NULL DEFAULT -1,
-   `deep` int(11) NULL DEFAULT 1,
-   `source` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
-   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='table of relation between groups';
-
-### 人-组关系表
-
+-- User-Group relationship
 CREATE TABLE `mrbs_u2g_map`  (
    `id` bigint NOT NULL AUTO_INCREMENT,
    `user_id` int(11) NULL DEFAULT NULL,
    `parent_id` int(11) NULL DEFAULT -1,
    `deep` int(11) NULL DEFAULT 1,
    `source` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
-   PRIMARY KEY (`id`) USING BTREE
+   PRIMARY KEY (`id`) USING BTREE,
+   INDEX       `n_user_id`(`user_id` ASC) USING BTREE,
+   INDEX       `n_parent_id`(`parent_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='table of relation between user and group';
 
 CREATE TABLE `mrbs_version` (
