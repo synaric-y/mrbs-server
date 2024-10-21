@@ -13,7 +13,6 @@ $variables = db() -> query("SELECT * FROM " . _tbl("system_variable")) -> next_r
 
 $use_wxwork = $variables['use_wxwork'];
 $use_exchange = $variables['use_exchange'];
-$exchange_server = $variables['exchange_server'];
 $corpid = $variables['corpid'];
 $secret = $variables['secret'];
 $agentid = $variables['agentid'];
@@ -31,6 +30,7 @@ $AD_timely_sync = $variables['AD_timely_sync'];
 $AD_interval_type = $variables['AD_interval_type'];
 $AD_interval_time = $variables['AD_interval_time'];
 $AD_interval_date = $variables['AD_interval_date'];
+$exchange_server = $variables['Exchange_server'];
 $Exchange_sync_type = $variables['Exchange_sync_type'];
 $Exchange_sync_interval = $variables['Exchange_sync_interval'];
 $logo_dir = $variables['logo_dir'];
