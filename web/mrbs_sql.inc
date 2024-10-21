@@ -2648,8 +2648,24 @@ function del_user_group($group_id)
 {
   db()->begin();
   db()->command("DELETE FROM " . _tbl("user_group") . " WHERE id = ?", array($group_id));
+  $result = db()->query("SELECT * FROM ". _tbl("g2g_map") . " WHERE group_id = ? ", array($group_id));
+  $sql = "
+      DELETE FROM  ". _tbl("u2g_map") . "
+      WHERE parent_id = ? AND deep = ? AND source = 'system'
+      AND (user_id, id) IN (
+          SELECT user_id, id FROM (
+            SELECT user_id, MIN(id)
+              FROM ". _tbl("u2g_map") . "
+              WHERE parent_id = ? AND deep = ? AND source = 'system'
+              GROUP BY user_id
+          ) AS temp
+      );
+    ";
+  db()->command($sql, array($group_id, 1, $group_id, 1));
+  while ($row = $result->next_row_keyed()) {
+    db()->command($sql, array($row['parent_id'], $row['deep'] + 1, $row['parent_id'], $row['deep'] + 1));
+  }
   db()->command("DELETE FROM " . _tbl("g2g_map") . " WHERE parent_id = ? OR group_id = ? ", array($group_id, $group_id));
-  db()->command("DELETE FROM " . _tbl("u2g_map") . " WHERE parent_id = ?", array($group_id));
   resolve_user_group_count();
   db()->commit();
   return true;
