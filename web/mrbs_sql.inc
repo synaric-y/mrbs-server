@@ -2771,6 +2771,7 @@ function unbind_user_to_group($user_id, $group_id): bool
 
   // Resolve User-Group relationship
   resolve_u2g($user_id);
+  resolve_user_group_count();
   return true;
 }
 
