@@ -460,7 +460,7 @@ class SyncADManager
 
   function _reportSuccess($report)
   {
-    $task = RedisConnect::get('CURRENT_SYNC_AD_TASK');
+    $task = RedisConnect::get(RedisKeys::$CURRENT_SYNC_AD_TASK);
     if (!empty($task)) {
       $task = json_decode($task, true);
       $task['complete'] = 1;

@@ -22,7 +22,7 @@ if (getLevel($_SESSION['user']) < 2){
   ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
-$task = RedisConnect::get('CURRENT_SYNC_AD_TASK');
+$task = RedisConnect::get(RedisKeys::$CURRENT_SYNC_AD_TASK);
 if (!empty($task)) {
   $task = json_decode($task, true);
 }
