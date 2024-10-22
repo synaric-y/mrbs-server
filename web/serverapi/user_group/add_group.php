@@ -33,11 +33,16 @@ if (empty($parent_id)) {
 }
 
 if ($parent_id != -1) {
+  if (!empty($third_id)) {
+    ApiHelper::fail(get_vocab("group_cannot_bind_third"), ApiHelper::GROUP_CANNOT_SYNC_THIRD);
+  }
+
   $parentGroup = DBHelper::one(_tbl("user_group"), "id = $parent_id");
   if (empty($parentGroup) || $parentGroup['source'] != 'system' || $parentGroup['sync_state'] != 0) {
     ApiHelper::fail(get_vocab("invalid_parent"), ApiHelper::INVALID_GROUP_PARENT);
   }
 }
+
 
 $insertGroup = array();
 $insertGroup['name'] = $name;

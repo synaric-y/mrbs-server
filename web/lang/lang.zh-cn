@@ -629,6 +629,7 @@ $vocab["internal_database_error"]                   = "内部错误";
 $vocab["group_not_exist"]                           = "用户组不存在";
 $vocab["group_cannot_unbind"]                       = "用户组无法解绑";
 $vocab["group_cannot_modify"]                       = "用户组无法编辑或删除";
+$vocab["group_cannot_bind_third"]                   = "仅顶级用户组可以同步第三方用户组";
 
 $vocab["success"]            = "成功";
 $vocab["already_login"]      = "已经登录了";

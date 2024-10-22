@@ -71,6 +71,8 @@ class ApiHelper
 
   public const GROUP_CANNOT_DEL_OR_UPDATE = -205;
 
+  public const GROUP_CANNOT_SYNC_THIRD = -206;
+
   public const NO_AREA = -47;
   public const INVALID_ROOM_ID = -48;
   public const DEVICE_EXISTS = -49;
