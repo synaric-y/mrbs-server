@@ -25,16 +25,16 @@ DROP TABLE IF EXISTS mrbs_users;
 
 CREATE TABLE mrbs_area
 (
-  # tinyints and smallints in mrbs_area are assumed to represent booleans
-  id                          int NOT NULL auto_increment,
-  disabled                    tinyint DEFAULT 0 NOT NULL COMMENT 'disabled flag, "0" means area is not disabled, "1" means area is disabled',
+  #                           tinyints and smallints in mrbs_area are assumed to represent booleans
+    id int NOT NULL auto_increment,
+  disabled                    tinyint                                                      DEFAULT 0   NOT NULL COMMENT 'disabled flag, "0" means area is not disabled, "1" means area is disabled',
   area_name                   varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'this should be unique',
-  sort_key                    varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' NOT NULL,
+  sort_key                    varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT ''  NOT NULL,
   timezone                    varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'time zone of this area',
   area_admin_email            text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   resolution                  int COMMENT 'minimum time interval',
   default_duration            int COMMENT 'default entry duration',
-  default_duration_all_day    tinyint DEFAULT 0 NOT NULL COMMENT '"0" means by default, entry will last default_duration, and "1" means by default, entry will last all day.',
+  default_duration_all_day    tinyint                                                      DEFAULT 0   NOT NULL COMMENT '"0" means by default, entry will last default_duration, and "1" means by default, entry will last all day.',
   morningstarts               int COMMENT 'the earliest booking hour of the day',
   morningstarts_minutes       int COMMENT 'the earliest booking minutes of the day, should be used with morningstarts',
   eveningends                 int COMMENT 'the latest booking hour of the day',
@@ -51,38 +51,38 @@ CREATE TABLE mrbs_area
   min_delete_ahead_secs       int,
   max_delete_ahead_enabled    tinyint,
   max_delete_ahead_secs       int,
-  max_per_day_enabled         tinyint DEFAULT 0 NOT NULL,
-  max_per_day                 int DEFAULT 0 NOT NULL,
-  max_per_week_enabled        tinyint DEFAULT 0 NOT NULL,
-  max_per_week                int DEFAULT 0 NOT NULL,
-  max_per_month_enabled       tinyint DEFAULT 0 NOT NULL,
-  max_per_month               int DEFAULT 0 NOT NULL,
-  max_per_year_enabled        tinyint DEFAULT 0 NOT NULL,
-  max_per_year                int DEFAULT 0 NOT NULL,
-  max_per_future_enabled      tinyint DEFAULT 0 NOT NULL,
-  max_per_future              int DEFAULT 0 NOT NULL,
-  max_secs_per_day_enabled    tinyint DEFAULT 0 NOT NULL,
-  max_secs_per_day            int DEFAULT 0 NOT NULL,
-  max_secs_per_week_enabled   tinyint DEFAULT 0 NOT NULL,
-  max_secs_per_week           int DEFAULT 0 NOT NULL,
-  max_secs_per_month_enabled  tinyint DEFAULT 0 NOT NULL,
-  max_secs_per_month          int DEFAULT 0 NOT NULL,
-  max_secs_per_year_enabled   tinyint DEFAULT 0 NOT NULL,
-  max_secs_per_year           int DEFAULT 0 NOT NULL,
-  max_secs_per_future_enabled tinyint DEFAULT 0 NOT NULL,
-  max_secs_per_future         int DEFAULT 0 NOT NULL,
-  max_duration_enabled        tinyint DEFAULT 0 NOT NULL,
-  max_duration_secs           int DEFAULT 0 NOT NULL,
-  max_duration_periods        int DEFAULT 0 NOT NULL,
+  max_per_day_enabled         tinyint                                                      DEFAULT 0   NOT NULL,
+  max_per_day                 int                                                          DEFAULT 0   NOT NULL,
+  max_per_week_enabled        tinyint                                                      DEFAULT 0   NOT NULL,
+  max_per_week                int                                                          DEFAULT 0   NOT NULL,
+  max_per_month_enabled       tinyint                                                      DEFAULT 0   NOT NULL,
+  max_per_month               int                                                          DEFAULT 0   NOT NULL,
+  max_per_year_enabled        tinyint                                                      DEFAULT 0   NOT NULL,
+  max_per_year                int                                                          DEFAULT 0   NOT NULL,
+  max_per_future_enabled      tinyint                                                      DEFAULT 0   NOT NULL,
+  max_per_future              int                                                          DEFAULT 0   NOT NULL,
+  max_secs_per_day_enabled    tinyint                                                      DEFAULT 0   NOT NULL,
+  max_secs_per_day            int                                                          DEFAULT 0   NOT NULL,
+  max_secs_per_week_enabled   tinyint                                                      DEFAULT 0   NOT NULL,
+  max_secs_per_week           int                                                          DEFAULT 0   NOT NULL,
+  max_secs_per_month_enabled  tinyint                                                      DEFAULT 0   NOT NULL,
+  max_secs_per_month          int                                                          DEFAULT 0   NOT NULL,
+  max_secs_per_year_enabled   tinyint                                                      DEFAULT 0   NOT NULL,
+  max_secs_per_year           int                                                          DEFAULT 0   NOT NULL,
+  max_secs_per_future_enabled tinyint                                                      DEFAULT 0   NOT NULL,
+  max_secs_per_future         int                                                          DEFAULT 0   NOT NULL,
+  max_duration_enabled        tinyint                                                      DEFAULT 0   NOT NULL,
+  max_duration_secs           int                                                          DEFAULT 0   NOT NULL,
+  max_duration_periods        int                                                          DEFAULT 0   NOT NULL,
   approval_enabled            tinyint,
   reminders_enabled           tinyint,
   enable_periods              tinyint,
   periods                     text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   confirmation_enabled        tinyint,
   confirmed_default           tinyint,
-  times_along_top             tinyint NOT NULL DEFAULT 0,
-  default_type                char DEFAULT 'E' NOT NULL COMMENT '"E" means by default, entry is external, "I" means by default, entry is internal',
-  parent_id                   int DEFAULT -1 COMMENT 'superior area id',
+  times_along_top             tinyint                                                                  NOT NULL DEFAULT 0,
+  default_type                char                                                         DEFAULT 'E' NOT NULL COMMENT '"E" means by default, entry is external, "I" means by default, entry is internal',
+  parent_id                   int                                                          DEFAULT -1 COMMENT 'superior area id',
   PRIMARY KEY (id),
   UNIQUE KEY uq_area_name (area_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='table of area';
@@ -91,13 +91,13 @@ CREATE TABLE mrbs_area
 
 CREATE TABLE mrbs_room
 (
-  id                  int NOT NULL auto_increment,
-  disabled            tinyint DEFAULT 0 NOT NULL,
-  area_id             int DEFAULT 0 NOT NULL,
-  room_name           varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' NOT NULL,
-  sort_key            varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' NOT NULL,
+  id                  int                                                                      NOT NULL auto_increment,
+  disabled            tinyint                                                       DEFAULT 0  NOT NULL,
+  area_id             int                                                           DEFAULT 0  NOT NULL,
+  room_name           varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci  DEFAULT '' NOT NULL,
+  sort_key            varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci  DEFAULT '' NOT NULL,
   description         varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  capacity            int DEFAULT 0 NOT NULL,
+  capacity            int                                                           DEFAULT 0  NOT NULL,
   room_admin_email    text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   invalid_types       varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'JSON encoded',
   custom_html         text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
@@ -112,41 +112,40 @@ CREATE TABLE mrbs_room
 
   PRIMARY KEY (id),
   FOREIGN KEY (area_id)
-    REFERENCES mrbs_area(id)
+    REFERENCES mrbs_area (id)
     ON UPDATE CASCADE
     ON DELETE RESTRICT,
   UNIQUE KEY uq_room_name (area_id, room_name),
-  KEY idxSortKey (sort_key)
+  KEY                 idxSortKey (sort_key)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='table of room';
-
 
 
 
 CREATE TABLE mrbs_repeat
 (
-  id             int NOT NULL auto_increment,
-  start_time     int DEFAULT 0 NOT NULL COMMENT 'Unix timestamp',
-  end_time       int DEFAULT 0 NOT NULL COMMENT 'Unix timestamp',
-  rep_type       int DEFAULT 0 NOT NULL COMMENT '"1" means dayily, "2" means weekly, "3" means monthly, "4" means yearly',
-  end_date       int DEFAULT 0 NOT NULL COMMENT 'Unix timestamp',
-  rep_opt        varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' NOT NULL COMMENT 'example: 0001001 means Wednesday and Saturday',
-  room_id        int DEFAULT 1 NOT NULL COMMENT 'entry will be in this room',
-  timestamp      timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  create_by      varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' NOT NULL COMMENT 'who created the entry',
-  modified_by    varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' NOT NULL,
-  name           varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' NOT NULL COMMENT 'entry name',
-  type           char DEFAULT 'E' NOT NULL COMMENT '"E" means the entry is external, "I" means the entry is internal',
+  id             int                                                                       NOT NULL auto_increment,
+  start_time     int                                                           DEFAULT 0   NOT NULL COMMENT 'Unix timestamp',
+  end_time       int                                                           DEFAULT 0   NOT NULL COMMENT 'Unix timestamp',
+  rep_type       int                                                           DEFAULT 0   NOT NULL COMMENT '"1" means dayily, "2" means weekly, "3" means monthly, "4" means yearly',
+  end_date       int                                                           DEFAULT 0   NOT NULL COMMENT 'Unix timestamp',
+  rep_opt        varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci  DEFAULT ''  NOT NULL COMMENT 'example: 0001001 means Wednesday and Saturday',
+  room_id        int                                                           DEFAULT 1   NOT NULL COMMENT 'entry will be in this room',
+  timestamp      timestamp                                                     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  create_by      varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci  DEFAULT ''  NOT NULL COMMENT 'who created the entry',
+  modified_by    varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci  DEFAULT ''  NOT NULL,
+  name           varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci  DEFAULT ''  NOT NULL COMMENT 'entry name',
+  type           char                                                          DEFAULT 'E' NOT NULL COMMENT '"E" means the entry is external, "I" means the entry is internal',
   description    text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  rep_interval   smallint DEFAULT 1 NOT NULL COMMENT 'repeat interval',
-  month_absolute smallint DEFAULT NULL COMMENT 'when to repeat monthly entry(absolute month)',
-  month_relative varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'when to repeat monthly entry(relative month)',
+  rep_interval   smallint                                                      DEFAULT 1   NOT NULL COMMENT 'repeat interval',
+  month_absolute smallint                                                      DEFAULT NULL COMMENT 'when to repeat monthly entry(absolute month)',
+  month_relative varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci   DEFAULT NULL COMMENT 'when to repeat monthly entry(relative month)',
   status         tinyint unsigned NOT NULL DEFAULT 0,
   reminded       int,
   info_time      int,
   info_user      varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   info_text      text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  ical_uid       varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' NOT NULL,
-  ical_sequence  smallint DEFAULT 0 NOT NULL,
+  ical_uid       varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT ''  NOT NULL,
+  ical_sequence  smallint                                                      DEFAULT 0   NOT NULL,
   book_by        varchar(80) NULL DEFAULT '' COMMENT 'booker',
   exchange_id    varchar(511) NULL DEFAULT '' COMMENT '',
   exchange_key   varchar(511) NULL DEFAULT '' COMMENT '',
@@ -154,7 +153,7 @@ CREATE TABLE mrbs_repeat
 
   PRIMARY KEY (id),
   FOREIGN KEY (room_id)
-    REFERENCES mrbs_room(id)
+    REFERENCES mrbs_room (id)
     ON UPDATE CASCADE
     ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='table of repeat entry';
@@ -163,33 +162,33 @@ CREATE TABLE mrbs_repeat
 
 CREATE TABLE mrbs_entry
 (
-  id                          int NOT NULL auto_increment,
-  start_time                  int DEFAULT 0 NOT NULL COMMENT 'Unix timestamp',
-  end_time                    int DEFAULT 0 NOT NULL COMMENT 'Unix timestamp',
-  entry_type                  int DEFAULT 0 NOT NULL COMMENT '"0" means single entry, "1" means one entry of a repeat entry, "2" means a modified entry, "99" means fast meeting',
-  repeat_id                   int DEFAULT NULL COMMENT 'if the entry belongs to a repeat entry, this is the id of the repeat entry',
-  room_id                     int DEFAULT 1 NOT NULL COMMENT 'the entry will be in the room',
-  timestamp                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  create_by                   varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' NOT NULL COMMENT 'who created the entry',
-  modified_by                 varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' NOT NULL,
-  name                        varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' NOT NULL COMMENT 'entry name',
-  type                        char DEFAULT 'E' NOT NULL COMMENT '"E" means the entry is external, "I" means the entry is internal',
+  id                          int                                                                           NOT NULL auto_increment,
+  start_time                  int                                                           DEFAULT 0       NOT NULL COMMENT 'Unix timestamp',
+  end_time                    int                                                           DEFAULT 0       NOT NULL COMMENT 'Unix timestamp',
+  entry_type                  int                                                           DEFAULT 0       NOT NULL COMMENT '"0" means single entry, "1" means one entry of a repeat entry, "2" means a modified entry, "99" means fast meeting',
+  repeat_id                   int                                                           DEFAULT NULL COMMENT 'if the entry belongs to a repeat entry, this is the id of the repeat entry',
+  room_id                     int                                                           DEFAULT 1       NOT NULL COMMENT 'the entry will be in the room',
+  timestamp                   timestamp                                                     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  create_by                   varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci  DEFAULT ''      NOT NULL COMMENT 'who created the entry',
+  modified_by                 varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci  DEFAULT ''      NOT NULL,
+  name                        varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci  DEFAULT ''      NOT NULL COMMENT 'entry name',
+  type                        char                                                          DEFAULT 'E'     NOT NULL COMMENT '"E" means the entry is external, "I" means the entry is internal',
   description                 text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   status                      tinyint unsigned NOT NULL DEFAULT 0,
   reminded                    int,
   info_time                   int,
   info_user                   varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   info_text                   text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  ical_uid                    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' NOT NULL,
-  ical_sequence               smallint DEFAULT 0 NOT NULL,
-  ical_recur_id               varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  allow_registration          tinyint DEFAULT 0 NOT NULL,
-  registrant_limit            int DEFAULT 0 NOT NULL,
-  registrant_limit_enabled    tinyint DEFAULT 1 NOT NULL,
-  registration_opens          int DEFAULT 1209600 NOT NULL COMMENT 'Seconds before the start time', -- 2 weeks
-  registration_opens_enabled  tinyint DEFAULT 0 NOT NULL,
-  registration_closes         int DEFAULT 0 NOT NULL COMMENT 'Seconds before the start_time',
-  registration_closes_enabled tinyint DEFAULT 0 NOT NULL,
+  ical_uid                    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT ''      NOT NULL,
+  ical_sequence               smallint                                                      DEFAULT 0       NOT NULL,
+  ical_recur_id               varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci  DEFAULT NULL,
+  allow_registration          tinyint                                                       DEFAULT 0       NOT NULL,
+  registrant_limit            int                                                           DEFAULT 0       NOT NULL,
+  registrant_limit_enabled    tinyint                                                       DEFAULT 1       NOT NULL,
+  registration_opens          int                                                           DEFAULT 1209600 NOT NULL COMMENT 'Seconds before the start time', -- 2 weeks
+  registration_opens_enabled  tinyint                                                       DEFAULT 0       NOT NULL,
+  registration_closes         int                                                           DEFAULT 0       NOT NULL COMMENT 'Seconds before the start_time',
+  registration_closes_enabled tinyint                                                       DEFAULT 0       NOT NULL,
   book_by                     varchar(80) NULL DEFAULT '' COMMENT 'booker',
   exchange_id                 varchar(511) NULL DEFAULT '' COMMENT '',
   exchange_key                varchar(511) NULL DEFAULT '' COMMENT '',
@@ -197,32 +196,32 @@ CREATE TABLE mrbs_entry
 
   PRIMARY KEY (id),
   FOREIGN KEY (room_id)
-    REFERENCES mrbs_room(id)
+    REFERENCES mrbs_room (id)
     ON UPDATE CASCADE
     ON DELETE RESTRICT,
   FOREIGN KEY (repeat_id)
-    REFERENCES mrbs_repeat(id)
+    REFERENCES mrbs_repeat (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
-  KEY idxStartTime (start_time),
-  KEY idxEndTime   (end_time),
-  KEY idxRoomStartEnd (room_id, start_time, end_time)
+  KEY                         idxStartTime (start_time),
+  KEY                         idxEndTime (end_time),
+  KEY                         idxRoomStartEnd (room_id, start_time, end_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='table of entry';
 
 
 
 CREATE TABLE mrbs_participants
 (
-  id          int NOT NULL auto_increment,
-  entry_id    int NOT NULL,
-  username    varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  create_by   varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  registered  int,
+  id         int NOT NULL auto_increment,
+  entry_id   int NOT NULL,
+  username   varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  create_by  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  registered int,
 
   PRIMARY KEY (id),
   UNIQUE KEY uq_entryid_username (entry_id, username),
   FOREIGN KEY (entry_id)
-    REFERENCES mrbs_entry(id)
+    REFERENCES mrbs_entry (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -245,7 +244,7 @@ CREATE TABLE mrbs_zoneinfo
   timezone           varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' NOT NULL,
   outlook_compatible tinyint unsigned NOT NULL DEFAULT 0,
   vtimezone          text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  last_updated       int NOT NULL DEFAULT 0,
+  last_updated       int NOT NULL                                                  DEFAULT 0,
 
   /* Note that there is a limit on the length of keys which imposes a constraint
      on the size of VARCHAR that can be keyed */
@@ -256,60 +255,59 @@ CREATE TABLE mrbs_zoneinfo
 
 CREATE TABLE mrbs_sessions
 (
-  id      varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'session id',
-  access  int unsigned DEFAULT NULL COMMENT 'Unix timestamp' COMMENT 'the last time to access to the session',
-  data    text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'session data',
+  id     varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'session id',
+  access int unsigned DEFAULT NULL COMMENT 'Unix timestamp' COMMENT 'the last time to access to the session',
+  data   text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'session data',
 
   /* Note that there is a limit on the length of keys which imposes a constraint
      on the size of VARCHAR that can be keyed */
   PRIMARY KEY (id),
-  KEY idxAccess (access)
+  KEY    idxAccess (access)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='table of session';
 
 
 CREATE TABLE mrbs_users
 (
-  id                int NOT NULL auto_increment,
-  third_id          varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'third group_id',
-  third_parent_id   text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL COMMENT 'third parent_id',
-  sync_state        int(11) NULL DEFAULT NULL COMMENT '0:no sync;1:sync',
-  sync_version      varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'sync version code',
-  last_sync_time    int(13) NULL DEFAULT NULL COMMENT 'last sync timestamp',
-  level             smallint DEFAULT 0 NOT NULL COMMENT '"1" means ordinary user, "2" means administrator',  /* play safe and give no rights */
-  name              varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'username, should be unique',
-  display_name      varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'the name used to be displayed',
-  password_hash     varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  email             varchar(75) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  create_time       int NULL DEFAULT NULL COMMENT 'create time',
-  timestamp         timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  last_login        int DEFAULT '0' NOT NULL,
-  reset_key_hash    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  reset_key_expiry  int DEFAULT 0 NOT NULL,
-  disabled          tinyint NOT NULL DEFAULT '0',
-  source            varchar(50) NOT NULL DEFAULT '' COMMENT 'system/ad/wxwork',
-  remark            text NULL DEFAULT NULL,
+  id               int                                                                       NOT NULL auto_increment,
+  third_id         varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'third group_id',
+  third_parent_id  text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL COMMENT 'third parent_id',
+  sync_state       int(11) NULL DEFAULT NULL COMMENT '0:no sync;1:sync',
+  sync_version     varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'sync version code',
+  last_sync_time   int(13) NULL DEFAULT NULL COMMENT 'last sync timestamp',
+  level            smallint                                                      DEFAULT 0   NOT NULL COMMENT '"1" means ordinary user, "2" means administrator', /* play safe and give no rights */
+  name             varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'username, should be unique',
+  display_name     varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'the name used to be displayed',
+  password_hash    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  email            varchar(75) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  create_time      int NULL DEFAULT NULL COMMENT 'create time',
+  timestamp        timestamp                                                     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  last_login       int                                                           DEFAULT '0' NOT NULL,
+  reset_key_hash   varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  reset_key_expiry int                                                           DEFAULT 0   NOT NULL,
+  disabled         tinyint                                                                   NOT NULL DEFAULT '0',
+  source           varchar(50)                                                               NOT NULL DEFAULT '' COMMENT 'system/ad/wxwork',
+  remark           text NULL DEFAULT NULL,
 
   PRIMARY KEY (id),
   UNIQUE KEY uq_name (name)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='table of system user';
 
-INSERT INTO mrbs_users (level, name, display_name, email) values (1, 'exchange', 'exchange', '');
+INSERT INTO mrbs_users (level, name, display_name, email)
+values (1, 'exchange', 'exchange', '');
 
-INSERT INTO mrbs_users (level, name, display_name, email) values (2, 'admin', 'admin', '');
+INSERT INTO mrbs_users (level, name, display_name, email)
+values (2, 'admin', 'admin', '');
 
 INSERT INTO mrbs_variables (variable_name, variable_content)
-  VALUES ( 'db_version', '82');
+VALUES ('db_version', '82');
 INSERT INTO mrbs_variables (variable_name, variable_content)
-  VALUES ( 'local_db_version', '1');
+VALUES ('local_db_version', '1');
 
 
 
-
-
-
-
-### 2.0开始
+###
+2.0开始
 
 DROP TABLE IF EXISTS mrbs_system_variable;
 DROP TABLE IF EXISTS mrbs_device;
@@ -320,8 +318,9 @@ DROP TABLE IF EXISTS mrbs_g2g_map;
 DROP TABLE IF EXISTS mrbs_u2g_map;
 
 
-CREATE TABLE mrbs_system_variable(
-  id                     int NOT NULL auto_increment,
+CREATE TABLE mrbs_system_variable
+(
+  id                     int     NOT NULL auto_increment,
   use_wxwork             tinyint NOT NULL DEFAULT 0 COMMENT 'whether use wxwork',
   use_exchange           tinyint NOT NULL DEFAULT 0 COMMENT 'whether use exchange',
   Exchange_server        varchar(255) NULL DEFAULT '' COMMENT 'only be used when use_exchange=1, this is exchange server ip or domain',
@@ -351,16 +350,18 @@ CREATE TABLE mrbs_system_variable(
   temporary_meeting      tinyint NULL DEFAULT 1 COMMENT 'by default, "1" means meeting can be booked from tablet, "0" means meeting cannot be booked from tablet',
   resolution             int NULL DEFAULT 1800 COMMENT 'default minimum time interval',
   company_name           varchar(255) NULL DEFAULT '' COMMENT 'company name',
-  init_status            int NOT NULL DEFAULT 0 COMMENT '0/1/2/3',
+  init_status            int     NOT NULL DEFAULT 0 COMMENT '0/1/2/3',
   server_address         varchar(255) NULL DEFAULT '' COMMENT 'backend server address',
-  theme_type             int NOT NULL DEFAULT 1 COMMENT 'theme type',
+  theme_type             int     NOT NULL DEFAULT 1 COMMENT 'theme type',
 
   PRIMARY KEY (id)
 )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='system variables';
-INSERT INTO mrbs_system_variable(init_status) VALUES (0);
+INSERT INTO mrbs_system_variable(init_status)
+VALUES (0);
 
-CREATE TABLE mrbs_device(
-  id            int NOT NULL auto_increment,
+CREATE TABLE mrbs_device
+(
+  id            int          NOT NULL auto_increment,
   device_id     varchar(255) NOT NULL DEFAULT '' COMMENT 'device id',
   version       varchar(100) NULL DEFAULT '' COMMENT 'device app version',
   description   varchar(255) NULL DEFAULT '' COMMENT '',
@@ -371,74 +372,78 @@ CREATE TABLE mrbs_device(
   set_time      int NULL COMMENT 'when tablet bind the room',
   room_id       int NULL COMMENT 'the room tablet has bind',
   is_charging   tinyint NULL DEFAULT 0 COMMENT '"0" means tablet is not charging, "1" means tablet is charging',
-  PRIMARY KEY(id)
+  PRIMARY KEY (id)
 )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='table of device';
 
 
 
-
-CREATE TABLE mrbs_area_group(
-  id int NOT NULL auto_increment,
-  area_id int NOT NULL,
+CREATE TABLE mrbs_area_group
+(
+  id       int NOT NULL auto_increment,
+  area_id  int NOT NULL,
   group_id int NOT NULL,
   PRIMARY KEY (id)
 )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='table of the relation between area and group';
 
 
-CREATE TABLE mrbs_room_group(
-  id int NOT NULL auto_increment,
-  room_id int NOT NULL,
+CREATE TABLE mrbs_room_group
+(
+  id       int NOT NULL auto_increment,
+  room_id  int NOT NULL,
   group_id int NOT NULL,
   PRIMARY KEY (id)
 )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='table of the relation between room and group';
 
 -- User Group
-CREATE TABLE `mrbs_user_group`  (
-                                  `id` int NOT NULL AUTO_INCREMENT,
-                                  `name` varchar(511) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'group name',
-                                  `third_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'third group_id',
-                                  `third_parent_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL COMMENT 'third parent_id',
-                                  `source` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
-                                  `sync_state` int NULL DEFAULT NULL COMMENT '0:no sync;1:sync',
-                                  `last_sync_time` int NULL DEFAULT NULL COMMENT 'last sync timestamp',
-                                  `sync_version` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'sync version code',
-                                  `disabled` tinyint NULL DEFAULT 0,
-                                  `user_count` int NULL DEFAULT 0 COMMENT 'users in this group',
-                                  PRIMARY KEY (`id`) USING BTREE,
-                                  INDEX `n_name`(`name` ASC) USING BTREE
+CREATE TABLE `mrbs_user_group`
+(
+  `id`              int NOT NULL AUTO_INCREMENT,
+  `name`            varchar(511) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'group name',
+  `third_id`        varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'third group_id',
+  `third_parent_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL COMMENT 'third parent_id',
+  `source`          varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
+  `sync_state`      int NULL DEFAULT NULL COMMENT '0:no sync;1:sync',
+  `last_sync_time`  int NULL DEFAULT NULL COMMENT 'last sync timestamp',
+  `sync_version`    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'sync version code',
+  `disabled`        tinyint NULL DEFAULT 0 COMMENT 'whether this group can be used',
+  `user_count`      int NULL DEFAULT 0 COMMENT 'users in this group',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX             `n_name`(`name` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2530 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = DYNAMIC;
 
 -- Group-Group relationship
 CREATE TABLE `mrbs_g2g_map`
 (
   `id`        bigint NOT NULL AUTO_INCREMENT,
-  `group_id`  int NULL DEFAULT NULL,
-  `parent_id` int NULL DEFAULT -1,
-  `deep`      int NULL DEFAULT 1,
-  `source`    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
+  `group_id`  int NULL DEFAULT NULL COMMENT 'user group id',
+  `parent_id` int NULL DEFAULT -1 COMMENT 'parent node id',
+  `deep`      int NULL DEFAULT 1 COMMENT 'depth from current user group to parent',
+  `source`    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'create source, values: system/ad''',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX       `n_group_id`(`group_id` ASC) USING BTREE,
   INDEX       `n_parent_id`(`parent_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 111300 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = DYNAMIC;
 
 -- User-Group relationship
-CREATE TABLE `mrbs_u2g_map`  (
-   `id` bigint NOT NULL AUTO_INCREMENT,
-   `user_id` int(11) NULL DEFAULT NULL,
-   `parent_id` int(11) NULL DEFAULT -1,
-   `deep` int(11) NULL DEFAULT 1,
-   `source` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
-   PRIMARY KEY (`id`) USING BTREE,
-   INDEX       `n_user_id`(`user_id` ASC) USING BTREE,
-   INDEX       `n_parent_id`(`parent_id` ASC) USING BTREE
+CREATE TABLE `mrbs_u2g_map`
+(
+  `id`        bigint NOT NULL AUTO_INCREMENT,
+  `user_id`   int(11) NULL DEFAULT NULL COMMENT 'user id',
+  `parent_id` int(11) NULL DEFAULT -1 COMMENT 'parent node id',
+  `deep`      int(11) NULL DEFAULT 1 COMMENT 'depth from current user to parent',
+  `source`    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'create source, values: system/ad',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX       `n_user_id`(`user_id` ASC) USING BTREE,
+  INDEX       `n_parent_id`(`parent_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='table of relation between user and group';
 
-CREATE TABLE `mrbs_version` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `version` varchar(255) NULL DEFAULT '',
+CREATE TABLE `mrbs_version`
+(
+  `id`           int(11) NOT NULL AUTO_INCREMENT,
+  `version`      varchar(255) NULL DEFAULT 'display version',
   `publish_time` int(11) NULL COMMENT 'when the version was published',
-  `update_time` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'when the version was updated',
-  `is_delete` tinyint NULL DEFAULT 0 COMMENT 'whether the files of the version has been deleted',
+  `update_time`  timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'when the version was updated',
+  `is_delete`    tinyint NULL DEFAULT 0 COMMENT 'whether the files of the version has been deleted',
   PRIMARY KEY (id),
   UNIQUE KEY (version)
 )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='table of all versions';
