@@ -361,7 +361,6 @@ class SyncADManager
 
   function _handleUser(User $user, &$total, array $originGroupList, $option)
   {
-    global $TAG;
     $userAccountName = $option['userAccountName'];
 
     $result = array();
@@ -454,6 +453,7 @@ class SyncADManager
     if (!empty($task)) {
       $task = json_decode($task, true);
       $task['complete'] = -1;
+      RedisConnect::set(RedisKeys::$LAST_SYNC_AD, "" . time());
       RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), self::$TASK_EXPIRE_SECONDS);
     }
   }
