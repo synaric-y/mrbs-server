@@ -322,7 +322,7 @@ class SyncADManager
     log_ad(json_encode($syncResult));
     log_ad("end time: " . time());
     log_ad("end sync-------------------------------");
-    $this->_reportSuccess();
+    $this->_reportSuccess($syncResult);
 
     return $syncResult;
   }
@@ -458,12 +458,13 @@ class SyncADManager
     }
   }
 
-  function _reportSuccess()
+  function _reportSuccess($report)
   {
     $task = RedisConnect::get('CURRENT_SYNC_AD_TASK');
     if (!empty($task)) {
       $task = json_decode($task, true);
       $task['complete'] = 1;
+      $task['report'] = $report;
       RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), self::$TASK_EXPIRE_SECONDS);
     }
   }
