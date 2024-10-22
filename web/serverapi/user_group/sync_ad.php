@@ -25,11 +25,14 @@ if (getLevel($_SESSION['user']) < 2){
 $task = RedisConnect::get(RedisKeys::$CURRENT_SYNC_AD_TASK);
 if (!empty($task)) {
   $task = json_decode($task, true);
-  $result = array(
-    'status' => 'already_running',
-    'task_id' => $task['sync_version']
-  );
-  ApiHelper::success($result);
+
+  if ($task['complete'] != 1) {
+    $result = array(
+      'status' => 'already_running',
+      'task_id' => $task['sync_version']
+    );
+    ApiHelper::success($result);
+  }
 }
 
 $config = DBHelper::one(_tbl("system_variable"), "1=1");

@@ -465,6 +465,7 @@ class SyncADManager
       $task = json_decode($task, true);
       $task['complete'] = 1;
       $task['report'] = $report;
+      RedisConnect::set(RedisKeys::$LAST_SYNC_AD, "" . time());
       RedisConnect::setex(RedisKeys::$CURRENT_SYNC_AD_TASK, json_encode($task), self::$TASK_EXPIRE_SECONDS);
     }
   }

@@ -26,7 +26,9 @@ $task = RedisConnect::get(RedisKeys::$CURRENT_SYNC_AD_TASK);
 if (!empty($task)) {
   $task = json_decode($task, true);
 }
+$sync_time = RedisConnect::get(RedisKeys::$LAST_SYNC_AD);
 
 $result = array();
-$result['task'] = $task ?? null;
+$result['task'] = $task ?: null;
+$result['sync_time'] = $sync_time ?: 0;
 ApiHelper::success($result);
