@@ -20,5 +20,5 @@ try{
     $calendar->getCalendarItems();
     ApiHelper::success(null);
 }catch(GuzzleHttp\Exception\ConnectException $e){
-    ApiHelper::fail(get_vocab("exchange_disconnect"), ApiHelper::UNKOWN_ERROR);
+    ApiHelper::fail(get_vocab("exchange_disconnect"), ApiHelper::UNKNOWN_ERROR);
 }

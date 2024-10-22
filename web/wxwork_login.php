@@ -96,7 +96,7 @@ while($retry < 2){
   if ($data['errcode'] != 0) {
     if ($retry != 0){
       error_log("wxwork errcode: {$data['errcode']}\n", 3, "./log/wxwork_log.log");
-      ApiHelper::fail("wxwork errcode: {$data['errcode']}", ApiHelper::UNKOWN_ERROR);
+      ApiHelper::fail("wxwork errcode: {$data['errcode']}", ApiHelper::UNKNOWN_ERROR);
     }
     $file = fopen("./lib/Wxwork/api/src/mutex_lock.lock", "w+");
     if (flock($file, LOCK_EX)){
@@ -120,7 +120,7 @@ while($retry < 2){
 }
 
 if ($retry == 2){
-  ApiHelper::fail(\MRBS\get_vocab("unknown_error"), ApiHelper::UNKOWN_ERROR);
+  ApiHelper::fail(\MRBS\get_vocab("unknown_error"), ApiHelper::UNKNOWN_ERROR);
 }
 
 $result = \MRBS\db()-> query("SELECT * FROM " . \MRBS\_tbl("users") . " WHERE email = ? or email = ?", array($data['email'], $data['userid']));

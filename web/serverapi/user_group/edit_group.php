@@ -19,7 +19,7 @@ if (!checkAuth()){
 }
 
 if (getLevel($_SESSION['user']) < 2){
-  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
 }
 
 $group_id = $_POST['group_id'];

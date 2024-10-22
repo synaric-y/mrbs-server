@@ -57,7 +57,7 @@ if (!checkAuth()){
 $username = $_SESSION['user'];
 
 if (getLevel($_SESSION['user']) < 2){
-  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
 }
 session_write_close();
 
@@ -197,7 +197,7 @@ if (!empty($action) && ($action == "delete")){
 
   $result = db() -> command("DELETE FROM " . _tbl("users") . " WHERE name = ?", array($name));
   if (!$result) {
-    ApiHelper::fail("", ApiHelper::UNKOWN_ERROR);
+    ApiHelper::fail("", ApiHelper::UNKNOWN_ERROR);
 //    $response["code"] = -7;
 //    $response["message"] = get_vocab("db_failed");
 //    echo json_encode($response);

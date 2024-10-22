@@ -11,7 +11,7 @@ if (!checkAuth()){
 
 //判断用户是否具有权限
 if (getLevel($_SESSION['user']) < 2){
-  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
 }
 
 $result = db() -> query("SELECT * FROM " . _tbl("device"));

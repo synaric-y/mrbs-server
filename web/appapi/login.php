@@ -26,7 +26,7 @@ if (!$result) {
   ApiHelper::fail(get_vocab("invalid_username_or_password"), ApiHelper::INVALID_USERNAME_OR_PASSWORD);
 }
 if (getLevel($username) < 2){
-  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
 }
 $_SESSION['user'] = $username;
 setcookie("session_id", session_id(), time() + 24 * 60 * 60, "/web/appapi/", "", false, true);
