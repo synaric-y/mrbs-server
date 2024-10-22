@@ -2692,8 +2692,9 @@ function get_user_group_tree($group_id, $search, $source, $page = 1)
   }
 
   $sql = "
-    SELECT t1.id, t1.name, t1.third_id, t1.disabled, t1.user_count FROM " . _tbl("g2g_map") . " t2
+    SELECT t1.id, t1.name, t1.third_id, t1.disabled, t1.user_count, IF(t3.parent_id IS NULL, 0, 1) AS has_child FROM " . _tbl("g2g_map") . " t2
     LEFT JOIN " . _tbl("user_group") . " t1 ON t1.id = t2.group_id
+    LEFT JOIN " . _tbl("g2g_map") . " t3 ON t1.id = t3.parent_id
     WHERE t1.id IS NOT NULL AND t2.parent_id = ? AND t2.deep = 1 AND t2.source = ? $searchSQL2 GROUP BY t1.id LIMIT $start, 10
   ";
   $result = db()->query($sql,
