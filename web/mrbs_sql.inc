@@ -2615,7 +2615,7 @@ function edit_user_group($group): bool
     if (empty($targetGroup)) {
       return false;
     }
-    db()->command("DELETE FROM " . _tbl("u2g_map") . " WHERE parent_id = ?", array($group_id));
+    db()->command("DELETE FROM " . _tbl("u2g_map") . " WHERE parent_id = ? AND deep = 1", array($group_id));
     db()->command("UPDATE " . _tbl("user_group") .
       " SET name = :name, third_id = :third_id, third_parent_id = :third_parent_id, sync_state = 1 WHERE id = :id",
       array(

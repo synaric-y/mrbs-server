@@ -297,7 +297,7 @@ class SyncADManager
       if (empty($targetGroup)) {
         continue;
       }
-      db()->command("DELETE FROM " . _tbl("u2g_map") . " WHERE parent_id = ?", array($sysRelatedGroup['id']));
+      db()->command("DELETE FROM " . _tbl("u2g_map") . " WHERE parent_id = ? AND deep = 1 ", array($sysRelatedGroup['id']));
       $sql = "
         INSERT INTO "._tbl("u2g_map")." (user_id, parent_id, deep, source)
         SELECT DISTINCT user_id, ?, 1, 'system' FROM " . _tbl("u2g_map") . " WHERE parent_id = ?
