@@ -410,7 +410,9 @@ CREATE TABLE `mrbs_user_group`
   `disabled`        tinyint NULL DEFAULT 0 COMMENT 'whether this group can be used',
   `user_count`      int NULL DEFAULT 0 COMMENT 'users in this group',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX             `n_name`(`name` ASC) USING BTREE
+  INDEX             `n_name`(`name` ASC) USING BTREE,
+  INDEX             `n_id`(`name` ASC) USING BTREE,
+  INDEX             `n_third_id`(`name` ASC) USING BTREE,
 ) ENGINE = InnoDB AUTO_INCREMENT = 2530 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = DYNAMIC;
 
 -- Group-Group relationship
