@@ -2713,23 +2713,36 @@ function get_user_group_members($group_id, $search, $source, $page)
   $start = ($page - 1) * 10;
   $searchSQL = "";
   $sourceSQL = "";
+  $parentSQL = "t2.deep = 1 AND t1.disabled = 0 ";
   if (!empty($search)) {
     $searchSQL  = " AND (display_name like '%$search%' OR name like '%$search%') ";
   }
   if (!empty($source)) {
     $sourceSQL = " AND t1.source = '$source'";
   }
+
   $sql = "
-      SELECT t1.id, t1.display_name, t1.name, t1.email, t1.timestamp, t1.disabled, t1.source, t1.third_id
+      SELECT t1.id, t1.display_name, t1.name, t1.email, t1.timestamp, t1.disabled, t1.source, t1.third_id, IF(t2.parent_id = ?, 0, 1) is_bind
       FROM " . _tbl("users") . " t1 LEFT JOIN " . _tbl("u2g_map") . " t2
-      ON t1.id = t2.user_id WHERE parent_id = ? $searchSQL $sourceSQL GROUP BY t1.id LIMIT $start, 10
+      ON t1.id = t2.user_id WHERE t2.deep = 1 AND t1.disabled = 0  $searchSQL $sourceSQL GROUP BY t1.id ORDER BY is_bind LIMIT $start, 10
     ";
   $users = [];
   $result = db()->query($sql, array($group_id));
   while ($row = $result->next_row_keyed()) {
     $users[] = $row;
   }
-  return $users;
+  $sql = "
+      SELECT count(*) as total_num FROM (
+        SELECT 1
+        FROM " . _tbl("users") . " t1 LEFT JOIN " . _tbl("u2g_map") . " t2
+        ON t1.id = t2.user_id WHERE t2.deep = 1 AND t1.disabled = 0  $searchSQL $sourceSQL GROUP BY t1.id
+      ) t
+  ";
+  $total_num = db()->query1($sql, array($group_id));
+  return array(
+    "users" => $users,
+    "total_num" => $total_num ?: 0
+  );
 }
 
 /**

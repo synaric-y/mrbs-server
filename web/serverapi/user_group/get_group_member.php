@@ -26,8 +26,6 @@ $group_id = $_POST['group_id'];
 $page = intval($_POST['page']) ?? 1;
 $search = $_POST['search'];
 $source = $_POST['source'];
-$users = get_user_group_members($group_id, $search, $source, $page);
+$result = get_user_group_members($group_id, $search, $source, $page);
 
-$result = array();
-$result['users'] = $users;
 ApiHelper::success($result);
