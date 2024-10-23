@@ -33,7 +33,7 @@ if (!checkAuth()){
 }
 
 if (getLevel($_SESSION['user']) < $min_booking_admin_level){
-  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
 }
 
 //$sessionData = "";
@@ -805,7 +805,7 @@ try {
 //  }
 //}
 catch (\Exception $e) {
-ApiHelper::fail("", ApiHelper::UNKOWN_ERROR);
+ApiHelper::fail("", ApiHelper::UNKNOWN_ERROR);
 }
 if ($result['valid_booking']) {
   if ($result['new_details'][0]['id'] != 0) {

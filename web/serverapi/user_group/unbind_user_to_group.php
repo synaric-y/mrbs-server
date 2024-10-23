@@ -2,6 +2,14 @@
 
 namespace MRBS;
 
+/*
+ * Unbind User to User Group.
+ * @Param
+ * user_ids:    Specify the list of user IDs to be unbound.
+ * group_id:    Specify the parent group id.
+ * @Return
+ * No Return
+ */
 
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
@@ -9,7 +17,7 @@ if (!checkAuth()){
 }
 
 if (getLevel($_SESSION['user']) < 2){
-  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
 }
 
 $user_ids = $_POST['user_ids'];
@@ -21,7 +29,7 @@ if (empty($groupInfo) || $groupInfo['source'] != 'system') {
 }
 
 $uidIds = join(",", $user_ids);
-$foundUsers = DBHelper::query("select id from " ._tbl("users")." where id in( $uidIds )");
+$foundUsers = DBHelper::query_array("select id from " ._tbl("users")." where id in( $uidIds )");
 if (empty($foundUsers) || count($foundUsers) < count($user_ids)) {
   ApiHelper::fail(get_vocab("user_not_exist"), ApiHelper::USER_NOT_EXIST);
 }

@@ -50,7 +50,7 @@ while ($retry < 2){
       try{
         $result = refresh_access_token($corpid, $secret);
         if($result === false || $result === -1)
-          \MRBS\ApiHelper::fail(get_vocab("unkown_error"), \MRBS\ApiHelper::UNKOWN_ERROR);
+          \MRBS\ApiHelper::fail(get_vocab("unkown_error"), \MRBS\ApiHelper::UNKNOWN_ERROR);
       }catch (\Exception $e){
         throw new Exception("internal error");
       } finally {

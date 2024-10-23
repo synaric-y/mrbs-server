@@ -2,13 +2,21 @@
 
 namespace MRBS;
 
+/*
+ * Delete a User Group.
+ * @Param
+ * group_id:    Specify the group to be deleted.
+ * @Return
+ * No Return
+ */
+
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
 if (getLevel($_SESSION['user']) < 2){
-  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
 }
 
 $group_id = $_POST['group_id'];

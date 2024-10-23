@@ -15,6 +15,7 @@ ini_set('display_startup_errors', 1);    //php启动错误信息
 error_reporting(E_ALL);
 
 global $thirdCalendarService, $exchange_server, $exchange_sync_interval;
+
 $tag = "[sync_exchange] ";
 $areas = \MRBS\get_area_names();
 
@@ -22,12 +23,12 @@ $areas = \MRBS\get_area_names();
 while (true) {
   foreach ($areas as $id => $areaName) {
     $area = \MRBS\get_area_details($id);
-    \MRBS\log_i($tag, "start handle area: " . json_encode($area));
+    \MRBS\log_i($tag, "start handle area: " . count($area));
     $rooms = \MRBS\get_rooms($id);
 
     foreach ($rooms as $room) {
       try {
-        \MRBS\log_i($tag, "start handle room: " . json_encode($room));
+        \MRBS\log_i($tag, "start handle room: " . $room['id']);
         $fmtChangeList = array(
           "create" => array(),
           "update" => array(),
@@ -143,6 +144,6 @@ while (true) {
     }
   }
   \MRBS\log_i($tag, "done!");
-  sleep($exchange_sync_interval);
+  sleep($exchange_sync_interval ?? 10);
 }
 

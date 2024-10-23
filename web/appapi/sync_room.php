@@ -47,7 +47,7 @@ if (empty($row['room_id'])){
 }
 $timezone = getTimeZoneByRoom($row['room_id']);
 
-RedisConnect::zADD("heart_beat", $device_id, time());
+RedisConnect::zADD(RedisKeys::$HEART_BEAT, $device_id, time());
 
 if (!empty($timezone)) {
   date_default_timezone_set($timezone);

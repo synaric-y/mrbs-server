@@ -29,6 +29,7 @@ ini_set('display_errors', 1);            //错误信息
 ini_set('display_startup_errors', 1);    //php启动错误信息
 error_reporting(E_ALL);
 
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 include_once "defaultincludes.inc";
 include_once "functions_table.inc";
 include_once "mrbs_sql.inc";

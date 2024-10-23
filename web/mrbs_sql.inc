@@ -2553,30 +2553,54 @@ function add_user_group($group, $parent_id): int
   if ($parent_id == -1) {
     db()->command("INSERT INTO " . _tbl("g2g_map") . "(group_id, parent_id, deep, source) VALUES (?, ?, ?, ?)", array($group_id, $parent_id, 1, $group['source']));
     db()->commit();
-    return $group_id;
-  }
-  // else we need to add all relations into the table according to parent
-  $result = db()->query("SELECT * FROM " . _tbl("g2g_map") . " WHERE group_id = ?", array($parent_id));
-  $maps = array();
-  $maps[] = array($group_id, $parent_id, 1, $group['source']);
-  while ($row = $result->next_row_keyed()) {
-    $maps[] = array($group_id, $row['parent_id'], $row['deep'] + 1, $group['source']);
-  }
-  $i = 0;
-  $batch = 0;
-  $sql = "INSERT INTO " . _tbl("g2g_map") . "(group_id, parent_id, deep, source) VALUES ";
-  $params = array();
-  while ($i < count($maps)) {
-    for (; $i - $batch * 10000 < min(count($maps) - $batch * 10000, 10000); $i++) {
-      $sql .= "(?, ?, ?, ?)";
-      if ($i != count($maps) - 1) {
-        $sql .= ", ";
-      }
-      $params = array_merge($params, $maps[$i]);
+  } else {
+    // else we need to add all relations into the table according to parent
+    $result = db()->query("SELECT * FROM " . _tbl("g2g_map") . " WHERE group_id = ?", array($parent_id));
+    $maps = array();
+    $maps[] = array($group_id, $parent_id, 1, $group['source']);
+    while ($row = $result->next_row_keyed()) {
+      $maps[] = array($group_id, $row['parent_id'], $row['deep'] + 1, $group['source']);
     }
-    db()->command($sql, $params);
-    $batch++;
+    $i = 0;
+    $batch = 0;
+    $sql = "INSERT INTO " . _tbl("g2g_map") . "(group_id, parent_id, deep, source) VALUES ";
+    $params = array();
+    while ($i < count($maps)) {
+      for (; $i - $batch * 10000 < min(count($maps) - $batch * 10000, 10000); $i++) {
+        $sql .= "(?, ?, ?, ?)";
+        if ($i != count($maps) - 1) {
+          $sql .= ", ";
+        }
+        $params = array_merge($params, $maps[$i]);
+      }
+      db()->command($sql, $params);
+      $batch++;
+    }
   }
+
+
+  if ($group['third_id']) {
+    $result = db()->query("SELECT * FROM " . _tbl("user_group") . " WHERE third_id = ? AND source = 'ad' ", array($group['third_id']));
+    $targetGroup = $result->next_row_keyed();
+    if (empty($targetGroup)) {
+      return false;
+    }
+    db()->command("UPDATE " . _tbl("user_group") .
+      " SET name = :name, third_id = :third_id, third_parent_id = :third_parent_id, sync_state = 1 WHERE id = :id",
+      array(
+        ':id' => $group_id,
+        ':name' => $group['name'],
+        ':third_id' => $targetGroup['third_id'],
+        ':third_parent_id' => $targetGroup['third_parent_id'],
+      ));
+    $sql = "
+      INSERT INTO "._tbl("u2g_map")." (user_id, parent_id, deep, source)
+      SELECT DISTINCT user_id, ?, 1, 'system' FROM " . _tbl("u2g_map") . " WHERE parent_id = ?
+    ";
+    db()->command($sql, array($group_id, $targetGroup['id']));
+    resolve_user_group_count();
+  }
+
   db()->commit();
   return $group_id;
 }
@@ -2586,12 +2610,12 @@ function edit_user_group($group): bool
   $group_id = $group['group_id'];
   db()->begin();
   if ($group['third_id']) {
-    $result = db()->query("SELECT * FROM " . _tbl("user_group") . " WHERE third_id = ? ", array($group['third_id']));
+    $result = db()->query("SELECT * FROM " . _tbl("user_group") . " WHERE third_id = ? AND source = 'ad' ", array($group['third_id']));
     $targetGroup = $result->next_row_keyed();
     if (empty($targetGroup)) {
       return false;
     }
-    db()->command("DELETE FROM " . _tbl("u2g_map") . " WHERE parent_id = ?", array($group_id));
+    db()->command("DELETE FROM " . _tbl("u2g_map") . " WHERE parent_id = ? AND deep = 1", array($group_id));
     db()->command("UPDATE " . _tbl("user_group") .
       " SET name = :name, third_id = :third_id, third_parent_id = :third_parent_id, sync_state = 1 WHERE id = :id",
       array(
@@ -2624,19 +2648,41 @@ function del_user_group($group_id)
 {
   db()->begin();
   db()->command("DELETE FROM " . _tbl("user_group") . " WHERE id = ?", array($group_id));
+  $result = db()->query("SELECT * FROM ". _tbl("g2g_map") . " WHERE group_id = ? ", array($group_id));
+  $sql = "
+      DELETE FROM  ". _tbl("u2g_map") . "
+      WHERE parent_id = ? AND deep = ? AND source = 'system'
+      AND (user_id, id) IN (
+          SELECT user_id, id FROM (
+            SELECT user_id, MIN(id)
+              FROM ". _tbl("u2g_map") . "
+              WHERE parent_id = ? AND deep = ? AND source = 'system'
+              GROUP BY user_id
+          ) AS temp
+      );
+    ";
+  db()->command($sql, array($group_id, 1, $group_id, 1));
+  while ($row = $result->next_row_keyed()) {
+    db()->command($sql, array($row['parent_id'], $row['deep'] + 1, $row['parent_id'], $row['deep'] + 1));
+  }
   db()->command("DELETE FROM " . _tbl("g2g_map") . " WHERE parent_id = ? OR group_id = ? ", array($group_id, $group_id));
-  db()->command("DELETE FROM " . _tbl("u2g_map") . " WHERE parent_id = ?", array($group_id));
   resolve_user_group_count();
   db()->commit();
   return true;
 }
 
-function get_user_group_tree($group_id, $source, $page = 1)
+function get_user_group_tree($group_id, $search, $source, $page = 1)
 {
   $group = array();
   $start = ($page - 1) * 10;
+  $searchSQL = "";
+  $searchSQL2 = "";
+  if (!empty($search)) {
+    $searchSQL  = " AND (name like '%$search%') ";
+    $searchSQL2  = " AND (t1.name like '%$search%') ";
+  }
   if ($group_id != -1) {
-    $result = db()->query("SELECT name, third_id, disabled, user_count FROM " . _tbl("user_group") . " WHERE id = ? AND source = ?",
+    $result = db()->query("SELECT name, third_id, disabled, user_count, source, sync_state FROM " . _tbl("user_group") . " WHERE id = ? $searchSQL AND source = ?",
       array($group_id, $source)
     );
     $group = $result->next_row_keyed();
@@ -2646,9 +2692,10 @@ function get_user_group_tree($group_id, $source, $page = 1)
   }
 
   $sql = "
-    SELECT t1.id, t1.name, t1.third_id, t1.disabled, t1.user_count FROM " . _tbl("g2g_map") . " t2
+    SELECT t1.id, t1.name, t1.third_id, t1.disabled, t1.user_count, t1.source, t1.sync_state, IF(t3.parent_id IS NULL, 0, 1) AS has_child FROM " . _tbl("g2g_map") . " t2
     LEFT JOIN " . _tbl("user_group") . " t1 ON t1.id = t2.group_id
-    WHERE t2.parent_id = ? AND t2.deep = 1 AND t2.source = ? GROUP BY t1.id LIMIT $start, 10
+    LEFT JOIN " . _tbl("g2g_map") . " t3 ON t1.id = t3.parent_id
+    WHERE t1.id IS NOT NULL AND t2.parent_id = ? AND t2.deep = 1 AND t2.source = ? $searchSQL2 GROUP BY t1.id
   ";
   $result = db()->query($sql,
     array($group_id, $source)
@@ -2661,20 +2708,51 @@ function get_user_group_tree($group_id, $source, $page = 1)
   return $group;
 }
 
-function get_user_group_members($group_id, $page)
+function get_user_group_members($group_id, $search, $source, $in_group, $page)
 {
   $start = ($page - 1) * 10;
+  $searchSQL = "";
+  $sourceSQL = "";
+  $inGroupSQL = "1=1 ";
+  if (!empty($search)) {
+    $searchSQL  = " AND (display_name like '%$search%' OR name like '%$search%') ";
+  }
+  if (!empty($source)) {
+    $sourceSQL = " AND t1.source = '$source'";
+  }
+  if (isset($in_group)) {
+    if ($in_group == 1) {
+      $inGroupSQL = "is_bind = 1";
+    } else if ($in_group == 0) {
+      $inGroupSQL = "is_bind = 0";
+    }
+  }
+
   $sql = "
-      SELECT t1.id, t1.display_name, t1.name, t1.email, t1.timestamp, t1.disabled, t1.source, t1.third_id
-      FROM " . _tbl("users") . " t1 LEFT JOIN " . _tbl("u2g_map") . " t2
-      ON t1.id = t2.user_id WHERE parent_id = ? GROUP BY t1.id LIMIT $start, 10
+      SELECT * FROM (
+        SELECT t1.id, t1.display_name, t1.name, t1.email, t1.timestamp, t1.disabled, t1.source, t1.third_id,
+             CASE WHEN EXISTS(SELECT 1 FROM mrbs_u2g_map WHERE user_id = t1.id AND parent_id = ?) THEN 1 ELSE 0 END AS is_bind
+        FROM " . _tbl("users") . " t1
+        WHERE t1.disabled = 0 $searchSQL $sourceSQL GROUP BY t1.id ORDER BY is_bind DESC
+      ) sub WHERE $inGroupSQL LIMIT $start, 10
     ";
   $users = [];
   $result = db()->query($sql, array($group_id));
   while ($row = $result->next_row_keyed()) {
     $users[] = $row;
   }
-  return $users;
+  $sql = "
+      SELECT count(*) as total_num FROM (
+        SELECT 1, CASE WHEN EXISTS(SELECT 1 FROM mrbs_u2g_map WHERE user_id = t1.id AND parent_id = ?) THEN 1 ELSE 0 END AS is_bind
+        FROM " . _tbl("users") . " t1
+        WHERE t1.disabled = 0 AND t1.disabled = 0 $searchSQL $sourceSQL GROUP BY t1.id
+      ) t WHERE $inGroupSQL
+  ";
+  $total_num = db()->query1($sql, array($group_id));
+  return array(
+    "users" => $users,
+    "total_num" => $total_num ?: 0
+  );
 }
 
 /**
@@ -2717,6 +2795,7 @@ function unbind_user_to_group($user_id, $group_id): bool
 
   // Resolve User-Group relationship
   resolve_u2g($user_id);
+  resolve_user_group_count();
   return true;
 }
 

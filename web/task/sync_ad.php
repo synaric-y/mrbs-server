@@ -17,4 +17,4 @@ error_reporting(E_ALL);
  * This script should be started by the timer and not called by the network request.
  */
 $manager = new SyncADManager();
-$manager->syncAD();
+$manager->syncAD('');

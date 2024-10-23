@@ -2,13 +2,24 @@
 
 namespace MRBS;
 
+/*
+ * Edit a User Group.
+ * @Param
+ * group_id:    Specify the group to be edited.
+ * name:        New User Group name.
+ * third_id:    Rebind the third-party ID, the group members will be cleared,
+ *              and the members under the third-party ID will be synchronized to this group again.
+ * @Return
+ * No Return
+ */
+
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
 if (getLevel($_SESSION['user']) < 2){
-  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
+  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
 }
 
 $group_id = $_POST['group_id'];
@@ -21,6 +32,12 @@ if (empty($group)) {
 }
 if ($group['source'] == 'ad') {
   ApiHelper::fail(get_vocab("group_cannot_modify"), ApiHelper::GROUP_CANNOT_DEL_OR_UPDATE);
+}
+if (!empty($third_id)) {
+  $g2g = DBHelper::one(_tbl("g2g_map"), "group_id = $group_id");
+  if ($g2g['parent_id'] != -1) {
+    ApiHelper::fail(get_vocab("group_cannot_bind_third"), ApiHelper::GROUP_CANNOT_SYNC_THIRD);
+  }
 }
 
 edit_user_group($_POST);

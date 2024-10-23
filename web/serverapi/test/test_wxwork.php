@@ -19,8 +19,8 @@ try{
     ApiHelper::success(null);
   }
 }catch(Exception $e){
-  ApiHelper::fail("network error", ApiHelper::UNKOWN_ERROR);
+  ApiHelper::fail("network error", ApiHelper::UNKNOWN_ERROR);
 }
 
-ApiHelper::fail("network error", ApiHelper::UNKOWN_ERROR);
+ApiHelper::fail("network error", ApiHelper::UNKNOWN_ERROR);
 

@@ -724,6 +724,7 @@ $vocab["internal_database_error"]                   = "Internal database error";
 $vocab["group_not_exist"]                           = "User Group not exist";
 $vocab["group_cannot_unbind"]                       = "User Group cannot unbind";
 $vocab["group_cannot_modify"]                       = "User Group cannot modify";
+$vocab["group_cannot_bind_third"]                   = "Only top-level User Group is allowed to bind third-service User Group";
 
 $vocab["success"]           = "success";
 $vocab["already_login"]     = "already login";

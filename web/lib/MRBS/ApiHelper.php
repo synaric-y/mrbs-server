@@ -7,8 +7,9 @@ class ApiHelper
 
   public const  SUCCESS = 0;
   public const PLEASE_LOGIN = -99;
-  public const ACCESSDENIED = -98;
-  public const UNKOWN_ERROR = -97;
+
+  public const ACCESS_DENIED = -98;
+  public const UNKNOWN_ERROR = -97;
   public const INTERNAL_ERROR = -96;
   public const ALREADY_LOGIN = 1;
   public const INVALID_USERNAME_OR_PASSWORD = -2;
@@ -71,6 +72,8 @@ class ApiHelper
 
   public const GROUP_CANNOT_DEL_OR_UPDATE = -205;
 
+  public const GROUP_CANNOT_SYNC_THIRD = -206;
+
   public const NO_AREA = -47;
   public const INVALID_ROOM_ID = -48;
   public const DEVICE_EXISTS = -49;
@@ -100,7 +103,7 @@ class ApiHelper
       "msg" => get_vocab("success"),
       "data" => $data
     );
-    echo json_encode($rt);
+    echo json_encode($rt, JSON_NUMERIC_CHECK);
     exit();
   }
 
@@ -111,7 +114,7 @@ class ApiHelper
       "msg" => $msg,
       "data" => $data
     );
-    echo json_encode($rt);
+    echo json_encode($rt, JSON_NUMERIC_CHECK);
     exit();
   }
 }

@@ -8,7 +8,7 @@ require_once "../mrbs_sql.inc";
 require "../defaultincludes.inc";
 
 while(1){
-  $result = RedisConnect::zRangeByScore('heart_beat', '-inf', time() - 30);
+  $result = RedisConnect::zRangeByScore(RedisKeys::$HEART_BEAT, '-inf', time() - 30);
   if ($result === false){
     sleep(5);
     continue;

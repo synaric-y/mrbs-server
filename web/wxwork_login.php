@@ -120,7 +120,7 @@ while($retry < 2){
 }
 
 if ($retry == 2){
-  ApiHelper::fail(\MRBS\get_vocab("unknown_error"), ApiHelper::UNKOWN_ERROR);
+  ApiHelper::fail(\MRBS\get_vocab("unknown_error"), ApiHelper::UNKNOWN_ERROR);
 }
 
 $result = \MRBS\db()-> query("SELECT * FROM " . \MRBS\_tbl("users") . " WHERE email = ? or email = ?", array($data['email'], $data['userid']));

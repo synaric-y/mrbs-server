@@ -19,7 +19,7 @@ if (!isset($_SESSION['user']) || empty($_SESSION) ) {
 session_write_close();
 $result = db() -> query("DELETE FROM " . _tbl("sessions") . " WHERE id = ?", [$_COOKIE['session_id']]);
 if (!$result){
-  ApiHelper::fail("", ApiHelper::UNKOWN_ERROR);
+  ApiHelper::fail("", ApiHelper::UNKNOWN_ERROR);
 //  $response = array(
 //    "code" => -2,
 //    "message" => "DB error"

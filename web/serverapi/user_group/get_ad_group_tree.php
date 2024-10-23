@@ -3,7 +3,7 @@
 namespace MRBS;
 
 /*
- * Query the first-level system-created groups under the specified User Group.
+ * Query the AD-created first-level groups under the specified User Group.
  * @Param
  * group_id:    Specify the group to be queried. If you need to return all top-level groups, pass -1
  * page:        Page number, start from 1.
@@ -25,7 +25,7 @@ if (getLevel($_SESSION['user']) < 2){
 $group_id = $_POST['group_id'];
 $page = intval($_POST['page']) ?? 1;
 $search = $_POST['search'];
-$group = get_user_group_tree($group_id, $search, "system", $page);
+$group = get_user_group_tree($group_id, $search, "ad", $page);
 if (empty($group)) {
   ApiHelper::fail(get_vocab("group_not_exist"), ApiHelper::GROUP_NOT_EXIST);
 }

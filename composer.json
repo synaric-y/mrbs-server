@@ -4,6 +4,9 @@
       "ext-json": "*",
       "ext-redis": "*",
       "ext-gd": "*",
-      "ext-zip": "*"
+      "gregwar/captcha": "^1.2",
+      "ext-zip": "*",
+      "ext-curl": "*",
+      "directorytree/ldaprecord": "^2.20"
     }
 }
