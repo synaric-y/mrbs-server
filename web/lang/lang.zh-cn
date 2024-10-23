@@ -684,3 +684,5 @@ $vocab["version_exists"]              = "该版本已存在";
 $vocab["unsupport_fast_meeting"]      = "该房间不允许预定快速会议";
 $vocab["group_limit"]                 = "该房间只能被%s组预定";
 $vocab["exchange_disconnect"]         = "无法连接到Exchange服务器";
+$vocab["disabled_self"]               = "无法禁用自己";
+$vocab["delete_one_with_child"]       = "无法删除一个有子区域的区域";

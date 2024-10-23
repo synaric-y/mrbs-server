@@ -773,3 +773,5 @@ $vocab["version_exists"]               = "This version exists";
 $vocab["unsupport_fast_meeting"]       = "This room is not allowed to book fask meeting";
 $vocab["group_limit"]                  = "This room can only be used by %s";
 $vocab["exchange_disconnect"]          = "Fail to connect to exchange server";
+$vocab["disabled_self"]                = "You cannot disable your own account";
+$vocab["delete_one_with_child"]        = "Cannot delete an area with children";

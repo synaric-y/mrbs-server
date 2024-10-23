@@ -29,16 +29,24 @@ function getLevel($name)
 
 function user_can_book($name, $room)
 {
-  if (empty($room['group_ids'])){
-    return true;
+  $result = db()->query("SELECT * FROM " . _tbl("room_group") . " WHERE room_id = ?", array($room['id']));
+  $user = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE name = ?", array($name)) ->next_row_keyed();
+  if ($result -> count() == 0){
+    $result = db() -> query("SELECT * FROM " . _tbl("area") . " A INNER JOIN " . _tbl("area_group") . " AG ON A.id = AG.area_id INNER JOIN " . _tbl("u2g_map") . " u2g ON u2g.group_id = AG.group_id WHERE A.id = ?", array($room['area_id']));
+    while($row = $result -> next_row_keyed()){
+      if ($row['user_id'] == $user['id']){
+        return true;
+      }
+    }
   }
 
-  $user = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE name = ?", array($name)) ->next_row_keyed();
 
-  $data = json_decode($room['group_ids'], true);
-  foreach ($data as $group_id) {
-    $exist = db() -> query1("SELECT COUNT(*) FROM " . _tbl("u2g_map") . " WHERE user_id = ? AND parent_id = ?", array($user['id'], $group_id));
-    if ($exist > 1){
+  while($row = $result ->next_row_keyed()){
+    if ($row['group_id'] == -1){
+      return true;
+    }
+    $result = db() -> query("SELECT COUNT(*) FROM " . _tbl("u2g_map") . " WHERE user_id = ? AND parent_id = ?", array($user['id'], $row['group_id']));
+    if ($result > 0){
       return true;
     }
   }

@@ -36,6 +36,7 @@ $form_vars = array(
 );
 
 $room = $_POST['room'];
+$group_ids = $_POST["group_ids"] ?? null;
 
 foreach($form_vars as $var => $var_type)
 {
@@ -282,7 +283,18 @@ if (empty($errors))
     $sql .= implode(",", $assign_array) . " WHERE id=?";
     $sql_params[] = $room;
     db()->command($sql, $sql_params);
-
+    db()->command("DELETE FROM " . _tbl("room_group") . " WHERE room_id = ?", array($room));
+    if (!empty($group_ids)){
+      $sql = "INSERT INTO " . _tbl("room_group") . "(room_id, group_id) VALUES ";
+      $params = array();
+      foreach ($group_ids as $group_id) {
+        $sql .= "(?, ?),";
+        $params[] = $room;
+        $params[] = $group_id;
+      }
+      $sql = substr($sql, 0, -1);
+      db()->command($sql, $params);
+    }
     // Commit the transaction
     db()->commit();
 

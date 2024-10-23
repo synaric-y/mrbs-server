@@ -27,7 +27,14 @@ if (!$result) {
   ApiHelper::fail(get_vocab("invalid_username_or_password"), ApiHelper::INVALID_USERNAME_OR_PASSWORD);
 }
 $_SESSION['user'] = $username;
-setcookie("session_id", session_id(), time() + 24 * 60 * 60, "/web/", "", false, true);
+setcookie("session_id", session_id(), [
+  "expires" => time() + 24 * 60 * 60,
+  "path" => "/web/",
+  "domain" => null,
+  "secure" => true,
+  "httponly" => true,
+  "samesite" => "None"
+]);
 $result = db() -> query("SELECT level, display_name FROM " . _tbl("users") . " WHERE name = ?", array($username));
 $row = $result -> next_row_keyed();
 $data = array(

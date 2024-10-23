@@ -58,7 +58,7 @@ if ($type == "room") {
     }
     $sql = "DELETE FROM " . _tbl('repeat') . " WHERE room_id=?";
     db()->command($sql, array($room));
-
+    db()->command("DELETE FROM " . _tbl("room_group") . " WHERE room_id=?", array($room));
     // Now take out the room itself
     $sql = "DELETE FROM " . _tbl('room') . " WHERE id=?";
     db()->command($sql, array($room));
@@ -75,6 +75,10 @@ if ($type == "room") {
 }
 
 if ($type == "area") {
+  $one = db() -> query1( "SELECT COUNT(*) FROM " . _tbl("area") . " WHERE parent_id = ?", array($area));
+  if ($one > 0){
+    ApiHelper::fail(get_vocab("delete_one_with_child"), ApiHelper::DELETE_ONE_WITH_CHILD);
+  }
   // We are only going to let them delete an area if there are
   // no rooms. its easier
   $sql = "SELECT COUNT(*)
@@ -86,10 +90,15 @@ if ($type == "area") {
     // OK, nothing there, let's blast it away
     $sql = "DELETE FROM " . _tbl('area') . "
              WHERE id=?";
-
-    db()->command($sql, array($area));
-
-    // Redirect back to the admin page
+    try{
+      db()->begin();
+      db()->command("DELETE FROM " . _tbl("area_group") . " WHERE area_id = ?", array($area));
+      db()->command($sql, array($area));
+      db()->commit();
+    }catch(Exception $e){
+      db()->rollback();
+      throw $e;
+    }
     ApiHelper::success(null);
   } else {
     // There are rooms left in the area
