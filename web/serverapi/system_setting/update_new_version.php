@@ -16,7 +16,7 @@ if (getLevel($_SESSION['user']) < 2) {
   ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESSDENIED);
 }
 
-$version = $_POST['version'];
+$version = $_REQUEST['version'];
 $result = db() -> query1("SELECT COUNT(*) FROM " . _tbl("version") . " WHERE version = ?", array($version));
 if ($result > 0){
   ApiHelper::fail(get_vocab("version_exists"), ApiHelper::VERSION_EXISTS);
@@ -30,10 +30,11 @@ if($file['error'] === UPLOAD_ERR_OK){
   if (strtolower($fileInfo['extension']) !== 'zip'){
     ApiHelper::fail(get_vocab("unsupport_file_type"), ApiHelper::UNSUPPORT_FILE_TYPE);
   }
-  $dir = dirname(__DIR__, 3) . "/display/" . $version . "/" . $version . ".zip";
+  $dir = dirname(__DIR__, 3) . "/display/" . $version;
   if (!is_dir($dir)) {
     mkdir($dir, 0755, true);
   }
+  $dir .= "/" . $version . ".zip";
   if (move_uploaded_file($file['tmp_name'], $dir)){
     $zip = new ZipArchive;
     if($zip -> open($dir) === TRUE){
