@@ -2713,7 +2713,6 @@ function get_user_group_members($group_id, $search, $source, $page)
   $start = ($page - 1) * 10;
   $searchSQL = "";
   $sourceSQL = "";
-  $parentSQL = "t2.deep = 1 AND t1.disabled = 0 ";
   if (!empty($search)) {
     $searchSQL  = " AND (display_name like '%$search%' OR name like '%$search%') ";
   }
@@ -2722,9 +2721,10 @@ function get_user_group_members($group_id, $search, $source, $page)
   }
 
   $sql = "
-      SELECT t1.id, t1.display_name, t1.name, t1.email, t1.timestamp, t1.disabled, t1.source, t1.third_id, IF(t2.parent_id = ?, 0, 1) is_bind
-      FROM " . _tbl("users") . " t1 LEFT JOIN " . _tbl("u2g_map") . " t2
-      ON t1.id = t2.user_id WHERE t2.deep = 1 AND t1.disabled = 0  $searchSQL $sourceSQL GROUP BY t1.id ORDER BY is_bind LIMIT $start, 10
+      SELECT t1.id, t1.display_name, t1.name, t1.email, t1.timestamp, t1.disabled, t1.source, t1.third_id,
+             CASE WHEN EXISTS(SELECT 1 FROM mrbs_u2g_map WHERE user_id = t1.id AND parent_id = ?) THEN 1 ELSE 0 END AS is_bind
+      FROM " . _tbl("users") . " t1
+      WHERE t1.disabled = 0 $searchSQL $sourceSQL GROUP BY t1.id ORDER BY is_bind DESC LIMIT $start, 10
     ";
   $users = [];
   $result = db()->query($sql, array($group_id));
@@ -2734,8 +2734,8 @@ function get_user_group_members($group_id, $search, $source, $page)
   $sql = "
       SELECT count(*) as total_num FROM (
         SELECT 1
-        FROM " . _tbl("users") . " t1 LEFT JOIN " . _tbl("u2g_map") . " t2
-        ON t1.id = t2.user_id WHERE t2.deep = 1 AND t1.disabled = 0  $searchSQL $sourceSQL GROUP BY t1.id
+        FROM " . _tbl("users") . " t1
+        WHERE t1.disabled = 0 AND t1.disabled = 0  $searchSQL $sourceSQL GROUP BY t1.id
       ) t
   ";
   $total_num = db()->query1($sql, array($group_id));
