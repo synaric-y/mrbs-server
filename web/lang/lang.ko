@@ -288,3 +288,5 @@ $vocab["version_exists"]              = "이 버전이 이미 존재합니다";
 $vocab["unsupport_fast_meeting"]      = "이 방에서는 간단한 회의가 허용되지 않습니다";
 $vocab["group_limit"]                 = "이 객실은 %s 그룹만 예약할 수 있습니다";
 $vocab["exchange_disconnect"]         = "Exchange 서버에 연결할 수 없습니다";
+$vocab["disabled_self"]               = "자신의 계정을 삭제할 수 없습니다";
+$vocab["delete_one_with_child"]       = "소지역이 있는 지역은 삭제할 수 없습니다";

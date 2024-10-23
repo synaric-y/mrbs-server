@@ -27,7 +27,7 @@ if ($row['is_delete'] == 1){
 }
 
 $now_version = $version;
-db() -> command("UPDATE " . _tbl("system_variable") . " SET version = ?", array($now_version));
+db() -> command("UPDATE " . _tbl("system_variable") . " SET now_version = ?", array($now_version));
 
 
-ApiHelper::success($server_address . "/admin/" . $version . "/index.html");
+ApiHelper::success($server_address . "/display/" . $version . "/index.html");

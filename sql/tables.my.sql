@@ -80,9 +80,11 @@ CREATE TABLE mrbs_area
   periods                     text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   confirmation_enabled        tinyint,
   confirmed_default           tinyint,
+
   times_along_top             tinyint                                                                  NOT NULL DEFAULT 0,
   default_type                char                                                         DEFAULT 'E' NOT NULL COMMENT '"E" means by default, entry is external, "I" means by default, entry is internal',
   parent_id                   int                                                          DEFAULT -1 COMMENT 'superior area id',
+
   PRIMARY KEY (id),
   UNIQUE KEY uq_area_name (area_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='table of area';

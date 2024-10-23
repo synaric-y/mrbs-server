@@ -5,8 +5,8 @@ namespace MRBS;
 
 
 require_once dirname(__DIR__, 3) . '/vendor/autoload.php';
-require_once '../../functions_ical.inc';
-require_once '../../functions_mail.inc';
+require_once dirname(__DIR__, 2) . '/functions_ical.inc';
+require_once dirname(__DIR__, 2) . '/functions_mail.inc';
 
 use MRBS\CalendarServer\CalendarServerManager;
 

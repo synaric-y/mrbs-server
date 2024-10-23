@@ -55,14 +55,13 @@ if ($count > 0){
   }
 }
 $start_num = ($pagenum - 1) * $pagesize;
-$sql .= " LIMIT ?, ?";
-$params[] = $start_num;
-$params[] = $pagesize;
+$sql .= " LIMIT $start_num, $pagesize";
 $result = db() -> query($sql, $params);
 $sql = str_replace("id, level, name, display_name, email, create_time, disabled", "COUNT(*)", $sql);
+$sql = str_replace(" LIMIT $start_num, $pagesize", "", $sql);
 $total_num = db() -> query1($sql, $params);
 if ($result -> count() == 0){
-  ApiHelper::fail(get_vocab("user_not_exist"), ApiHelper::USER_NOT_EXIST);
+  ApiHelper::success(['total_num' => $total_num]);
 }else{
   while($row = $result -> next_row_keyed()){
     if ($row['name'] == $username){
@@ -70,7 +69,7 @@ if ($result -> count() == 0){
     }else{
       $row['is_self'] = 0;
     }
-    $data1[] = $row;
+    $data1['users'][] = $row;
   }
   if ($total_num != 0){
     $data1['total_num'] = $total_num;

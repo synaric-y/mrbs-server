@@ -67,6 +67,14 @@ $form_vars = array(
 );
 
 $area = $_POST['area'];
+$parent_id = $_POST['parent_id'] ?? null;
+$parent_id = intval($parent_id);
+$group_ids = $_POST['group_ids'];
+
+$one = db() -> query1("SELECT COUNT(*) FROM " . _tbl("area") . " WHERE id = ?", array($parent_id));
+if($one < 1){
+  ApiHelper::fail(get_vocab("area_not_exist"), ApiHelper::AREA_NOT_EXIST);
+}
 foreach ($form_vars as $var => $var_type) {
   $$var = $_POST[$var] ?? null;
   if (($var_type == 'bool') || ($$var !== null)) {
@@ -414,18 +422,40 @@ $assign_array[] = "default_type=?";
 $sql_params[] = $area_default_type;
 $assign_array[] = "times_along_top=?";
 $sql_params[] = $area_times_along_top;
+$assign_array[] = "parent_id=?";
+$sql_params[] = $parent_id;
 
 $sql .= implode(",", $assign_array) . " WHERE id=?";
 $sql_params[] = $area;
 
 $areaExist = db() -> query1("SELECT COUNT(*) FROM " . _tbl("area") . " WHERE id = ?", array($area));
 if ($areaExist > 0) {
-  db()->command($sql, $sql_params);
-  $success = true;
+  db()->begin();
+  try{
+    db()->command($sql, $sql_params);
+    db()->command("DELETE FROM " . _tbl("area_group") . " WHERE area_id = ?", array($area));
+    if(!empty($group_ids)){
+      $sql = "INSERT INTO " . _tbl("area_group") . " (area_id, group_id) VALUES ";
+      $params = array();
+      foreach ($group_ids as $group_id) {
+        $sql .= "(?, ?),";
+        $params[] = $area;
+        $params[] = $group_id;
+      }
+      $sql = substr($sql, 0, -1);
+      db()->command($sql, $params);
+    }
+    $success = true;
+  }catch (Exception $e){
+    db()->rollback();
+    throw $e;
+  }
+
 }else{
   $success = false;
 }
 if ($success){
+  db()->commit();
   ApiHelper::success(null);
 }else{
   ApiHelper::fail(get_vocab("area_not_exist"), ApiHelper::AREA_NOT_EXIST);
