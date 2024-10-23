@@ -101,7 +101,7 @@ class ApiHelper
       "msg" => get_vocab("success"),
       "data" => $data
     );
-    echo json_encode($rt);
+    echo json_encode($rt, JSON_NUMERIC_CHECK);
     exit();
   }
 
@@ -112,7 +112,7 @@ class ApiHelper
       "msg" => $msg,
       "data" => $data
     );
-    echo json_encode($rt);
+    echo json_encode($rt, JSON_NUMERIC_CHECK);
     exit();
   }
 }
