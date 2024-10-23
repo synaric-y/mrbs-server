@@ -402,7 +402,7 @@ CREATE TABLE `mrbs_user_group`
   `third_id`        varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'third group_id',
   `third_parent_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL COMMENT 'third parent_id',
   `source`          varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'system/ad',
-  `sync_state`      int NULL DEFAULT NULL COMMENT '0:no sync;1:sync',
+  `sync_state`      int NULL DEFAULT 0 COMMENT '0:no sync;1:sync',
   `last_sync_time`  int NULL DEFAULT NULL COMMENT 'last sync timestamp',
   `sync_version`    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'sync version code',
   `disabled`        tinyint NULL DEFAULT 0 COMMENT 'whether this group can be used',
