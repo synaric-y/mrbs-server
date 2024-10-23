@@ -2723,7 +2723,7 @@ function get_user_group_members($group_id, $search, $source, $in_group, $page)
   if (isset($in_group)) {
     if ($in_group == 1) {
       $inGroupSQL = "is_bind = 1";
-    } else {
+    } else if ($in_group == 0) {
       $inGroupSQL = "is_bind = 0";
     }
   }
