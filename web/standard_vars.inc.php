@@ -13,7 +13,7 @@ $variables = db() -> query("SELECT * FROM " . _tbl("system_variable")) -> next_r
 
 $use_wxwork = $variables['use_wxwork'];
 $use_exchange = $variables['use_exchange'];
-$exchange_server = $variables['exchange_server'];
+$exchange_server = $variables['Exchange_server'];
 $corpid = $variables['corpid'];
 $secret = $variables['secret'];
 $agentid = $variables['agentid'];
