@@ -2708,23 +2708,33 @@ function get_user_group_tree($group_id, $search, $source, $page = 1)
   return $group;
 }
 
-function get_user_group_members($group_id, $search, $source, $page)
+function get_user_group_members($group_id, $search, $source, $in_group, $page)
 {
   $start = ($page - 1) * 10;
   $searchSQL = "";
   $sourceSQL = "";
+  $inGroupSQL = "1=1 ";
   if (!empty($search)) {
     $searchSQL  = " AND (display_name like '%$search%' OR name like '%$search%') ";
   }
   if (!empty($source)) {
     $sourceSQL = " AND t1.source = '$source'";
   }
+  if (isset($in_group)) {
+    if ($in_group == 1) {
+      $inGroupSQL = "is_bind = 1";
+    } else {
+      $inGroupSQL = "is_bind = 0";
+    }
+  }
 
   $sql = "
-      SELECT t1.id, t1.display_name, t1.name, t1.email, t1.timestamp, t1.disabled, t1.source, t1.third_id,
+      SELECT * FROM (
+        SELECT t1.id, t1.display_name, t1.name, t1.email, t1.timestamp, t1.disabled, t1.source, t1.third_id,
              CASE WHEN EXISTS(SELECT 1 FROM mrbs_u2g_map WHERE user_id = t1.id AND parent_id = ?) THEN 1 ELSE 0 END AS is_bind
-      FROM " . _tbl("users") . " t1
-      WHERE t1.disabled = 0 $searchSQL $sourceSQL GROUP BY t1.id ORDER BY is_bind DESC LIMIT $start, 10
+        FROM " . _tbl("users") . " t1
+        WHERE t1.disabled = 0 $searchSQL $sourceSQL GROUP BY t1.id ORDER BY is_bind DESC
+      ) sub WHERE $inGroupSQL LIMIT $start, 10
     ";
   $users = [];
   $result = db()->query($sql, array($group_id));
@@ -2733,10 +2743,10 @@ function get_user_group_members($group_id, $search, $source, $page)
   }
   $sql = "
       SELECT count(*) as total_num FROM (
-        SELECT 1
+        SELECT 1, CASE WHEN EXISTS(SELECT 1 FROM mrbs_u2g_map WHERE user_id = t1.id AND parent_id = ?) THEN 1 ELSE 0 END AS is_bind
         FROM " . _tbl("users") . " t1
-        WHERE t1.disabled = 0 AND t1.disabled = 0  $searchSQL $sourceSQL GROUP BY t1.id
-      ) t
+        WHERE t1.disabled = 0 AND t1.disabled = 0 $searchSQL $sourceSQL GROUP BY t1.id
+      ) t WHERE $inGroupSQL
   ";
   $total_num = db()->query1($sql, array($group_id));
   return array(

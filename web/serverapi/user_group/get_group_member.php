@@ -9,6 +9,7 @@ namespace MRBS;
  * page:        Page number, start from 1.
  * search:      Search by name.
  * source:      Search by source, values: system/ad, pass null or empty string to filter all.
+ * in_group:    (Optional) 0: not in User Group; 1: in User Group.
  * @Return
  * users:       A user list.
  */
@@ -26,6 +27,7 @@ $group_id = $_POST['group_id'];
 $page = intval($_POST['page']) ?? 1;
 $search = $_POST['search'];
 $source = $_POST['source'];
-$result = get_user_group_members($group_id, $search, $source, $page);
+$in_group = $_POST['in_group'];
+$result = get_user_group_members($group_id, $search, $source, $in_group, $page);
 
 ApiHelper::success($result);
