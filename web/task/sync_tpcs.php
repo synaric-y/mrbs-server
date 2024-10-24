@@ -10,8 +10,8 @@ require_once dirname(__DIR__) . "/defaultincludes.inc";
 require_once dirname(__DIR__) . "/functions_table.inc";
 require_once dirname(__DIR__) . "/mrbs_sql.inc";
 
-ini_set('display_errors', 1);            //错误信息
-ini_set('display_startup_errors', 1);    //php启动错误信息
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 global $thirdCalendarService, $exchange_server, $exchange_sync_interval;

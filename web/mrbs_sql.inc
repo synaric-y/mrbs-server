@@ -2731,7 +2731,7 @@ function get_user_group_members($group_id, $search, $source, $in_group, $page)
   $sql = "
       SELECT * FROM (
         SELECT t1.id, t1.display_name, t1.name, t1.email, t1.timestamp, t1.disabled, t1.source, t1.third_id,
-             CASE WHEN EXISTS(SELECT 1 FROM mrbs_u2g_map WHERE user_id = t1.id AND parent_id = ?) THEN 1 ELSE 0 END AS is_bind
+             CASE WHEN EXISTS(SELECT 1 FROM " . _tbl("u2g_map") . " WHERE user_id = t1.id AND parent_id = ?) THEN 1 ELSE 0 END AS is_bind
         FROM " . _tbl("users") . " t1
         WHERE t1.disabled = 0 $searchSQL $sourceSQL GROUP BY t1.id ORDER BY is_bind DESC
       ) sub WHERE $inGroupSQL LIMIT $start, 10
