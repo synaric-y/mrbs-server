@@ -2678,11 +2678,17 @@ function get_user_group_tree($group_id, $search, $source, $page = 1)
   $searchSQL = "";
   $searchSQL2 = "";
   if (!empty($search)) {
-    $searchSQL  = " AND (name like '%$search%') ";
+    $searchSQL  = " AND (t1.name like '%$search%') ";
     $searchSQL2  = " AND (t1.name like '%$search%') ";
   }
   if ($group_id != -1) {
-    $result = db()->query("SELECT name, third_id, disabled, user_count, source, sync_state FROM " . _tbl("user_group") . " WHERE id = ? $searchSQL AND source = ?",
+    $sql = "
+      SELECT t1.name, t1.third_id, t1.disabled, t1.user_count, t1.source, t1.sync_state,
+             CASE WHEN EXISTS(SELECT 1 FROM " . _tbl("g2g_map") . " WHERE group_id = t1.id AND parent_id = -1 AND deep = 1) THEN 1 ELSE 0 END AS top_level
+      FROM " . _tbl("user_group") . " t1
+      WHERE t1.id = ? $searchSQL AND t1.source = ?
+    ";
+    $result = db()->query($sql,
       array($group_id, $source)
     );
     $group = $result->next_row_keyed();
@@ -2702,6 +2708,7 @@ function get_user_group_tree($group_id, $search, $source, $page = 1)
   );
   $child_groups = [];
   while ($row = $result->next_row_keyed()) {
+    $row['top_level'] = $group_id == -1 ? 1 : 0;
     $child_groups[] = $row;
   }
   $group['child_groups'] = $child_groups;
