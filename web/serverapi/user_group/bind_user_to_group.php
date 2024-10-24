@@ -31,7 +31,7 @@ if (empty($groupInfo) || $groupInfo['source'] != 'system') {
 // Filter valid user_id, which not hold a relationship to $group_id
 $uidIds = join(",", $user_ids);
 $checkSQL = "
-  select id from " . _tbl("users") . " where source = 'system' and id in ($uidIds) and id not in (
+  select id from " . _tbl("users") . " where id in ($uidIds) and id not in (
     select user_id from " . _tbl("u2g_map") . " where parent_id = $group_id GROUP BY user_id
   )
 ";
