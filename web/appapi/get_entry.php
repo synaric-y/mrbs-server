@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace MRBS;
 
 /*
- * 获取预约列表
+ * useless file
  */
 
 $room_id = intval(ApiHelper::value("id"));

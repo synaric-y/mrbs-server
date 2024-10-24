@@ -9,7 +9,7 @@ if (!checkAuth()){
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
-//判断用户是否具有权限
+// whether the user have the access to checking the device information
 if (getLevel($_SESSION['user']) < 2){
   ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
 }
@@ -19,6 +19,9 @@ if ($result ->count() == 0){
   ApiHelper::success(null);
 }
 
+// by checking the zset of the redis, if a device do not send the heart beat in 30 seconds, then the
+//    device will be considered as offline device.(Only sync_room will be record as connecting, other
+//    operation will not be record into redis)
 $devices = $result -> all_rows_keyed();
 $down_set = RedisConnect::zRangeByScore(RedisKeys::$HEART_BEAT, time() - 30, time());
 foreach ($devices as &$device){

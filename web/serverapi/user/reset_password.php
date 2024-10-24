@@ -3,6 +3,11 @@
 
 namespace MRBS;
 
+/*
+ * reset password of a user
+ * password0 should be the same with password1
+ */
+
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);

@@ -36,16 +36,14 @@ global $max_level;
 
 
 /*
- * 编辑用户接口
+ * create, edit or delete a user
  * @Params
- * action：用于判断该操作是新增还是编辑还是删除
- * id：当action是编辑或者删除时，id为待编辑或待删除用户的id
- * email：用户的电子邮箱地址
- * name：用户的用户名
- * password0：第一次输入的密码
- * password1：第二次输入的密码
- * level：用户的权限级别
- * display_name：用户用于展示的名字
+ * action：'add' means creating a user, 'edit' means editing a user, 'delete' means delete a user
+ * id：only be used when action is 'edit' or 'delete', id of the user which will be operated
+ * email：user email
+ * name：username(be used to log in)
+ * level：permission level
+ * display_name：name used to display
  */
 /*---------------------------------------------------------------------------*\
 |                         Authenticate the current user                         |
@@ -99,8 +97,8 @@ if (!empty($id)) {
   }
 }
 
-//  // Find out how many admins are left in the table - it's disastrous if the last one is deleted,
-//  // or admin rights are removed!
+//   Find out how many admins are left in the table - it's disastrous if the last one is deleted,
+//   or admin rights are removed!
 if ($action == "edit") {
   $sql = "SELECT COUNT(*)
               FROM " . _tbl('users') . "
@@ -134,10 +132,10 @@ if (!isset($name) || empty($name)) {
   ApiHelper::fail(get_vocab("empty_name"), ApiHelper::EMPTY_NAME);
 }
 
-///*---------------------------------------------------------------------------*\
-//|             Edit a given entry - 2nd phase: Update the database.            |
-//\*---------------------------------------------------------------------------*/
-//
+/*---------------------------------------------------------------------------*\
+|             Edit a given entry - 2nd phase: Update the database.            |
+\*---------------------------------------------------------------------------*/
+
 if (!empty($action) && ($action == "edit")){
   $isExist = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE id = ?", array($id));
   $user = $isExist -> next_row_keyed();
@@ -151,8 +149,6 @@ if (!empty($action) && ($action == "edit")){
   $user["display_name"] = $display_name;
   $user["email"] = $email;
   $user["remark"] = $remark;
-//  db() -> query("UPDATE " . _tbl("users") . " SET name = ?, display_name = ?, email = ?, password_hash = ? WHERE id = ?", array($user['name']
-//    , $user["display_name"], $user["email"], $user["password"], $user["id"]));
   $sql = "UPDATE " . _tbl("users") . " SET ";
   foreach ($user as $key => $value) {
     $sql .= $key . "=?,";
@@ -184,11 +180,10 @@ if (!empty($action) && ($action == "edit")){
 }
 
 
-//
-///*---------------------------------------------------------------------------*\
-//|                                Delete a user                                |
-//\*---------------------------------------------------------------------------*/
-//
+/*---------------------------------------------------------------------------*\
+|                                Delete a user                                |
+\*---------------------------------------------------------------------------*/
+
 if (!empty($action) && ($action == "delete")){
 
   if($username == $name){
@@ -198,10 +193,6 @@ if (!empty($action) && ($action == "delete")){
   $result = db() -> command("DELETE FROM " . _tbl("users") . " WHERE name = ?", array($name));
   if (!$result) {
     ApiHelper::fail("", ApiHelper::UNKNOWN_ERROR);
-//    $response["code"] = -7;
-//    $response["message"] = get_vocab("db_failed");
-//    echo json_encode($response);
-//    return;
   }
   ApiHelper::success(null);
 }

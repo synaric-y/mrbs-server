@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace MRBS;
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__, 3) . '/vendor/autoload.php';
 
 use MRBS\CalendarServer\CalendarServerManager;
 
@@ -13,14 +13,8 @@ use MRBS\CalendarServer\CalendarServerManager;
 // means that $id is the id of an entry in the repeat table.   This
 // should be fixed sometime.]
 
-require_once "../../functions_mail.inc";
+require_once dirname(__DIR__, 2) . "/functions_mail.inc";
 
-/*
- * 用于删除会议，支持删除普通会议以及周期会议
- * @Params
- * id：待删除会议的id
- * series：用于判断待删除会议是否是周期会议，如果不是，则该参数为空字符串，否则为任意非空字符串
- */
 
 $id = $_POST["entry_id"];
 $series = boolval($_POST["entry_series"] ?? false);

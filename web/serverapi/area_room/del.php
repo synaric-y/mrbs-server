@@ -7,12 +7,13 @@ use MRBS\CalendarServer\CalendarServerManager;
 
 
 /*
- * 用于判断删除区域或者房间的接口，如果删除放进，则会将该房间下的所有会议删除，但是如果删除区域，则必须保证该
- * 区域下没有其他房间，否则会删除失败。
+ * delete a room or an area, when deleting a room, the entries in the room will be deleted, but when
+ *    deleting an area, user should make sure there are no room in the area, otherwise the operation
+ *    will no be allowed
  * @Params
- * type：待删除的是区域还是房间
- * room：待删除的房间id
- * area：待删除的区域id
+ * type：'room' means deleting a room, 'area' means deleting an area
+ * room：id of the room which will be deleted
+ * area：id of the area which will be deleted
  */
 
 if (!checkAuth()) {
@@ -33,18 +34,7 @@ $type = $_POST['type'] ?? null;
 $room = $_POST['room'] ?? null;
 $area = $_POST['area'] ?? null;
 
-//$context = array(
-//    'view'      => $view,
-//    'view_all'  => $view_all,
-//    'year'      => $year,
-//    'month'     => $month,
-//    'day'       => $day,
-//    'area'      => $area,
-//    'room'      => $room ?? null
-//  );
 
-// This is gonna blast away something. We want them to be really
-// really sure that this is what they want to do.
 if ($type == "room") {
 
   db()->begin();
@@ -69,7 +59,6 @@ if ($type == "room") {
 
   db()->commit();
 
-  // Go back to the admin page
   ApiHelper::success(null);
 
 }

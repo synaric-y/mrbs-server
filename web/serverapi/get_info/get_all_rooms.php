@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace MRBS;
 
 /*
- * 获取所有房间信息
+ * get all rooms
  * @Params
- * type：用于判断是查询所有内容，还是某个区域下的房间，还是某个具体房间
- * id：待查询的区域或房间id
+ * type：'all' means all rooms, 'area' means the rooms in the area, 'room' means the room
+ * id：only be used when type is 'room' or 'area', means the id of the room or area
  * @Return
- * data中包含查询到的相应的区域、房间信息
+ * room information
  */
 
 $area = null;

@@ -11,21 +11,7 @@ require_once dirname(__DIR__, 2) . '/functions_mail.inc';
 use MRBS\CalendarServer\CalendarServerManager;
 
 global $min_booking_admin_level;
-//$is_ajax = is_ajax();
-//
-//if ($is_ajax && !checkAuthorised(this_page(), true))
-//{
-//  exit;
-//}
-//
-//
-//// Check the CSRF token
-//Form::checkToken();
 
-
-// (1) Check the user is authorised for this page
-//  ---------------------------------------------
-//checkAuthorised(this_page());
 
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
@@ -36,30 +22,7 @@ if (getLevel($_SESSION['user']) < $min_booking_admin_level){
   ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
 }
 
-//$sessionData = "";
-//session_decode($sessionData);
 $mrbs_username = $_SESSION['user'];
-//$mrbs_username = "";
-
-
-// (2) Get the form variables
-// --------------------------
-
-// NOTE:  the code on this page assumes that array form variables are passed
-// as an array of values, rather than an array indexed by value.   This is
-// particularly important for checkbox arrays which should be formed like this:
-//
-//    <input type="checkbox" name="foo[]" value="n">
-//    <input type="checkbox" name="foo[]" value="m">
-//
-// and not like this:
-//
-//    <input type="checkbox" name="foo[n]" value="1">
-//    <input type="checkbox" name="foo[m]" value="1">
-
-
-// This page can be called with an Ajax call.  In this case it just checks
-// the validity of a proposed booking and does not make the booking.
 
 function sanitize_room_id($id): int
 {
@@ -124,7 +87,6 @@ $form_vars = array(
 $just_check = false;
 
 foreach ($form_vars as $var => $var_type) {
-//  $$var = get_form_var($var, $var_type);
   if (isset($_POST[$var]))
     $$var = $_POST[$var];
 
@@ -158,7 +120,6 @@ if (!isset($rep_interval)) {
   $rep_interval = 1;
 }
 
-//
 // Sanitize the room ids
 $rooms = array_map(__NAMESPACE__ . '\sanitize_room_id', $rooms);
 
@@ -170,39 +131,35 @@ $row = $result -> next_row_keyed();
 if ($row['room_disabled'] == 1 || $row['area_disabled'] == 1){
   ApiHelper::fail(get_vocab("area_or_room_disabled"), ApiHelper::AREA_OR_ROOM_DISABLED);
 }
-//
 // Convert the registration opens and closes times into seconds
 if (isset($registration_opens_value) && isset($registration_opens_units)) {
   $registration_opens = $registration_opens_value;
   fromTimeString($registration_opens, $registration_opens_units);
   $registration_opens = constrain_int($registration_opens, 4);
 }
-//
+
 if (isset($registration_closes_value) && isset($registration_closes_units)) {
   $registration_closes = $registration_closes_value;
   fromTimeString($registration_closes, $registration_closes_units);
   $registration_closes = constrain_int($registration_closes, 4);
 }
-//
-//if (!$is_ajax)
-//{
-//  // Convert the database booleans (the custom field booleans are done later)
+
+// Convert the database booleans (the custom field booleans are done later)
 foreach (['allow_registration', 'registrant_limit_enabled', 'registration_opens_enabled', 'registration_closes_enabled'] as $var) {
   $$var = !empty($$var) ? 1 : 0;
 }
-//}
-//
+
 // If they're not an admin and multi-day bookings are not allowed, then
 // set the end date to the start date
 if (!is_book_admin($rooms) && $auth['only_admin_can_book_multiday']) {
   $end_date = $start_date;
 }
-//
+
 if (false === ($start_date_split = split_iso_date($start_date))) {
   ApiHelper::fail(get_vocab("invalid_start_time"), ApiHelper::INVALID_START_TIME);
 }
 list($start_year, $start_month, $start_day) = $start_date_split;
-//
+
 if (false === ($end_date_split = split_iso_date($end_date))) {
   ApiHelper::fail(get_vocab("invalid_end_time"), ApiHelper::INVALID_END_TIME);
 }
@@ -349,8 +306,7 @@ if ($no_mail) {
 // Note: we assume that
 // (1) this is not a series (we can't cope with them yet)
 // (2) we always get passed start_seconds and end_seconds in the Ajax data
-//if ($is_ajax && $commit)
-//{
+
 if (!empty($id)) {
   $old_booking = get_booking_info($id, false);
 
@@ -417,7 +373,7 @@ foreach ($fields as $field) {
     $custom_fields[$field['name']] = $old_booking[$field['name']];
   }
 }
-//}
+
 
 
 // When All Day is checked, $start_seconds and $end_seconds are disabled and so won't
@@ -475,12 +431,9 @@ if (!empty($id)) {
 
 // Must have write access to at least one of the rooms
 if (!getWritable($create_by, $target_rooms, false)) {
-//  showAccessDenied($view, $view_all, $year, $month, $day, $area, $room ?? null);
-//  exit;
   ApiHelper::fail(get_vocab("no_access_to_entry"), ApiHelper::NO_ACCESS_TO_ENTRY);
 }
-//
-//
+
 if ($enable_periods) {
   $resolution = 60;
 }
@@ -569,55 +522,7 @@ if ($repeat_rule->getType() != RepeatRule::NONE) {
   }
 }
 
-// If we're committing this booking, get the start day/month/year and
-// make them the current day/month/year
-//if (!$is_ajax || $commit)
-//{
-//  $day = $start_day;
-//  $month = $start_month;
-//  $year = $start_year;
-//}
 
-// Set up the return URL.    As the user has tried to book a particular room and a particular
-// day, we must consider these to be the new "sticky room" and "sticky day", so modify the
-// return URL accordingly.
-
-// First get the return URL basename, having stripped off the old query string
-//   (1) It's possible that $returl could be empty, for example if edit_entry.php had been called
-//       direct, perhaps if the user has it set as a bookmark
-//   (2) Avoid an endless loop.   It shouldn't happen, but just in case ...
-//   (3) If you've come from search, you probably don't want to go back there (and if you did we'd
-//       have to preserve the search parameter in the query string)
-//if (isset($returl) && ($returl !== ''))
-//{
-//  $returl = parse_url($returl);
-//  if ($returl !== false)
-//  {
-//    if (isset($returl['query']))
-//    {
-//      parse_str($returl['query'], $query_vars);
-//    }
-//    $view = $query_vars['view'] ?? $default_view;
-//    $view_all = $query_vars['view_all'] ?? (($default_view_all) ? 1 : 0);
-//    $returl = explode('/', $returl['path']);
-//    $returl = end($returl);
-//  }
-//}
-//
-//if (empty($returl) ||
-//    in_array($returl, array('edit_entry.php',
-//                            'edit_entry_handler.php',
-//                            'search.php')))
-//{
-//  $returl = 'index.php';
-//}
-//
-//// If we haven't been given a sensible date then get out of here and don't try and make a booking
-//if (!isset($start_day) || !isset($start_month) || !isset($start_year) || !checkdate($start_month, $start_day, $start_year))
-//{
-//  location_header($returl);
-//}
-//
 //// If the old sticky room is one of the rooms requested for booking, then don't change the sticky room.
 //// Otherwise change the sticky room to be one of the new rooms.
 if (!in_array($room, $rooms)) {
@@ -777,33 +682,8 @@ try {
     ApiHelper::fail(get_vocab("no_access_no_policy"), ApiHelper::NO_ACCESS_NO_POLICY);
   }
 
-  // If this is an Ajax request, output the result and finish
-//  if ($is_ajax)
-//  {
-  // Generate the new HTML
-//    if ($commit)
-//    {
-  // Generate the new HTML
-//      require_once "functions_table.inc";
-//
-//      switch ($view)
-//      {
-//        case 'day':
-//          $result['table_innerhtml'] = day_table_innerhtml($view, $year, $month, $day, $area, $room, $timetohighlight);
-//          break;
-//        case 'week':
-//          $result['table_innerhtml'] = week_table_innerhtml($view, $view_all, $year, $month, $day, $area, $room, $timetohighlight);
-//          break;
-//        default:
-//          throw new \Exception("Unsupported view '$view'");
-//          break;
-//      }
 }
-//    http_headers(array("Content-Type: application/json"));
-//    echo json_encode($result);
-//    exit;
-//  }
-//}
+
 catch (\Exception $e) {
 ApiHelper::fail("", ApiHelper::UNKNOWN_ERROR);
 }

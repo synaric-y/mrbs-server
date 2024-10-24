@@ -4,15 +4,12 @@ declare(strict_types=1);
 namespace MRBS;
 
 /*
- * 用于编辑会议的接口
+ * create or edit an area
  * @Params
- * area：区域id
- * sort_key：排序值
- * area_name：区域名称
- * area_disabled：区域是否禁用
- * area_timezone：区域时区，TODO 暂时未启用
- * area_admin_email：区域管理员电子邮箱
- * area_start_first_slot：区域
+ * area：id of the area which will be edited, only be used when editing an area
+ * area_name：area name
+ * area_disabled：change the disabled status
+ * area_timezone：timezone of the area，TODO temporarily useless
  */
 
 if (!checkAuth()){
@@ -106,7 +103,7 @@ foreach ($form_vars as $var => $var_type) {
         break;
     }
   }
-//  // Trim the strings and truncate them to the maximum field length
+// Trim the strings and truncate them to the maximum field length
   if (is_string($$var)) {
     $$var = trim($$var);
     $$var = truncate($$var, "area.$var");
@@ -124,23 +121,18 @@ if (!isset($area_default_type))
 foreach ($interval_types as $interval_type)
 {
   $var = "area_max_per_$interval_type";
-//  $$var = get_form_var($var, 'int');
   if (isset($_POST[$var]))
     $$var = intval($_POST[$var]);
   $var = "area_max_per_{$interval_type}_enabled";
-//  $$var = get_form_var($var, 'string');
   if (isset($_POST[$var]))
     $$var = (string) $_POST[$var] ?? null;
   $var = "area_max_secs_per_$interval_type";
-//  $$var = get_form_var($var, 'int');
   if (isset($_POST[$var]))
     $$var = intval($_POST[$var]);
   $var = "area_max_secs_per_{$interval_type}_units";
-//  $$var = get_form_var($var, 'string');
   if (isset($_POST[$var]))
     $$var = (string) $_POST[$var] ?? null;
   $var = "area_max_secs_per_{$interval_type}_enabled";
-//  $$var = get_form_var($var, 'string');
   if (isset($_POST[$var]))
     $$var = (string) $_POST[$var] ?? null;
 }
@@ -150,7 +142,7 @@ foreach ($interval_types as $interval_type)
 
 if (empty($area))
 {
-  throw new \Exception('$area is empty');
+  ApiHelper::fail(get_vocab("invalid_area"), ApiHelper::INVALID_AREA);
 }
 
 // Initialise the error array

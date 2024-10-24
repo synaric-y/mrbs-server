@@ -2,11 +2,6 @@
 declare(strict_types=1);
 namespace MRBS;
 
-// Check the CSRF token.
-//Form::checkToken();
-//
-//// Check the user is authorised for this page
-//checkAuthorised(this_page());
 
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
@@ -40,7 +35,6 @@ $group_ids = $_POST["group_ids"] ?? null;
 
 foreach($form_vars as $var => $var_type)
 {
-//  $$var = get_form_var($var, $var_type);
   $$var = $_POST[$var] ?? null;
   if (($var_type == 'bool') || ($$var !== null))
   {

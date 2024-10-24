@@ -4,6 +4,10 @@ declare(strict_types=1);
 namespace MRBS;
 
 
+/*
+ * use a specific version of device interface
+ */
+
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);

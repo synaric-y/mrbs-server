@@ -3,6 +3,10 @@
 
 namespace MRBS;
 
+/*
+ * set the disabled status of a user
+ */
+
 if (!checkAuth()) {
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);

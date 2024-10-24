@@ -9,7 +9,7 @@ require_once "mrbs_sql.inc";
 header('Content-Type: application/json');
 
 /*
- * 登出接口，无传入传出值，需要有登录状态的cookie
+ * logout, request should take the cookie
  */
 
 if (!isset($_SESSION['user']) || empty($_SESSION) ) {

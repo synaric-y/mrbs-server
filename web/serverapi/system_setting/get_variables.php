@@ -5,6 +5,10 @@ declare(strict_types=1);
 
 namespace MRBS;
 
+/*
+ * get variables when the variables be set 1
+ */
+
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);

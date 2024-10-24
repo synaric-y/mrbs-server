@@ -6,16 +6,17 @@ namespace MRBS;
 global $datetime_formats;
 
 /*
- * 用于首页显示，查询某一个时间段内的所有会议
+ * get entries between start_time and end_time
  * @Params
- * type：判断根据什么条件进行查询，根据区域时为area，根据房间时为room，无限定条件时为all
- * id：如果是根据区域或者房间进行查询，则需要传入该区域或房间的id
- * start_time：查询范围的开始时间，为秒级时间戳
- * end_time：查询范围的结束时间，为秒级时间戳
- * timezone：前端的时区，TODO 该参数是目前暂定的防止由于时区导致的显示问题的解决方案，后期将尝试改为多时区
+ * type：'all' means the entries in all rooms, 'area' means the entries in the area, 'room' means the
+ *     entries in the room
+ * id：only be used when type is 'area' or 'room', id of the room or area
+ * start_time：timestamp
+ * end_time：timestamp
+ * timezone：TODO temporarily be the parameter, will get from area information soon after
  * @Return
- * data中areas包含所有的会议信息，max_time表示当前查询的区域中最晚的可预定时间，min_time表示当前查询区域中最早
- * 的可预订时间，time表示后端时间转换到前端时区后的时间，timestamp表示当前后端时间戳
+ * entries information, the booking min_time of all area, the booking max_time of all area
+ *    the timestamp and date of now
  */
 
 function buildTree($data, $parent_id = -1)

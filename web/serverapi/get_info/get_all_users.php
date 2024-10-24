@@ -4,11 +4,16 @@ declare(strict_types=1);
 namespace MRBS;
 
 /*
- * 获取所有用户信息
+ * get all user information
  * @Params
- * 无
+ * name: username(be used to log in)
+ * display_name: name to display
+ * disabled: whether the user is disabled
+ * level: permission level
+ * pagesize: display quantity per page
+ * pagenum: page number
  * @Return
- * data中包含查询到的所有信息
+ * user information and total number of users
  */
 
 if (!checkAuth()){
@@ -54,6 +59,7 @@ if ($count > 0){
     }
   }
 }
+
 $start_num = ($pagenum - 1) * $pagesize;
 $sql .= " LIMIT $start_num, $pagesize";
 $result = db() -> query($sql, $params);

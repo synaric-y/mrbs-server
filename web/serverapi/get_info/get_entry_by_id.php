@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace MRBS;
 
 /*
- * 根据会议id查询会议
+ * get entry by entry id
  * @Params
- * id：待查询的会议id
+ * id：id of the entry
  * @Return
- * data中包含该会议的所有信息
+ * entry information
  */
 if (isset($_POST['id']))
   $id = $_POST['id'];

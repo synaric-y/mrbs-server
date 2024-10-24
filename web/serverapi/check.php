@@ -2,8 +2,8 @@
 namespace MRBS;
 
 /*
- * 由于前端发送请求后，后端会根据前端的cookie自动查询解析session，所以只需要判断session中是否有用户
- * 数据就可以判断用户是否登录了。
+ * check if the user is logged in
+ *
  */
 function checkAuth()
 {
@@ -15,7 +15,7 @@ function checkAuth()
 }
 
 /*
- * 用于获取用户的权限级别，TODO 当前系统中，管理员权限级别为2，普通用户权限级别为1。
+ * get the permission level of a user by username
  */
 function getLevel($name)
 {
@@ -27,6 +27,9 @@ function getLevel($name)
   return intval($row['level']);
 }
 
+/*
+ * check if the user can book an entry
+ */
 function user_can_book($name, $room)
 {
   $result = db()->query("SELECT * FROM " . _tbl("room_group") . " WHERE room_id = ?", array($room['id']));

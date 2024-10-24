@@ -2,7 +2,7 @@
 namespace MRBS;
 
 /*
- * 用于统一调用的接口，通过此接口固定response的头参数
+ * Business logic entry
  */
 
 $origin_arr = [
@@ -10,7 +10,6 @@ $origin_arr = [
   'http://localhost:5173',
   'http://172.16.89.161:83',
   'http://172.16.89.91:81',
-  'http://localhost'
 ];
 
 $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';

@@ -8,6 +8,16 @@ global $allow_registration_default, $registrant_limit_default, $registrant_limit
 require_once "../mrbs_sql.inc";
 require "../defaultincludes.inc";
 
+/*
+ * book meeting on wxwork
+ * @params
+ * room_id: where meeting will be hold on
+ * start_time: when the meeting will be hold on(timestamp)
+ * end_time: when the meeting will end(timestamp)
+ * name: meeting name
+ * @return
+ * none
+ */
 
 if (!checkAuth()){
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
@@ -15,11 +25,10 @@ if (!checkAuth()){
   return;
 }
 
-$data = $_POST;
-$roomId = intval($data['room_id']);
-$start_time = intval($data['start_time']);
-$end_time = intval($data['end_time']);
-$name = $data['name'];
+$roomId = intval($_POST['room_id']);
+$start_time = intval($_POST['start_time']);
+$end_time = intval($_POST['end_time']);
+$name = $_POST['name'];
 
 
 $now = time();

@@ -2,12 +2,11 @@
 declare(strict_types=1);
 namespace MRBS;
 
-require_once "../defaultincludes.inc";
-require_once "../mrbs_sql.inc";
+/*
+ * useless file
+ */
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-$area_id = intval($data['area_id']);
+$area_id = intval($_POST['area_id']);
 
 $rooms = get_rooms($area_id);
 

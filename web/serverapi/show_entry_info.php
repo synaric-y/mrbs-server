@@ -7,11 +7,11 @@ require_once "defaultincludes.inc";
 require_once "mrbs_sql.inc";
 
 /*
- * 根据id查询会议信息
+ * get entry information by entry id
  * @Params
- * id：待查询会议的id
+ * id：id of the entry which will be searched
  * @Return
- * data中包含该会议的信息
+ * entry information
  */
 
 $id = intval($_POST['id']);

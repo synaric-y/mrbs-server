@@ -6,11 +6,11 @@ namespace MRBS;
 
 
 /*
- * 查询自己创建的会议
+ * get the entries created by self
  * @Params
- * 无
+ * none
  * @Return
- * 所有自己创建的会议
+ * all entries created by user self
  */
 
 if (!checkAuth()){
