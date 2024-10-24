@@ -26,7 +26,7 @@ if ($result -> count() == 0){
 }
 
 $row = $result -> next_row_keyed();
-if (empty($row['room_id'])){
+if ($row['is_set'] == 0){
   ApiHelper::success(["is_set" => 0]);
 }
 $result = db()->query("SELECT * FROM " . _tbl("room") . " R LEFT JOIN "  . _tbl("area") . " A ON R.area_id = A.id WHERE R.id = ?", array($row['room_id']));
