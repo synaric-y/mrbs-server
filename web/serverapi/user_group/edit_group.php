@@ -35,7 +35,7 @@ if ($group['source'] == 'ad') {
 }
 if (!empty($third_id)) {
   $g2g = DBHelper::one(_tbl("g2g_map"), "group_id = $group_id");
-  if ($g2g['parent_id'] != -1) {
+  if (!empty($g2g) && $g2g['parent_id'] != -1) {
     ApiHelper::fail(get_vocab("group_cannot_bind_third"), ApiHelper::GROUP_CANNOT_SYNC_THIRD);
   }
 }
