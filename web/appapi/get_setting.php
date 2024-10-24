@@ -26,6 +26,9 @@ if ($result -> count() == 0){
 }
 
 $row = $result -> next_row_keyed();
+if (empty($row['room_id'])){
+  ApiHelper::success(["is_set" => 0]);
+}
 $result = db()->query("SELECT * FROM " . _tbl("room") . " R LEFT JOIN "  . _tbl("area") . " A ON R.area_id = A.id WHERE R.id = ?", array($row['room_id']));
 if ($result -> count() == 0){
   ApiHelper::fail(get_vocab("room_not_exist"), ApiHelper::ROOM_NOT_EXIST);
