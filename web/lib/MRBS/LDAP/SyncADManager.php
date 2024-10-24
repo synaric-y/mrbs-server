@@ -16,20 +16,33 @@ use function MRBS\db;
 use function MRBS\log_ad;
 use function MRBS\resolve_user_group_count;
 
+/**
+ * Synchronize User and Group from AD(LDAP).
+ */
 class SyncADManager
 {
 
-  // Expire time for redis key which caches current task info
+  /*
+   * Expire time for redis key which caches current task info
+   */
   static int $TASK_EXPIRE_SECONDS = 3600;
-  // Batch count to report task progress
-  static $REPORT_INTERVAL = 200;
+  /*
+   * Batch count to report task progress
+   */
+  static int $REPORT_INTERVAL = 200;
+  /*
+   * Record synchronization progress
+   */
   private $progress = [];
-  private $sync_version = "";
+  /*
+   * Current synchronization batch version
+   */
+  private string $sync_version = "";
 
   /**
    * Synchronize User and Group from AD(LDAP).
    */
-  public function syncAD($sync_version) {
+  public function sync($sync_version) {
     try {
       $this->_syncAD($sync_version);
     } catch (\Throwable $e) {
@@ -40,7 +53,7 @@ class SyncADManager
     }
   }
 
-  public function _syncAD($sync_version)
+  private function _syncAD($sync_version)
   {
     $CREATE_SOURCE = "ad";
     $this->sync_version = $sync_version ?? md5(uniqid('', true));
@@ -236,7 +249,7 @@ class SyncADManager
       $temp++;
       try {
         $parentNodeList = [];
-        $this->recursiveGetParentList($localGroupList, $localGroup, $parentNodeList, 0);
+        $this->_recursiveGetParentList($localGroupList, $localGroup, $parentNodeList, 0);
         if (empty($parentNodeList)) {
           continue;
         }
@@ -264,7 +277,7 @@ class SyncADManager
       $temp++;
       try {
         $parentNodeList = [];
-        $this->recursiveGetParentList($localGroupList, $localUser, $parentNodeList, 0);
+        $this->_recursiveGetParentList($localGroupList, $localUser, $parentNodeList, 0);
         if (empty($parentNodeList)) {
           continue;
         }
@@ -327,7 +340,7 @@ class SyncADManager
     return $syncResult;
   }
 
-  function recursiveGetParentList($nodeMap, $node, &$resultList, $deep)
+  private function _recursiveGetParentList($nodeMap, $node, &$resultList, $deep)
   {
     $pidString = $node['third_parent_id'];
     $pidList = explode(",", $pidString);
@@ -354,12 +367,12 @@ class SyncADManager
       if (empty($parentNode)) {
         continue;
       } else {
-        $this->recursiveGetParentList($nodeMap, $parentNode, $resultList, $deep + 1);
+        $this->_recursiveGetParentList($nodeMap, $parentNode, $resultList, $deep + 1);
       }
     }
   }
 
-  function _handleUser(User $user, &$total, array $originGroupList, $option)
+  private function _handleUser(User $user, &$total, array $originGroupList, $option)
   {
     $userAccountName = $option['userAccountName'];
 
@@ -388,7 +401,7 @@ class SyncADManager
     return $result;
   }
 
-  function _handleGroup(Group $group, &$totalGroup)
+  private function _handleGroup(Group $group, &$totalGroup)
   {
     $result = array();
     $result['name'] = $group->getName();
@@ -409,13 +422,13 @@ class SyncADManager
     return $result;
   }
 
-  function _GUIDtoStr($binary_guid)
+  private function _GUIDtoStr($binary_guid)
   {
     $unpacked = unpack('Va/v2b/n2c/Nd', $binary_guid);
     return sprintf('%08X-%04X-%04X-%04X-%04X%08X', $unpacked['a'], $unpacked['b1'], $unpacked['b2'], $unpacked['c1'], $unpacked['c2'], $unpacked['d']);
   }
 
-  function _initProgress($steps)
+  private function _initProgress($steps)
   {
     for ($i = 0; $i < $steps; $i++) {
       $this->progress[] = array(
@@ -425,7 +438,7 @@ class SyncADManager
     }
   }
 
-  function _reportProgress($step, $current, $total)
+  private function _reportProgress($step, $current, $total)
   {
     if (empty($this->progress[$step])) {
       $this->progress[] = array();
@@ -447,7 +460,7 @@ class SyncADManager
     }
   }
 
-  function _reportFail()
+  private function _reportFail()
   {
     $task = RedisConnect::get(RedisKeys::$CURRENT_SYNC_AD_TASK);
     if (!empty($task)) {
@@ -458,7 +471,7 @@ class SyncADManager
     }
   }
 
-  function _reportSuccess($report)
+  private function _reportSuccess($report)
   {
     $task = RedisConnect::get(RedisKeys::$CURRENT_SYNC_AD_TASK);
     if (!empty($task)) {

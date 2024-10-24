@@ -22,7 +22,7 @@ if (empty($sync_version) || empty($task)) {
 }
 
 $manager = new SyncADManager();
-$manager->syncAD($sync_version);
+$manager->sync($sync_version);
 
 $result = array();
 ApiHelper::success($result);
