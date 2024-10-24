@@ -7,6 +7,10 @@ namespace MRBS;
 require_once "../mrbs_sql.inc";
 require "../defaultincludes.inc";
 
+/*
+ * useless file
+ * a temptation to update the online status
+ */
 while(1){
   $result = RedisConnect::zRangeByScore(RedisKeys::$HEART_BEAT, '-inf', time() - 30);
   if ($result === false){

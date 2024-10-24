@@ -7,6 +7,10 @@ namespace MRBS;
 
 use ZipArchive;
 
+/*
+ * upload the device interface code with version
+ */
+
 if (!checkAuth()) {
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
@@ -30,6 +34,8 @@ if($file['error'] === UPLOAD_ERR_OK){
   if (strtolower($fileInfo['extension']) !== 'zip'){
     ApiHelper::fail(get_vocab("unsupport_file_type"), ApiHelper::UNSUPPORT_FILE_TYPE);
   }
+
+  // file will be placed here
   $dir = dirname(__DIR__, 3) . "/display/" . $version;
   if (!is_dir($dir)) {
     mkdir($dir, 0755, true);

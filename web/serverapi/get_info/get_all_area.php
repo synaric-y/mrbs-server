@@ -5,6 +5,10 @@ declare(strict_types=1);
 
 namespace MRBS;
 
+/*
+ * get all area ids and names
+ */
+
 $is_charge = $_POST["is_charge"] ?? null;
 $battery_level = $_POST["battery_level"] ?? null;
 $device_id = $_POST["device_id"] ?? null;

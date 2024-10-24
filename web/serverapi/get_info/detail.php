@@ -4,12 +4,12 @@ namespace MRBS;
 
 
 /*
- * 用于获取房间或者区域的具体信息
+ * get all information of a room or an area
  * @Params
- * type：用于判断需要获取的是房间信息还是区域信息
- * id：待获取的房间或者区域的id
+ * type：'room' means searching room information, 'area' means searching area information
+ * id：the id of the room or area which should be searched
  * @Return
- * data中包含查询到的房间或者区域的信息
+ * the information of the room or area
  */
 
 

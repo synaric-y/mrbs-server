@@ -9,6 +9,8 @@ global $allow_registration_default, $registrant_limit_default, $registrant_limit
 global $registration_opens_default, $registration_opens_enabled_default, $registration_closes_default;
 global $registration_closes_enabled_default;
 
+
+//according to the device, book fast meeting to the room
 $device_id = $_POST['device_id'];
 $begin_time = $_POST['begin_time'];
 $end_time = $_POST['end_time'];

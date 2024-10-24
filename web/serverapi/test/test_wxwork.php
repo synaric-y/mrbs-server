@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+/*
+ * though getting access token to check if the wxwork server can be connected
+ */
 
 require_once dirname(__DIR__, 3) . '/vendor/autoload.php';
 require_once dirname(__DIR__, 2) . "/lib/Wxwork/api/src/CorpAPI.class.php";

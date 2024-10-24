@@ -7,12 +7,12 @@ namespace MRBS;
 header('Content-Type: application/json');
 
 /*
- * 用于登录的接口
+ * login
  * @Params
- * username：登录用户名
- * password：登录密码
+ * username
+ * password
  * @Return
- * 无，但是会设置js不可更改的cookie
+ * none
  */
 
 $username = $_POST['username'];

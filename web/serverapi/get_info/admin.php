@@ -3,12 +3,12 @@ declare(strict_types=1);
 namespace MRBS;
 
 /*
- * 用于查询区域或房间信息
+ * get all room or area
  * @Param
- * type：查询区域时为area，查询房间时为room
- * area：查询房间时生效，用于限定查询某个区域的房间
+ * type：'room' means searching room information, 'area' means searching area information
+ * area：when searching all rooms, the id of area should be given
  * @Return
- * code为0时表示成功，data中会包含查询到的数据
+ * all room or area information with tree structure
  */
 
 function buildTree($rows, $parent_id = -1): array
@@ -39,9 +39,7 @@ if (getLevel($_SESSION['user']) < 2){
 $type = $_POST['type'];
 $area = $_POST['area'] ?? null;
 
-if ($type == 'all'){
-
-} else if ($type == 'area'){
+ if ($type == 'area'){
   $sql = "SELECT * FROM " . _tbl("area");
   $result = db() -> query($sql);
   $data = array();

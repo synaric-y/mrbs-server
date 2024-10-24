@@ -16,7 +16,8 @@ function getTimeZoneByRoom($roomId)
   return $result['timezone'];
 }
 
-//$room_id = intval(ApiHelper::value("room_id"));
+
+// Query the room bound to the device in the database based on the actual device, and then return the meeting information in the room to the terminal device.
 $device_id = $_POST['device_id'];
 $is_charge = $_POST['is_charge'];
 $battery_level = $_POST['battery_level'];
@@ -47,6 +48,7 @@ if (empty($row['room_id'])){
 }
 $timezone = getTimeZoneByRoom($row['room_id']);
 
+//Save the communication time into the zset of redis to facilitate querying to determine whether the device is disconnected.
 RedisConnect::zADD(RedisKeys::$HEART_BEAT, $device_id, time());
 
 if (!empty($timezone)) {

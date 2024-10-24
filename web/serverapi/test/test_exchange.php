@@ -14,6 +14,10 @@ use function MRBS\_tbl;
 use function MRBS\get_vocab;
 use MRBS\ApiHelper;
 
+/*
+ * though getting calendar item to check if the exchange server can be connected
+ */
+
 try{
     $api = API::withUsernameAndPassword($exchange_server, "Room.Dev3", "JI%oSlfOS9");
     $calendar = $api->getCalendar();

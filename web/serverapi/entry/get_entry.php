@@ -5,6 +5,10 @@ declare(strict_types=1);
 
 namespace MRBS;
 
+/*
+ * get all entries(include the entries which is passed)
+ */
+
 if (!checkAuth()){
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);

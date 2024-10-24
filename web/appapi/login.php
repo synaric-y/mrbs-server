@@ -6,12 +6,12 @@ namespace MRBS;
 header('Content-Type: application/json');
 
 /*
- * 用于登录的接口
+ * login in device
  * @Params
  * username：登录用户名
  * password：登录密码
  * @Return
- * 无，但是会设置js不可更改的cookie
+ * no return value but cookie
  */
 
 $username = $_POST['username'];
@@ -25,6 +25,7 @@ $result = auth() -> validateUser($username, $password);
 if (!$result) {
   ApiHelper::fail(get_vocab("invalid_username_or_password"), ApiHelper::INVALID_USERNAME_OR_PASSWORD);
 }
+// specially, when someone log in on device, the account must be a manager
 if (getLevel($username) < 2){
   ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
 }

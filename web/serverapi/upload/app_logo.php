@@ -7,6 +7,10 @@ namespace MRBS;
 
 use ZipArchive;
 
+/*
+ * upload the logo of the device interface
+ */
+
 if (!checkAuth()) {
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);

@@ -7,9 +7,8 @@ namespace MRBS;
 require_once "../mrbs_sql.inc";
 require "../defaultincludes.inc";
 
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-$meeting_id = $data["meeting_id"];
+
+$meeting_id = $_POST["meeting_id"];
 
 $meeting = DBHelper::one(_tbl("entry"), "id = $meeting_id");
 

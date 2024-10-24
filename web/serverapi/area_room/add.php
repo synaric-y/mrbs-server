@@ -4,17 +4,16 @@ declare(strict_types=1);
 namespace MRBS;
 
 /*
- * 添加区域或房间接口
+ * add a room or an area
  * @Param
- * name：房间或区域名称（不可为空）
- * description：房间描述，TODO 目前用来存储房间内设备
- * capacity：房间的容纳量
- * room_admin_email：房间管理员的email
- * type：添加的是区域还是房间，如果是区域则该参数为area，如果是房间则该参数为room
- * area：如果添加的是房间，需要给出区域的id
+ * name：room name or area name(not null)
+ * description：room or area description, TODO temporarily to save the device(except tablet) in the room, and have not be used
+ * capacity：room capacity(useful when add a room)
+ * room_admin_email：email of the room manager
+ * type：'room' means adding a room, 'area' means adding an area, other words are invalid
+ * area：when adding a room, an area should be given to show which area the room belongs to
  * @Return
- * 如果code为0，则代表操作成功，如果为-99，说明用户没有登录状态，如果为-98，说明用户没有该操作权限，如果-9代表
- * type参数无效，如果为-10说明name参数为空
+ * none
  */
 
 // This file is for adding new areas/rooms
@@ -24,13 +23,13 @@ $parent_id = intval($_POST['parent_id']) ?? -1;
 $group_ids = $_POST['group_ids'] ?? null;
 
 
-//判断用户是否登录
+//whether user is logged in
 if (!checkAuth()) {
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
-//判断用户是否具有权限
+//whether user have the access to add room or area
 
 if (getLevel($_SESSION['user']) < 2) {
   ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);

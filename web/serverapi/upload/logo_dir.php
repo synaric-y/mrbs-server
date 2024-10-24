@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+/*
+ * get the logo directory
+ */
+
 namespace MRBS;
 
 if (!checkAuth()) {

@@ -5,11 +5,11 @@ namespace MRBS;
 
 
 /*
- * 根据用户id查询用户信息
+ * get user information by user id
  * @Params
- * id：用户id
+ * id：user id
  * @Return
- * data中包含该用户的所有信息
+ * user information
  */
 
 $id = $_POST['id'];

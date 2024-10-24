@@ -5,11 +5,11 @@ namespace MRBS;
 
 
 /*
- * 用于获取所有管理员名称的接口
+ * get all admin ids and names
  * @Param
- * 无
+ * none
  * @Return
- * 所有管理员的name
+ * all admin ids and names
  */
 
 if (!checkAuth()){

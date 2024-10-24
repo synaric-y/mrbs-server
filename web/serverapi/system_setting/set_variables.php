@@ -5,6 +5,10 @@ declare(strict_types=1);
 
 namespace MRBS;
 
+/*
+ * set the system variables when the variables is not null
+ */
+
 if (!checkAuth()) {
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
