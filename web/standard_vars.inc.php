@@ -43,6 +43,6 @@ $fast_meeting_type = $variables['fast_meeting_type'];
 $resolution = $variables['resolution'];
 $company_name = $variables['company_name'];
 $init_status = $variables['init_status'];
-$time_type = $variables['time_type'];
+$time_type = intval($variables['time_type']);
 $server_address = $variables['server_address'];
 

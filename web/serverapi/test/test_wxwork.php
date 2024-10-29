@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * though getting access token to check if the wxwork server can be connected
+ * though getting access token, check if the wxwork server can be connected
  */
 
 require_once dirname(__DIR__, 3) . '/vendor/autoload.php';

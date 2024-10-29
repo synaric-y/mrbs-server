@@ -193,6 +193,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
       return;
     }
     if ($ci->getCalendarItemType() == "RecurringMaster") {
+      $recurrence = $ci -> getRecurrence();
 //      try {
 //        $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
 //      } catch (\Exception $e) {
@@ -200,7 +201,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
 //        \MRBS\log_i($this::$TAG, $e->getTraceAsString());
 //      }
 //      return;
-      if ($ci->getRecurrence()->getWeeklyRecurrence() == null || $ci->getRecurrence()->getEndDateRecurrence() == null) {
+      if ($recurrence->getWeeklyRecurrence() == null || $recurrence->getEndDateRecurrence() == null) {
         \MRBS\log_i($this::$TAG, "not support calendar type: RecurringMaster");
         try {
           $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
@@ -211,12 +212,15 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
         return;
       } else {
         //TODO Weekly Recurrence
-        if ($ci->getRecurrence()->getEndDateRecurrence() !== null) {
-          $start_time = new DateTime($ci->getRecurrence()->getEndDateRecurrence()->getStartDate());
-          $end_time = $ci->getRecurrence()->getEndDateRecurrence()->getEndDate();
+        $end_date_recurrence = $recurrence -> getEndDateRecurrence();
+        $weekly_recurrence = $recurrence -> getWeeklyRecurrence();
+        $days_of_week = $weekly_recurrence -> getDaysOfWeek();
+        if ($end_date_recurrence !== null) {
+          $start_time = new DateTime($end_date_recurrence->getStartDate());
+          $end_time = $end_date_recurrence->getEndDate();
           switch (intval(date("w", $start_time -> getTimestamp()))) {
             case 0:
-              if (!strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Sunday")) {
+              if (!strpos($days_of_week, "Sunday")) {
                 \MRBS\log_i($this::$TAG, "today of week should be include");
                 try {
                   $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
@@ -228,7 +232,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
               }
               break;
             case 1:
-              if (!strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Monday")) {
+              if (!strpos($days_of_week, "Monday")) {
                 \MRBS\log_i($this::$TAG, "today of week should be include");
                 try {
                   $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
@@ -240,7 +244,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
               }
               break;
             case 2:
-              if (!strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Tuesday")) {
+              if (!strpos($days_of_week, "Tuesday")) {
                 \MRBS\log_i($this::$TAG, "today of week should be include");
                 try {
                   $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
@@ -252,7 +256,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
               }
               break;
             case 3:
-              if (!strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Wednesday")) {
+              if (!strpos($days_of_week, "Wednesday")) {
                 \MRBS\log_i($this::$TAG, "today of week should be include");
                 try {
                   $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
@@ -264,7 +268,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
               }
               break;
             case 4:
-              if (!strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Thursday")) {
+              if (!strpos($days_of_week, "Thursday")) {
                 \MRBS\log_i($this::$TAG, "today of week should be include");
                 try {
                   $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
@@ -276,7 +280,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
               }
               break;
             case 5:
-              if (!strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Friday")) {
+              if (!strpos($days_of_week, "Friday")) {
                 \MRBS\log_i($this::$TAG, "today of week should be include");
                 try {
                   $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
@@ -288,7 +292,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
               }
               break;
             case 6:
-              if (!strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Saturday")) {
+              if (!strpos($days_of_week, "Saturday")) {
                 \MRBS\log_i($this::$TAG, "today of week should be include");
                 try {
                   $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
@@ -311,26 +315,27 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
           }
           $rep_rule = new \MRBS\RepeatRule();
           $rep_rule->setType(RepeatRule::WEEKLY);
+          $e_days_of_week = $days_of_week;
           $days_of_week = array();
-          if (strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Sunday") !== false){
+          if (strpos($e_days_of_week, "Sunday") !== false){
             $days_of_week[] = 0;
           }
-          if (strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Monday") !== false){
+          if (strpos($e_days_of_week, "Monday") !== false){
             $days_of_week[] = 1;
           }
-          if (strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Tuesday") !== false){
+          if (strpos($e_days_of_week, "Tuesday") !== false){
             $days_of_week[] = 2;
           }
-          if (strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Wednesday") !== false){
+          if (strpos($e_days_of_week, "Wednesday") !== false){
             $days_of_week[] = 3;
           }
-          if (strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Thursday") !== false){
+          if (strpos($e_days_of_week, "Thursday") !== false){
             $days_of_week[] = 4;
           }
-          if (strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Friday") !== false){
+          if (strpos($e_days_of_week, "Friday") !== false){
             $days_of_week[] = 5;
           }
-          if (strpos($ci->getRecurrence()->getWeeklyRecurrence()->getDaysOfWeek(), "Saturday") !== false){
+          if (strpos($e_days_of_week, "Saturday") !== false){
             $days_of_week[] = 6;
           }
           if (count($days_of_week) == 0){
@@ -345,7 +350,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
           }
           $rep_rule -> setDays($days_of_week);
           $rep_rule -> setEndDate(new \MRBS\DateTime($end_time));
-          $rep_rule -> setInterval($ci->getRecurrence()->getWeeklyRecurrence()->getInterval());
+          $rep_rule -> setInterval($weekly_recurrence->getInterval());
           $adapter = new CalendarAdapter(CalendarAdapter::$MODE_ADD);
           $this -> fmtChangeList['create'][] = array(
             "from" => "exchange",

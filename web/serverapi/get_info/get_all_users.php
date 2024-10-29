@@ -35,11 +35,11 @@ $vars = array(
   "level"
 );
 
-$count = 0;
-foreach ($vars as $var) {
-  if (!empty($_POST[$var])){
-    $count++;
+foreach ($vars as $key => $var) {
+  if (isset($_POST[$var]) && $_POST[$var] !== ''){
     $$var = $_POST[$var];
+  }else{
+    unset($vars[$key]);
   }
 }
 
@@ -48,13 +48,17 @@ $pagenum = intval($_POST["pagenum"]);
 
 $params = array();
 $sql = "SELECT id, level, name, display_name, email, create_time, disabled FROM " . _tbl("users");
-if ($count > 0){
+$vars = array_values($vars);
+if (!empty($vars)){
   $sql .= " WHERE ";
-  for ($i = 0; $i < $count; $i++){
+  for ($i = 0; $i < count($vars); $i++){
     $var = $vars[$i];
+    if (!isset($$var) || $$var === ''){
+      continue;
+    }
     $sql .= $vars[$i] . " = ?";
     $params[] = $$var;
-    if ($i < $count - 1){
+    if ($i < count($vars) - 1){
       $sql .= " AND ";
     }
   }

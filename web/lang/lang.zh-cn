@@ -687,3 +687,4 @@ $vocab["group_limit"]                 = "该房间只能被%s组预定";
 $vocab["exchange_disconnect"]         = "无法连接到Exchange服务器";
 $vocab["disabled_self"]               = "无法禁用自己";
 $vocab["delete_one_with_child"]       = "无法删除一个有子区域的区域";
+$vocab["device_down"]                 = "设备离线，请检查网络状态";

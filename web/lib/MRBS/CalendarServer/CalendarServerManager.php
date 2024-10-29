@@ -14,6 +14,8 @@ class CalendarServerManager
 
   public static function getServer($config, $server, $timezone, $room)
   {
+    global $exchange_server;
+    $server = $exchange_server;
     $connectorName = $config["connector"];
     return new $connectorName(
       $server,

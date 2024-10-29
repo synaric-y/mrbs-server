@@ -1,5 +1,6 @@
 <?php
 
+require "defaultincludes.inc";
 
 global $corpid, $secret, $call_back_domain, $agentid;
 

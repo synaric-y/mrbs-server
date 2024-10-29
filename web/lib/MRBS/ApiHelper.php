@@ -92,7 +92,10 @@ class ApiHelper
   public const DISABLED_SELF = -62;
   public const DELETE_ONE_WITH_CHILD = -63;
 
-  public const LDAP_CONNECT_ERROR = -64;
+  public const DEVICE_DOWN = -64;
+
+  public const LDAP_CONNECT_ERROR = -65;
+
   static function value($key)
   {
     return $_POST[$key];

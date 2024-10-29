@@ -30,7 +30,7 @@ $vars = array(
   "redis_post",
   "redis_password",
   "AD_server",
-  "AD_post",
+  "AD_port",
   "AD_base_dn",
   "AD_username",
   "AD_password",
@@ -53,7 +53,7 @@ $vars = array(
 
 $params = array();
 foreach ($vars as $var) {
-  if (!empty($_POST[$var])) {
+  if (isset($_POST[$var]) && $_POST[$var] !== '') {
     $params[$var] = $_POST[$var];
   }
 }

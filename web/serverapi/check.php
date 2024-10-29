@@ -35,7 +35,7 @@ function user_can_book($name, $room)
   $result = db()->query("SELECT * FROM " . _tbl("room_group") . " WHERE room_id = ?", array($room['id']));
   $user = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE name = ?", array($name)) ->next_row_keyed();
   if ($result -> count() == 0){
-    $result = db() -> query("SELECT * FROM " . _tbl("area") . " A INNER JOIN " . _tbl("area_group") . " AG ON A.id = AG.area_id INNER JOIN " . _tbl("u2g_map") . " u2g ON u2g.group_id = AG.group_id WHERE A.id = ?", array($room['area_id']));
+    $result = db() -> query("SELECT * FROM " . _tbl("area") . " A INNER JOIN " . _tbl("area_group") . " AG ON A.id = AG.area_id INNER JOIN " . _tbl("u2g_map") . " u2g ON u2g.parent_id = AG.group_id WHERE A.id = ?", array($room['area_id']));
     while($row = $result -> next_row_keyed()){
       if ($row['user_id'] == $user['id']){
         return true;
