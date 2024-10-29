@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace MRBS;
 
-if (!checkAuth()){
+if (!checkAuth()) {
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
 // whether the user have the access to checking the device information
-if (getLevel($_SESSION['user']) < 2){
+if (getLevel($_SESSION['user']) < 2) {
   ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
 }
 
@@ -22,16 +22,17 @@ $vars = array(
   'status',
   'is_set',
   'room_name',
+  'room_id',
   'set_time_start',
   'set_time_end'
 );
-foreach ($vars as $key => $var){
-  if (isset($_POST[$var])){
+foreach ($vars as $key => $var) {
+  if (isset($_POST[$var])) {
     $$var = $_POST[$var];
-    if ($var === 'status'){
+    if ($var === 'status') {
       unset($vars[$key]);
     }
-  }else{
+  } else {
     unset($vars[$key]);
   }
 }
@@ -42,32 +43,42 @@ $pagenum = intval($_POST['pagenum']);
 $sql = "SELECT COUNT(*) FROM " . _tbl("device") . " D LEFT JOIN " . _tbl("room") . " R ON D.room_id = R.id";
 $params = [];
 $vars = array_values($vars);
-if (!empty($vars) && !(count($vars) == 1 && $vars[0] == 'status')){
+if (!empty($vars) && !(count($vars) == 1 && $vars[0] == 'status')) {
   $sql .= " WHERE ";
-  for ($i = 0; $i < count($vars); $i++){
+  for ($i = 0; $i < count($vars); $i++) {
     $var = $vars[$i];
-    if ($var === 'status' || $$var === ''){
+    if ($var === 'status' || $$var === '') {
       continue;
     }
-    if ($var !== 'battery_start' && $var !== 'battery_end' && $var !== 'set_time_start' && $var !== 'set_time_end'){
+    if ($var === 'device_id') {
+      $sql .= "D.device_id like '%{$$var}%'";
+      if ($i < count($vars) - 1) {
+        $sql .= " AND ";
+      }
+      continue;
+    }
+    if ($var !== 'battery_start' && $var !== 'battery_end' && $var !== 'set_time_start' && $var !== 'set_time_end'
+      && $var !== 'room_id') {
       $sql .= $var . " = ?";
-    }else if ($var === 'battery_start'){
+    } else if ($var === 'battery_start') {
       $sql .= 'battery_level' . ' >= ?';
-    }else if ($var === 'battery_end'){
+    } else if ($var === 'battery_end') {
       $sql .= 'battery_level' . " <= ?";
-    }else if ($var === 'set_time_start'){
+    } else if ($var === 'set_time_start') {
       $sql .= 'set_time' . ' >= ?';
-    }else{
+    } else if ($var === 'room_id') {
+      $sql .= 'R.id' . ' = ?';
+    } else {
       $sql .= 'set_time' . ' <= ?';
     }
-    if ($i < count($vars) - 1){
+    if ($i < count($vars) - 1) {
       $sql .= " AND ";
     }
     $params[] = $$var;
   }
 }
-$result = db() -> query1($sql, $params);
-if ($result == 0){
+$result = db()->query1($sql, $params);
+if ($result == 0) {
   ApiHelper::success(["total_num" => 0]);
 }
 
@@ -79,17 +90,17 @@ $total_num = $result;
 $sql = str_replace("COUNT(*)", "D.*, R.room_name as room_name", $sql);
 $offset = ($pagenum - 1) * $pagesize;
 $sql .= " LIMIT {$offset}, {$pagesize}";
-$result = db() -> query($sql, $params);
-$devices = $result -> all_rows_keyed();
+$result = db()->query($sql, $params);
+$devices = $result->all_rows_keyed();
 
 
-foreach ($devices as $key => &$device){
-  if (in_array($device['device_id'], $down_set)){
+foreach ($devices as $key => &$device) {
+  if (in_array($device['device_id'], $down_set)) {
     $device['status'] = 1;
-  }else{
+  } else {
     $device['status'] = 0;
   }
-  if (isset($status) && $device['status'] != $status){
+  if (isset($status) && $device['status'] != $status) {
     unset($devices[$key]);
   }
 }
