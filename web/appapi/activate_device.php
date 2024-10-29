@@ -16,6 +16,14 @@ $is_charge = $_POST['is_charge'];
 $battery_level = $_POST['battery_level'];
 $room_id = $_POST['room_id'] ?? false;
 
+if ($room_id !== false){
+  $count = db() -> query1("SELECT COUNT(*) FROM " . _tbl("room") . " WHERE id = ?", array($room_id));
+  if($count < 1){
+
+    ApiHelper::fail(get_vocab('room_not_exist'), ApiHelper::ROOM_NOT_EXIST);
+  }
+}
+
 if ($room_id === false){
   $status = 0;
 }else
@@ -26,7 +34,9 @@ if ($result > 0){
   ApiHelper::fail(get_vocab("device_exists"), ApiHelper::DEVICE_EXISTS);
 }
 
-$sql = "INSERT INTO " . _tbl("device") . "(device_id, version, description, resolution, is_charging, battery_level, is_set, room_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-db() -> command($sql, array($device_id, $version, $description, $resolution, $is_charge, $battery_level, $status, $room_id === false ? null : $room_id));
+
+
+$sql = "INSERT INTO " . _tbl("device") . "(device_id, version, description, resolution, is_charging, battery_level, is_set, room_id, set_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+db() -> command($sql, array($device_id, $version, $description, $resolution, $is_charge, $battery_level, $status, $room_id === false ? null : $room_id, $room_id === false ? null : time()));
 
 ApiHelper::success(null);

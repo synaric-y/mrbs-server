@@ -3,10 +3,8 @@ declare(strict_types=1);
 
 namespace MRBS;
 
-require_once "defaultincludes.inc";
-require_once "mrbs_sql.inc";
-
-header('Content-Type: application/json');
+require_once "../defaultincludes.inc";
+require_once "../mrbs_sql.inc";
 
 /*
  * logout, request should take the cookie
@@ -28,5 +26,5 @@ if (!$result){
 //  return;
 }
 
-setcookie("session_id", "", time() - 3600, "/web/");
+setcookie("session_id", "", time() - 3600, "/web/appapi/");
 ApiHelper::success(null);

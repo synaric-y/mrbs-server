@@ -111,14 +111,16 @@ if ($type == 'all'){
   foreach ($entries as $entry) {
     foreach ($rooms as &$room) {
       if ($entry['room_id'] == $room['id']){
-        $room['entries'][]['entry_id'] = $entry['id'];
-        $room['entries'][]['start_time'] = $entry['start_time'];
-        $room['entries'][]['end_time'] = $entry['end_time'];
-        $room['entries'][]['entry_name'] = $entry['name'];
-        $room['entries'][]['book_by'] = $entry['book_by'];
-        $room['entries'][]['status'] = $entry['start_time'] > time() ? 0 : ($entry['end_time'] < time() ? 2 : 1);
-        $room['entries'][]['duration'] = date("h:iA", intval($entry['start_time'])) . "-" . date("h:iA", intval($entry['end_time']));
-        $room['entries'][]['room_name'] = $room['room_name'];
+        $room['entries'][] = array(
+          'entry_id' => $entry['id'],
+          'start_time' => $entry['start_time'],
+          'end_time' => $entry['end_time'],
+          'entry_name' => $entry['name'],
+          'book_by' => $entry['book_by'],
+          'status' => $entry['start_time'] > time() ? 0 : ($entry['end_time'] < time() ? 2 : 1),
+          'duration' => date("h:iA", intval($entry['start_time'])) . "-" . date("h:iA", intval($entry['end_time'])),
+          'room_name' => $room['room_name']
+        );
       }
     }
     unset($room);
@@ -126,7 +128,8 @@ if ($type == 'all'){
   foreach ($rooms as &$room) {
     foreach ($areas as &$area) {
       if ($room['area_id'] == $area['id']) {
-        $room['entries'] = [];
+        $room['room_id'] = $room['id'];
+        unset($room['id']);
         $area['rooms'][] = $room;
         break;
       }
@@ -138,6 +141,8 @@ if ($type == 'all'){
   foreach ($areas as &$area){
       $area['start_time'] = sprintf("%02d", $area['morningstarts'] > 12 ? $area['morningstarts'] - 12 : $area['morningstarts']) . ":" . sprintf("%02d", $area['morningstarts_minutes']) . ($area['morningstarts'] > 12 ? " PM" : " AM");
       $area['end_time'] = sprintf("%02d", $area['eveningends'] > 12 ? $area['eveningends'] - 12 : $area['eveningends']) . ":" . sprintf("%02d", $area['eveningends_minutes']) . ($area['eveningends'] > 12 ? " PM" : " AM");
+      $area['area_id'] = $area['id'];
+      unset($area['id']);
   }
   unset($area);
   $min_time = 10000000;
@@ -163,6 +168,10 @@ if ($type == 'all'){
 
 }else{
   $entries = $result -> all_rows_keyed();
+  foreach ($entries as &$entry) {
+    $entry['status'] = $entry['start_time'] > time() ? 0 : ($entry['end_time'] < time() ? 2 : 1);
+  }
+  unset($entry);
   $area = db() -> query("SELECT id as area_id, area_name, disabled, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, resolution, parent_id FROM " . _tbl("area") . " WHERE id = ?", array($id)) -> next_row_keyed();
   $root = $area['parent_id'];
   $rooms = db() -> query("SELECT id, disabled, description, capacity, area_id FROM " . _tbl("room") . " WHERE area_id = ?", array($id)) -> all_rows_keyed();

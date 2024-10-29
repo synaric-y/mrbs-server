@@ -44,12 +44,16 @@ if (!empty($is_charge) || !empty($battery_level)) {
 //  return;
 //}
 
+if ($end_time < $begin_time) {
+  ApiHelper::fail(get_vocab(), ApiHelper::INVALID_END_TIME);
+}
+
 $result = db() -> query("SELECT * FROM " . _tbl("device") . " WHERE device_id = ?", array($device_id));
 if($result -> count() == 0){
   ApiHelper::fail(get_vocab("device_not_exist"), ApiHelper::DEVICE_NOT_EXIST);
 }
 $row = $result -> next_row_keyed();
-if (empty($row['room_id'])){
+if ($row['is_set'] === 0 || empty($row['room_id'])){
   ApiHelper::fail(get_vocab("device_not_bind"), ApiHelper::DEVICE_NOT_BIND);
 }
 $roomId = $row['room_id'];
@@ -61,8 +65,7 @@ $qSQL = "room_id = $roomId and
 
 $roomExist = DBHelper::one(_tbl("room"), "id = $roomId");
 if (empty($roomExist)){
-  ApiHelper::fail(get_vocab("room_not_exist"));
-  return;
+  ApiHelper::fail(get_vocab("room_not_exist"), ApiHelper::ROOM_NOT_EXIST);
 }
 if ($roomExist['disabled'] == 1) {
   ApiHelper::fail(get_vocab("room_disabled"));
@@ -71,7 +74,6 @@ if ($roomExist['disabled'] == 1) {
 $area = get_area_details($roomExist['area_id']);
 if (!$area || $area['disabled'] == 1) {
   ApiHelper::fail(get_vocab("area_disabled"));
-  return;
 }
 if($roomExist['temporary_meeting'] != 1){
   ApiHelper::fail(get_vocab("unsupport_fast_meeting"));

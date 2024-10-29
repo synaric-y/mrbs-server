@@ -7,6 +7,7 @@
       "gregwar/captcha": "^1.2",
       "ext-zip": "*",
       "ext-curl": "*",
-      "directorytree/ldaprecord": "^2.20"
+      "directorytree/ldaprecord": "^2.20",
+      "ext-soap": "*"
     }
 }

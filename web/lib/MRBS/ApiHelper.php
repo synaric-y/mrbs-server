@@ -91,6 +91,7 @@ class ApiHelper
   public const GROUP_LIMIT = -61;
   public const DISABLED_SELF = -62;
   public const DELETE_ONE_WITH_CHILD = -63;
+  public const DEVICE_DOWN = -64;
   static function value($key)
   {
     return $_POST[$key];
