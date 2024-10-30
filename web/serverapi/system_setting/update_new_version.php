@@ -66,7 +66,7 @@ if($file['error'] === UPLOAD_ERR_OK){
     ApiHelper::fail(get_vocab("fail_to_upload"), ApiHelper::FAIL_TO_UPLOAD);
   }
 
-  db() -> command("INSERT INTO " . _tbl("version") . "(version, publish_time) VALUES (?, ?)", array($version, time()));
+  db() -> command("INSERT IGNORE INTO " . _tbl("version") . "(version, publish_time) VALUES (?, ?)", array($version, time()));
 
   ApiHelper::success(null);
 }
