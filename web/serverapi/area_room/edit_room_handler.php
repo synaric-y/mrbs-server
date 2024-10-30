@@ -27,7 +27,11 @@ $form_vars = array(
   'exchange_username'=> 'string',
   'exchange_password'=> 'string',
   'wxwork_mr_id'     => 'string',
-  'custom_html'      => 'string'
+  'show_book'        => 'int',
+  'show_meeting_name'=> 'int',
+  'temporary_meeting'=> 'int',
+  'theme_type'       => 'int',
+  'time_type'        => 'int'
 );
 
 $room = $_POST['room'];
@@ -245,9 +249,25 @@ if (empty($errors))
             $assign_array[] = "exchange_password=?";
             $sql_params[] = $exchange_password;
             break;
-          case 'wxwork_mr_id':
-            $assign_array[] = "wxwork_mr_id=?";
-            $sql_params[] = $wxwork_mr_id;
+          case 'show_book':
+            $assign_array[] = "show_book=?";
+            $sql_params[] = $show_book;
+            break;
+          case 'show_meeting_name':
+            $assign_array[] = "show_meeting_name=?";
+            $sql_params[] = $show_meeting_name;
+            break;
+          case "temporary_meeting":
+            $assign_array[] = "temporary_meeting=?";
+            $sql_params[] = $temporary_meeting;
+            break;
+          case "theme_type":
+            $assign_array[] = "theme=?";
+            $sql_params[] = $theme;
+            break;
+          case "time_type":
+            $assign_array[] = "time_type=?";
+            $sql_params[] = $time_type;
             break;
           // then look at any user defined fields
           default:
