@@ -87,6 +87,7 @@ if(!$show_meeting_name){
     unset($entry['name']);
   }
 }
+
 if (isset($now_entry)) {
   if ($now_entry['entry_type'] == 99)
     $now_entry['name'] = get_vocab('ic_tp_meeting');
@@ -96,7 +97,8 @@ if (isset($now_entry) && !$show_meeting_name){
 }
 
 if(!$show_book){
-  unset($now_entry['create_by']);
+  if (isset($now_entry))
+    unset($now_entry['create_by']);
   foreach ($entries as &$entry) {
     unset($entry['create_by']);
   }

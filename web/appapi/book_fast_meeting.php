@@ -7,7 +7,7 @@ use MRBS\CalendarServer\CalendarServerManager;
 
 global $allow_registration_default, $registrant_limit_default, $registrant_limit_enabled_default;
 global $registration_opens_default, $registration_opens_enabled_default, $registration_closes_default;
-global $registration_closes_enabled_default;
+global $registration_closes_enabled_default, $temporary_meeting;
 
 
 //according to the device, book fast meeting to the room
@@ -75,7 +75,7 @@ $area = get_area_details($roomExist['area_id']);
 if (!$area || $area['disabled'] == 1) {
   ApiHelper::fail(get_vocab("area_disabled"));
 }
-if($roomExist['temporary_meeting'] != 1){
+if((empty($roomExist['temporary_meeting']) && $temporary_meeting != 1) ||$roomExist['temporary_meeting'] != 1){
   ApiHelper::fail(get_vocab("unsupport_fast_meeting"));
 }
 
