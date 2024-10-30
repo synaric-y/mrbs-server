@@ -32,5 +32,8 @@ try {
 } catch (GuzzleHttp\Exception\ConnectException|SoapFault|InvalidArgumentException $e) {
   ApiHelper::fail(get_vocab("exchange_disconnect"), ApiHelper::UNKNOWN_ERROR);
 } catch(API\Exception\UnauthorizedException $e){
-  ApiHelper::fail(get_vocab("invalid_username_or_password"), ApiHelper::INVALID_USERNAME_OR_PASSWORD);
+  if(empty($username) && empty($password))
+    ApiHelper::success(null);
+  else
+    ApiHelper::fail(get_vocab("invalid_username_or_password"), ApiHelper::INVALID_USERNAME_OR_PASSWORD);
 }
