@@ -2758,7 +2758,11 @@ function log_by_name($file, $aglist)
 {
   /*写日志*/
   $msg = implode(' ', $aglist);
-  $hopedir = dirname(__DIR__) . "/";
+//  $hopedir = dirname(__DIR__) . "/";
+  $hopedir = "/data/server/mrbs/";
+  if (!is_dir($hopedir)) {
+    mkdir($hopedir, 0777);
+  }
   $nowdate = date('Y-m-d', time());
   if (!file_exists($hopedir . 'log/' . $nowdate . '.php'))//创建文件
   {
