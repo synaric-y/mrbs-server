@@ -111,6 +111,8 @@ CREATE TABLE mrbs_room
   show_book           tinyint NULL DEFAULT 1 COMMENT '"0" means do not show booker in tablet, "1" means show booker in tablet',
   show_meeting_name   tinyint NULL DEFAULT 1 COMMENT '"0" means do not show meeting name in tablet, "1" means show meeting name int tablet',
   temporary_meeting   tinyint NULL DEFAULT 1 COMMENT '"0" means this room cannot book fast meetings, "1" means this room can book fast meeeting',
+  theme_type               int NULL DEFAULT 1 COMMENT 'theme id in config file',
+  time_type           int NULL DEFAULT 24 COMMENT '24 hour clock/12 hour clock',
 
   PRIMARY KEY (id),
   FOREIGN KEY (area_id)
@@ -308,8 +310,7 @@ VALUES ('local_db_version', '1');
 
 
 
-###
-2.0开始
+### 2.0开始
 
 DROP TABLE IF EXISTS mrbs_system_variable;
 DROP TABLE IF EXISTS mrbs_device;
@@ -412,7 +413,7 @@ CREATE TABLE `mrbs_user_group`
   PRIMARY KEY (`id`) USING BTREE,
   INDEX             `n_name`(`name` ASC) USING BTREE,
   INDEX             `n_id`(`name` ASC) USING BTREE,
-  INDEX             `n_third_id`(`name` ASC) USING BTREE,
+  INDEX             `n_third_id`(`name` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2530 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = DYNAMIC;
 
 -- Group-Group relationship

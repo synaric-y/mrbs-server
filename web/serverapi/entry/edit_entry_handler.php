@@ -37,6 +37,8 @@ function sanitize_room_id($id): int
   return intval($id);
 }
 
+$create_by = $_SESSION['user'];
+
 // Get non-standard form variables
 $form_vars = array(
   'create_by' => 'string',
@@ -97,6 +99,7 @@ foreach ($form_vars as $var => $var_type) {
   }
 
 }
+
 
 if($end_seconds < time()){
   ApiHelper::fail(get_vocab("expired_end_time"), ApiHelper::EXPIRED_END_TIME);

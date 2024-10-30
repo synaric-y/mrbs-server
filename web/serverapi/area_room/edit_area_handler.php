@@ -66,7 +66,7 @@ $form_vars = array(
 $area = $_POST['area'];
 $parent_id = $_POST['parent_id'] ?? null;
 $parent_id = intval($parent_id);
-$group_ids = $_POST['group_ids'];
+$group_ids = $_POST['group_ids'] ?? null;
 
 $one = db() -> query1("SELECT COUNT(*) FROM " . _tbl("area") . " WHERE id = ?", array($parent_id));
 if($one < 1){
