@@ -51,7 +51,9 @@ if (!empty($vars) && !(count($vars) == 1 && $vars[0] == 'status')) {
       continue;
     }
     if ($var === 'device_id') {
-      $sql .= "D.device_id like '%{$$var}%'";
+      if (!empty($$var)) {
+        $sql .= "D.device_id like '%{$$var}%'";
+      }
       if ($i < count($vars) - 1) {
         $sql .= " AND ";
       }
