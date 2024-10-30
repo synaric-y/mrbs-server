@@ -24,7 +24,7 @@ function buildTree($data, $parent_id = -1)
   $tree = [];
   foreach ($data as $row) {
     if ($row['parent_id'] == $parent_id) {
-      $children = buildTree($data, $row['id']);
+      $children = buildTree($data, $row['area_id']);
       if (!empty($children) || !empty($row['rooms'])){
         if (!empty($children))
           $row['children'] = $children;
@@ -79,7 +79,7 @@ if ($type != 'all') {
   }
 }
 
-$sql = "SELECT E.id AS id, area_id, room_id, start_time, end_time, E.name AS name, book_by, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, R.room_name, area_name, A.disabled as area_disabled, R.disabled as room_disabled, timezone, R.description as description, resolution, capacity FROM " . _tbl("entry") . " E LEFT JOIN " . _tbl("room") .
+$sql = "SELECT E.id AS id, area_id, room_id, start_time, end_time, E.name AS name, create_by, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, R.room_name, area_name, A.disabled as area_disabled, R.disabled as room_disabled, timezone, R.description as description, resolution, capacity, repeat_id FROM " . _tbl("entry") . " E LEFT JOIN " . _tbl("room") .
 " R ON E.room_id = R.id " . "LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id";
 if ($type == 'area'){
   $sql .= " WHERE A.id = ? AND start_time >= ? AND end_time <= ?";
@@ -99,7 +99,7 @@ else
 if ($type == 'all'){
   $entries = $result -> all_rows_keyed();
   $areas = db() -> query("SELECT id, area_name, disabled, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, resolution, parent_id FROM " . _tbl("area")) -> all_rows_keyed();
-  $rooms = db() -> query("SELECT id, disabled, description, capacity, area_id FROM " . _tbl("room")) -> all_rows_keyed();
+  $rooms = db() -> query("SELECT id, disabled, description, capacity, area_id, room_name FROM " . _tbl("room")) -> all_rows_keyed();
   $data = [];
   if (empty($rooms) || empty($areas)){
     $data["min_time"] = "08:00 AM";
@@ -108,6 +108,8 @@ if ($type == 'all'){
     $data["timestamp"] = time();
     ApiHelper::success($data);
   }
+
+
   foreach ($entries as $entry) {
     foreach ($rooms as &$room) {
       if ($entry['room_id'] == $room['id']){
@@ -174,7 +176,7 @@ if ($type == 'all'){
   unset($entry);
   $area = db() -> query("SELECT id as area_id, area_name, disabled, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, resolution, parent_id FROM " . _tbl("area") . " WHERE id = ?", array($id)) -> next_row_keyed();
   $root = $area['parent_id'];
-  $rooms = db() -> query("SELECT id, disabled, description, capacity, area_id FROM " . _tbl("room") . " WHERE area_id = ?", array($id)) -> all_rows_keyed();
+  $rooms = [];
   $areas[] = $area;
   $parent_ids[] = $area['area_id'];
   while(1){
@@ -184,11 +186,11 @@ if ($type == 'all'){
     }
     $parent_string = substr($parent_string, 0, -1);
     $parent_string .= ")";
-    $tmp_a = db() -> query("SELECT id, area_name, disabled, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, resolution, parent_id FROM " . _tbl("area") . " WHERE parent_id in " . $parent_string);
+    $tmp_a = db() -> query("SELECT id as area_id, area_name, disabled, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, resolution, parent_id FROM " . _tbl("area") . " WHERE parent_id in " . $parent_string);
     $count = $tmp_a -> count();
     $tmp_a = $tmp_a -> all_rows_keyed();
     $areas = array_merge($areas, $tmp_a);
-    $tmp_r = db() -> query("SELECT id, disabled, description, capacity, area_id FROM " . _tbl("room") . " WHERE area_id in " . $parent_string) -> all_rows_keyed();
+    $tmp_r = db() -> query("SELECT id as room_id, disabled, description, capacity, area_id, room_name FROM " . _tbl("room") . " WHERE area_id in " . $parent_string) -> all_rows_keyed();
     $rooms = array_merge($rooms, $tmp_r);
 
     if ($count == 0){
@@ -196,7 +198,7 @@ if ($type == 'all'){
     }
     $parent_ids = [];
     foreach ($tmp_a as $item) {
-      $parent_ids[] = $item['id'];
+      $parent_ids[] = $item['area_id'];
     }
 
   }
@@ -210,23 +212,25 @@ if ($type == 'all'){
   }
   foreach ($entries as $entry) {
     foreach ($rooms as &$room) {
-      if ($entry['room_id'] == $room['id']){
-        $room['entries'][]['entry_id'] = $entry['id'];
-        $room['entries'][]['start_time'] = $entry['start_time'];
-        $room['entries'][]['end_time'] = $entry['end_time'];
-        $room['entries'][]['entry_name'] = $entry['name'];
-        $room['entries'][]['book_by'] = $entry['book_by'];
-        $room['entries'][]['status'] = $entry['start_time'] > time() ? 0 : ($entry['end_time'] < time() ? 2 : 1);
-        $room['entries'][]['duration'] = date("h:iA", intval($entry['start_time'])) . "-" . date("h:iA", intval($entry['end_time']));
-        $room['entries'][]['room_name'] = $room['room_name'];
+      if ($entry['room_id'] == $room['room_id']){
+        $item = [];
+        $item['entry_id'] = $entry['id'];
+        $item['start_time'] = $entry['start_time'];
+        $item['end_time'] = $entry['end_time'];
+        $item['entry_name'] = $entry['name'];
+        $item['book_by'] = $entry['book_by'];
+        $item['status'] = $entry['start_time'] > time() ? 0 : ($entry['end_time'] < time() ? 2 : 1);
+        $item['duration'] = date("h:iA", intval($entry['start_time'])) . "-" . date("h:iA", intval($entry['end_time']));
+        $item['room_name'] = $room['room_name'];
+        $room['entries'][] = $item;
       }
     }
+    unset($room);
   }
-  unset($room);
+
   foreach ($rooms as $room) {
     foreach ($areas as &$area) {
-      if ($room['area_id'] == $area['id']) {
-        $room['entries'] = [];
+      if ($room['area_id'] == $area['area_id']) {
         $area['rooms'][] = $room;
         break;
       }
@@ -234,8 +238,10 @@ if ($type == 'all'){
     unset($area);
   }
 
+
   $min_time = 10000000;
   $max_time = -1;
+
   foreach ($areas as $area) {
     $min_time = min($min_time, $area['morningstarts'] * 60 + $area['morningstarts_minutes']);
     $max_time = max($max_time, $area['eveningends'] * 60 + $area['eveningends_minutes']);
