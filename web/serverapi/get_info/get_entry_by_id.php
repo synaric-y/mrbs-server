@@ -53,9 +53,10 @@ $row['end_time'] = intval($row['end_time']);
 $result = db() -> query("SELECT * FROM " . _tbl("room") . " WHERE id = ?", array($row['room_id']));
 $room = $result -> next_row_keyed();
 $row['room_name'] = $room['room_name'];
-$result = db() -> query("SELECT area_name FROM " . _tbl("area") . " WHERE id = ?", array($room['area_id']));
-$row['area_name'] = $result -> next_row_keyed()['area_name'];
+$result = db() -> query("SELECT area_name, id as area_id FROM " . _tbl("area") . " WHERE id = ?", array($room['area_id']));
+$area = $result -> next_row_keyed();
+$row['area_name'] = $area['area_name'];
 $row['end_date'] = date("Y-m-d", intval($row['end_date']));
-
+$row['area_id'] = $area['area_id'];
 ApiHelper::success($row);
 
