@@ -39,10 +39,10 @@ if (getLevel($_SESSION['user']) < 2){
 $type = $_POST['type'];
 $area = $_POST['area'] ?? null;
 
+$data = array();
  if ($type == 'area'){
   $sql = "SELECT * FROM " . _tbl("area");
   $result = db() -> query($sql);
-  $data = array();
   while($row = $result -> next_row_keyed()){
     unset($row['exchange_server']);
     unset($row['wxwork_corpid']);
