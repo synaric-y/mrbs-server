@@ -48,7 +48,7 @@ function user_can_book($name, $room)
     if ($row['group_id'] == -1){
       return true;
     }
-    $result = db() -> query("SELECT COUNT(*) FROM " . _tbl("u2g_map") . " WHERE user_id = ? AND parent_id = ?", array($user['id'], $row['group_id']));
+    $result = db() -> query1("SELECT COUNT(*) FROM " . _tbl("u2g_map") . " WHERE user_id = ? AND parent_id = ?", array($user['id'], $row['group_id']));
     if ($result > 0){
       return true;
     }
