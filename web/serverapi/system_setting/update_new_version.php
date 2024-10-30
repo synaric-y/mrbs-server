@@ -34,9 +34,22 @@ if($file['error'] === UPLOAD_ERR_OK){
   if (strtolower($fileInfo['extension']) !== 'zip'){
     ApiHelper::fail(get_vocab("unsupport_file_type"), ApiHelper::UNSUPPORT_FILE_TYPE);
   }
+  $zip = new ZipArchive;
+  // Check version name
+  if ($zip->open($file['tmp_name']) === TRUE) {
+    $root_name = $zip->getNameIndex(0);
+    $root_name = trim($root_name, '/');
+    if (preg_match('/^\d+(\.\d+){0,2}$/', $root_name) != 1) {
+      ApiHelper::fail(get_vocab("invalid_file_name"), ApiHelper::INVALID_FILE_NAME);
+    }
+    $zip->close();
+    $version = $root_name;
+  } else {
+    ApiHelper::fail(get_vocab("unsupport_file_type"), ApiHelper::UNSUPPORT_FILE_TYPE);
+  }
 
   // file will be placed here
-  $dir = dirname(__DIR__, 3) . "/display/" . $version;
+  $dir = dirname(__DIR__, 3) . "/display/";
   if (!is_dir($dir)) {
     mkdir($dir, 0755, true);
   }
