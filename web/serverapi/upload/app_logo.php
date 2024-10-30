@@ -29,11 +29,11 @@ if($file['error'] === UPLOAD_ERR_OK){
   if (strtolower($fileInfo['extension']) !== 'jpg' && strtolower($fileInfo['extension']) !== 'png') {
     ApiHelper::fail(get_vocab("unsupport_file_type"), ApiHelper::UNSUPPORT_FILE_TYPE);
   }
-  $dir = dirname(__DIR__, 3) . "\\logo\\" . $_SESSION['user'];
+  $dir = dirname(__DIR__, 3) . "/logo/" . $_SESSION['user'];
   if (!is_dir($dir)) {
     mkdir($dir, 0755, TRUE);
   }
-  $dir .= "\\app_logo." . strtolower($fileInfo['extension']);
+  $dir .= "/app_logo." . strtolower($fileInfo['extension']);
   if (move_uploaded_file($file['tmp_name'], $dir)){
     db()->command("UPDATE " . _tbl("system_variable") . " SET app_logo_dir = ?", array("/logo/" . $_SESSION['user'] . "/app_logo." . strtolower($fileInfo['extension'])));
     ApiHelper::success(null);
