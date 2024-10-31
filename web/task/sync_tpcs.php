@@ -36,16 +36,21 @@ while (true) {
         );
         foreach ($thirdCalendarService as $serviceName => $config) {
           if ($area[$config["switch"]] == 1) {
-            $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
-            $changeList = $connector->pullCalendarUpdate();
-            if (!empty($changeList["create"])) {
-              $fmtChangeList["create"] = array_merge($fmtChangeList["create"], $changeList["create"]);
-            }
-            if (!empty($changeList["update"])) {
-              $fmtChangeList["update"] = array_merge($fmtChangeList["update"], $changeList["update"]);
-            }
-            if (!empty($changeList["delete"])) {
-              $fmtChangeList["delete"] = array_merge($fmtChangeList["delete"], $changeList["delete"]);
+            try {
+              $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
+              $changeList = $connector->pullCalendarUpdate();
+              if (!empty($changeList["create"])) {
+                $fmtChangeList["create"] = array_merge($fmtChangeList["create"], $changeList["create"]);
+              }
+              if (!empty($changeList["update"])) {
+                $fmtChangeList["update"] = array_merge($fmtChangeList["update"], $changeList["update"]);
+              }
+              if (!empty($changeList["delete"])) {
+                $fmtChangeList["delete"] = array_merge($fmtChangeList["delete"], $changeList["delete"]);
+              }
+            } catch (Exception $e) {
+              \MRBS\log_i($tag, $e->getMessage());
+              \MRBS\log_i($tag, $e->getTraceAsString());
             }
           }
         }
