@@ -65,5 +65,7 @@ if($is_series){
     }
   }
 }
+// Don't convert to number
+$row['rep_opt'] = 'A' . $row['rep_opt'];
 ApiHelper::success($row);
 
