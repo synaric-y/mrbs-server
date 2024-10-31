@@ -79,11 +79,9 @@ while (true) {
                     continue;
                   $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
                   if ($create["from"] == $serviceName) {
-                    $connector->declineMeeting($create['item'], "conflict with " . $one['name'] . " , id " . $one['id']);
+                    $connector->declineMeeting($create, "conflict with " . $one['name'] . " , id " . $one['id']);
                   }
                 }
-//                $connector = CalendarServerManager::getServer(array("connector" => "MRBS\CalendarServer\ExchangeCalendarServerConnector"), $exchange_server, $area['timezone'], $room);
-//                $connector->declineMeeting($create['item'], "conflict with " . $one['name'] . " , id " . $one['id']);
                 break;
               }
             }
@@ -92,8 +90,10 @@ while (true) {
             }
             $result = \MRBS\mrbsCreateRepeatingEntrys($create['data']);
             if ($result['id'] == 0) {
-              $connector = CalendarServerManager::getServer(array("connector" => "MRBS\CalendarServer\ExchangeCalendarServerConnector"), $exchange_server, $area['timezone'], $room);
-              $connector->declineMeeting($create['item'], "Recurring Meeting create too many meetings or create no meetings");
+              foreach ($thirdCalendarService as $serviceName => $config) {
+                $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
+                $connector->declineMeeting($create, "Recurring Meeting create too many meetings or create no meetings");
+              }
 
             } else {
               foreach ($thirdCalendarService as $serviceName => $config) {
@@ -101,19 +101,17 @@ while (true) {
                   continue;
                 $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
                 if ($create["from"] == $serviceName) {
-                  $connector->acceptMeeting($create['item'], "");
+                  $connector->acceptMeeting($create, "");
                 } else
                   $connector->createMeeting($create["data"]);
               }
-//              $connector = CalendarServerManager::getServer(array("connector" => "MRBS\CalendarServer\ExchangeCalendarServerConnector"), $exchange_server, $area['timezone'], $room);
-//              $connector->acceptMeeting($create['item'], "");
             }
           } else {
             $success = DBHelper::insert(\MRBS\_tbl("entry"), $create["data"]) ?? false;
             foreach ($thirdCalendarService as $serviceName => $config) {
               if (!$success && $create["from"] == $serviceName) {
                 $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
-                $connector->declineMeeting($create['item'], "DB Failed");
+                $connector->declineMeeting($create, "DB Failed");
                 break;
               } else if (!$success && $create["from"] != $serviceName) {
                 continue;
@@ -125,7 +123,7 @@ while (true) {
 //            }
               $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
               if ($create["from"] == $serviceName) {
-                $connector->acceptMeeting($create['item'], "");
+                $connector->acceptMeeting($create, "");
               } else
                 $connector->createMeeting($create["data"]);
             }

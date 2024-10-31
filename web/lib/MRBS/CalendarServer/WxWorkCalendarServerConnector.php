@@ -181,4 +181,13 @@ class  WxWorkCalendarServerConnector implements AbstractCalendarServerConnector
     );
   }
 
+  public function acceptMeeting($entry, string $msg)
+  {
+    // TODO: Implement acceptMeeting() method.
+  }
+
+  public function declineMeeting($entry, string $msg)
+  {
+    // TODO: Implement declineMeeting() method.
+  }
 }

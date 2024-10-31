@@ -526,9 +526,10 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     }
   }
 
-  public function declineMeeting(CalendarItemType $i, string $msg)
+  public function declineMeeting($entry, string $msg)
   {
     try {
+      $i = $entry['item'];
       $this->getCalendar()->declineMeeting($i->getItemId(), $msg);
     } catch (\Exception $e) {
 //      echo $e->getMessage();
@@ -536,9 +537,10 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     }
   }
 
-  public function acceptMeeting(CalendarItemType $i, string $msg)
+  public function acceptMeeting($entry, string $msg)
   {
     try {
+      $i = $entry['item'];
       $this->getCalendar()->acceptMeeting($i->getItemId(), $msg);
     } catch (\Exception $e) {
 //      echo $e->getMessage();

@@ -17,11 +17,16 @@ class CalendarServerManager
     global $exchange_server;
     $server = $exchange_server;
     $connectorName = $config["connector"];
-    return new $connectorName(
-      $server,
-      $timezone,
-      $room,
-    );
+    try {
+      $connector = new $connectorName(
+        $server,
+        $timezone,
+        $room,
+      );
+      return $connector;
+    } catch (\Exception $e) {
+      return new EmptyCalendarServerConnector();
+    }
   }
 
   public static function createMeeting($id)
