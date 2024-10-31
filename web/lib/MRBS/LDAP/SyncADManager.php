@@ -25,11 +25,11 @@ class SyncADManager
   /*
    * Expire time for redis key which caches current task info
    */
-  static int $TASK_EXPIRE_SECONDS = 3600;
+  static $TASK_EXPIRE_SECONDS = 3600;
   /*
    * Batch count to report task progress
    */
-  static int $REPORT_INTERVAL = 200;
+  static $REPORT_INTERVAL = 200;
   /*
    * Record synchronization progress
    */
@@ -37,7 +37,7 @@ class SyncADManager
   /*
    * Current synchronization batch version
    */
-  private string $sync_version = "";
+  private $sync_version = "";
 
   /**
    * Synchronize User and Group from AD(LDAP).

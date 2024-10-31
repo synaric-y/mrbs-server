@@ -2772,8 +2772,8 @@ function log_by_name($file, $aglist)
     $fp = @fopen($hopedir . 'log/' . $nowdate . '.php', 'w');
     if($fp){
       chmod($hopedir . 'log/' . $nowdate . '.php', 0777);
+      @fclose($fp);
     }
-    @fclose($fp);
   }
   $file = fopen($hopedir . 'log/' . $file . $nowdate . '.php', "a+");
   $content = date('Y-m-d H:i:s', time()) . ": " . $msg  . PHP_EOL;
