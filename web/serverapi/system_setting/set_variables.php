@@ -54,21 +54,20 @@ $vars = array(
 $params = array();
 foreach ($vars as $var) {
   if (isset($_POST[$var]) && $_POST[$var] !== '') {
+    if ($var === 'server_address')
+      $_POST[$var] = urldecode($_POST[$var]);
     $params[$var] = $_POST[$var];
   }
 }
 
-end($params);
-$last = key($params);
-reset($params);
 
 $sql = "UPDATE " . _tbl("system_variable") . " SET ";
 
 foreach ($params as $name => $var) {
-  $sql .= $name . "= ?";
-  if ($name != $last)
-    $sql .= ",";
+  $sql .= $name . "= ?,";
 }
+
+$sql = substr($sql, 0, -1);
 
 db()->command($sql, array_values($params));
 

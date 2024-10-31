@@ -629,9 +629,7 @@ try {
   //  only modify one entry once. If you want to modify entry, you should do modify several times.
   //  We will handle this problem later.
 
-  if(isset($this_id)){
-    $edit_series = false;
-  }
+
   $result = mrbsMakeBookings($bookings, $this_id, $just_check, $skip, $original_room_id, $send_mail, $edit_series);
   // Notify the third-party Calendar service that a meeting has been created
   if (!$just_check && $result['valid_booking'] && empty($id)) {
