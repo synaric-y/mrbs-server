@@ -37,14 +37,15 @@ if (getLevel($_SESSION['user']) < 2) {
 
 $description = $_POST['description'] ?? null;
 $capacity = $_POST['capacity'] ?? null;
-if (empty(intval($capacity))) {
-  ApiHelper::fail(get_vocab("missing_parameters"), ApiHelper::MISSING_PARAMETERS);
-}
+
 $room_admin_email = $_POST['room_admin_email'] ?? null;
 $type = $_POST['type'] ?? null;
 $area = $_POST['area'] ?? null;
 if ($type !== 'room' && $type !== 'area') {
   ApiHelper::fail(get_vocab("wrong_type"), ApiHelper::WRONG_TYPE);
+}
+if ($type == 'room' && empty(intval($capacity))) {
+  ApiHelper::fail(get_vocab("missing_parameters"), ApiHelper::MISSING_PARAMETERS);
 }
 
 $area_vars = [
