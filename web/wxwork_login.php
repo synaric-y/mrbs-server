@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 
+namespace MRBS;
+
+
+use HttpUtils;
 
 require_once '../vendor/autoload.php';
 require_once "./defaultincludes.inc";
@@ -9,7 +13,6 @@ require_once "./mrbs_sql.inc";
 require_once "./lib/Wxwork/api/src/CorpAPI.class.php";
 require_once "./lib/Wxwork/api/src/Utils.php";
 
-use MRBS\ApiHelper;
 
 
 /*
@@ -23,16 +26,18 @@ use MRBS\ApiHelper;
 
 global $corpid, $secret, $default_password_hash;
 
-$corpid = "ww09d67060e82cbfa5";
-$secret = "4kQjzoLSa1uBR5Ow5UWItaiI7CCSzjFYqzYTgKuR4IA";
+$config = DBHelper::one(_tbl("system_variable"), "1=1");
+
+$corpid = $config['corpid'];
+$secret = $config['secret'];
 if (isset($_SESSION) && !empty($_SESSION['user'])){
   error_log("[" . date("Y-m-d H:i:s", time()) . "]" . \MRBS\get_vocab('already_login') . "\n", 3, dirname(__DIR__) . "/log/wxwork_log.log");
-  MRBS\ApiHelper::success(\MRBS\get_vocab('already_login'));
+  \MRBS\ApiHelper::success(\MRBS\get_vocab('already_login'));
 }
 
 if (!isset($_GET) || empty($_GET["code"])) {
   error_log("[" . date("Y-m-d H:i:s", time()) . "]" . \MRBS\get_vocab("invalid_code") . "\n", 3, dirname(__DIR__) . "/log/wxwork_log.log");
-  MRBS\ApiHelper::fail(\MRBS\get_vocab("invalid_code"), MRBS\ApiHelper::INVALID_CODE);
+  \MRBS\ApiHelper::fail(\MRBS\get_vocab("invalid_code"), \MRBS\ApiHelper::INVALID_CODE);
 }
 
 $retry = 0;

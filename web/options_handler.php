@@ -22,14 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 if (empty($_SERVER['REQUEST_METHOD'])) return;
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $_GET["act"] != 'wxwork_login' && $_GET["act"] != 'logout' && $_GET["act"] != '/serverapi/test_delete') {
-  // 设置 HTTP 状态码为 405 Method Not Allowed
-  header('HTTP/1.1 405 Method Not Allowed');
-  // 指定允许的请求方法
-  header('Allow: POST');
-  // 终止脚本执行
-  exit;
-}
+//if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $_GET["act"] != 'wxwork_login' && $_GET["act"] != 'logout' && $_GET["act"] != '/serverapi/test_delete') {
+//  // 设置 HTTP 状态码为 405 Method Not Allowed
+//  header('HTTP/1.1 405 Method Not Allowed');
+//  // 指定允许的请求方法
+//  header('Allow: POST');
+//  // 终止脚本执行
+//  exit;
+//}
 
 $json = file_get_contents('php://input');
 $json = removeJsonComments($json);
