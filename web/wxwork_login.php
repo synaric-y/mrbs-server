@@ -47,6 +47,7 @@ while ($retry < 1){
 
   $url = HttpUtils::MakeUrl("/cgi-bin/auth/getuserinfo?access_token={$access_token}&code={$code}");
   $json = HttpUtils::httpGet($url);
+  /** @noinspection PhpStrictTypeCheckingInspection */
   $data = json_decode($json, true);
 
   if ($data['errcode'] != 0) {
@@ -96,6 +97,7 @@ $retry = 0;
 while($retry < 2){
   $url = HttpUtils::MakeUrl("/cgi-bin/auth/getuserdetail?access_token={$access_token}");
   $json = HttpUtils::httpPost($url, json_encode($data));
+  /** @noinspection PhpStrictTypeCheckingInspection */
   $data = json_decode($json, true);
   error_log("[" . date("Y-m-d H:i:s", time()) . "]" . "resp: $json\n", 3, dirname(__DIR__) . "/log/wxwork_log.log");
   if ($data['errcode'] != 0) {
