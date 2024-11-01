@@ -68,9 +68,11 @@ $parent_id = $_POST['parent_id'] ?? null;
 $parent_id = intval($parent_id);
 $group_ids = $_POST['group_ids'] ?? null;
 
-$one = db() -> query1("SELECT COUNT(*) FROM " . _tbl("area") . " WHERE id = ?", array($parent_id));
-if($one < 1){
-  ApiHelper::fail(get_vocab("area_not_exist"), ApiHelper::AREA_NOT_EXIST);
+if (!empty($parent_id)) {
+  $one = db()->query1("SELECT COUNT(*) FROM " . _tbl("area") . " WHERE id = ?", array($parent_id));
+  if ($one < 1) {
+    ApiHelper::fail(get_vocab("area_not_exist"), ApiHelper::AREA_NOT_EXIST);
+  }
 }
 foreach ($form_vars as $var => $var_type) {
   $$var = $_POST[$var] ?? null;
