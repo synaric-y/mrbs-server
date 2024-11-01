@@ -45,7 +45,7 @@ function refresh_access_token(string $corpid, string $secret)
   } catch (RedisException $e) {
     return -1;
   }
-  return true;
+  return 0;
 }
 
 function get_user_info(string $code)
