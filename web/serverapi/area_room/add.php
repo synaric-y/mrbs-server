@@ -162,15 +162,17 @@ elseif ($type == "area") {
   db()->begin();
   db()->command($sql, $params);
   $area_id = db()->insert_id("", "");
-  $sql = "INSERT INTO " . _tbl("area_group") . "(area_id, group_id) VALUES ";
-  $params = array();
-  foreach ($group_ids as $group_id) {
-    $sql .= "(?, ?),";
-    $params[] = $area_id;
-    $params[] = $group_id;
+  if (!empty($group_ids)) {
+    $sql = "INSERT INTO " . _tbl("area_group") . "(area_id, group_id) VALUES ";
+    $params = array();
+    foreach ($group_ids as $group_id) {
+      $sql .= "(?, ?),";
+      $params[] = $area_id;
+      $params[] = $group_id;
+    }
+    $sql = substr($sql, 0, -1);
+    db()->command($sql, $params);
   }
-  $sql = substr($sql, 0, -1);
-  db()->command($sql, $params);
   db()->commit();
   ApiHelper::success(null);
 } elseif ($type == "room") {
@@ -206,15 +208,17 @@ elseif ($type == "area") {
   db()->begin();
   db()->command($sql, $params);
   $room_id = db()->insert_id("", "");
-  $sql = "INSERT INTO " . _tbl("room_group") . "(room_id, group_id) VALUES ";
-  $params = array();
-  foreach ($group_ids as $group_id) {
-    $sql .= "(?, ?),";
-    $params[] = $room_id;
-    $params[] = $group_id;
+  if (!empty($group_ids)) {
+    $sql = "INSERT INTO " . _tbl("room_group") . "(room_id, group_id) VALUES ";
+    $params = array();
+    foreach ($group_ids as $group_id) {
+      $sql .= "(?, ?),";
+      $params[] = $room_id;
+      $params[] = $group_id;
+    }
+    $sql = substr($sql, 0, -1);
+    db()->command($sql, $params);
   }
-  $sql = substr($sql, 0, -1);
-  db()->command($sql, $params);
   db()->commit();
   ApiHelper::success(null);
 }

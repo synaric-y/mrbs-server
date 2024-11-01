@@ -262,8 +262,8 @@ if (empty($errors))
             $sql_params[] = $temporary_meeting;
             break;
           case "theme_type":
-            $assign_array[] = "theme=?";
-            $sql_params[] = $theme;
+            $assign_array[] = "theme_type=?";
+            $sql_params[] = $theme_type;
             break;
           case "time_type":
             $assign_array[] = "time_type=?";
