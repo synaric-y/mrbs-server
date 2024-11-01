@@ -79,7 +79,7 @@ if ($type != 'all') {
   }
 }
 
-$sql = "SELECT E.id AS id, area_id, room_id, start_time, end_time, E.name AS name, create_by, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, R.room_name, area_name, A.disabled as area_disabled, R.disabled as room_disabled, timezone, R.description as description, resolution, capacity, repeat_id FROM " . _tbl("entry") . " E LEFT JOIN " . _tbl("room") .
+$sql = "SELECT E.id AS id, area_id, room_id, start_time, end_time, E.name AS name, create_by, book_by, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, R.room_name, area_name, A.disabled as area_disabled, R.disabled as room_disabled, timezone, R.description as description, resolution, capacity, repeat_id FROM " . _tbl("entry") . " E LEFT JOIN " . _tbl("room") .
 " R ON E.room_id = R.id " . "LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id";
 if ($type == 'area'){
   $sql .= " WHERE A.id = ? AND start_time >= ? AND end_time <= ?";
