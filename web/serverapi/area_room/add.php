@@ -67,9 +67,9 @@ $area_vars = [
   "min_create_ahead_enabled" => 0,
   "min_create_ahead_secs" => 0,
   "max_create_ahead_enabled" => 0,
-  "max_create_ahead_secs" => 0,
+  "max_create_ahead_secs" => 604800,
   "min_delete_ahead_enabled" => 0,
-  "min_delete_ahead_secs" => 0,
+  "min_delete_ahead_secs" => 604800,
   "max_delete_ahead_enabled" => 0,
   "max_delete_ahead_secs" => 0,
   "max_per_day_enabled" => 0,
@@ -99,10 +99,10 @@ $area_vars = [
   "reminders_enabled" => 0,
   "enable_periods" => 0,
   "periods" => null,
-  "confirmation_enabled" => 0,
+  "confirmation_enabled" => 1,
   "confirmed_default" => null,
   "times_along_top" => 0,
-  "default_type" => 'E',
+  "default_type" => 'I',
   "parent_id" => -1
 ];
 
@@ -140,6 +140,8 @@ elseif ($type == "area") {
     if ($parent < 1) {
       ApiHelper::fail(get_vocab("area_not_exist"), ApiHelper::AREA_NOT_EXIST);
     }
+  } else {
+    $parent_id = -1;
   }
   $area_vars['area_name'] = $name;
   $sql = "INSERT INTO " . _tbl("area") . "(";
