@@ -19,7 +19,7 @@ namespace MRBS;
 // This file is for adding new areas/rooms
 $error = '';
 $name = $_POST['name'] ?? null;
-$parent_id = intval($_POST['parent_id']) ?? -1;
+$parent_id = empty($_POST['parent_id']) ? intval($_POST['parent_id']) : -1;
 $group_ids = $_POST['group_ids'] ?? null;
 
 
@@ -55,53 +55,53 @@ $area_vars = [
   "area_admin_email" => '',
   "resolution" => 1800,
   "default_duration" => 3600,
-  "default_duration_all_day" => FALSE,
+  "default_duration_all_day" => 0,
   "morningstarts" => 8,
   "morningstarts_minutes" => 0,
   "eveningends" => 21,
   "eveningends_minutes" => 00,
-  "private_enabled" => FALSE,
-  "private_default" => FALSE,
-  "private_mandatory" => FALSE,
+  "private_enabled" => 0,
+  "private_default" => 0,
+  "private_mandatory" => 0,
   "private_override" => "none",
-  "min_create_ahead_enabled" => FALSE,
+  "min_create_ahead_enabled" => 0,
   "min_create_ahead_secs" => 0,
-  "max_create_ahead_enabled" => FALSE,
+  "max_create_ahead_enabled" => 0,
   "max_create_ahead_secs" => 0,
-  "min_delete_ahead_enabled" => FALSE,
+  "min_delete_ahead_enabled" => 0,
   "min_delete_ahead_secs" => 0,
-  "max_delete_ahead_enabled" => FALSE,
+  "max_delete_ahead_enabled" => 0,
   "max_delete_ahead_secs" => 0,
-  "max_per_day_enabled" => FALSE,
+  "max_per_day_enabled" => 0,
   "max_per_day" => 0,
-  "max_per_week_enabled" => FALSE,
+  "max_per_week_enabled" => 0,
   "max_per_week" => 0,
-  "max_per_month_enabled" => FALSE,
+  "max_per_month_enabled" => 0,
   "max_per_month" => 0,
-  "max_per_year_enabled" => FALSE,
+  "max_per_year_enabled" => 0,
   "max_per_year" => 0,
-  "max_per_future_enabled" => FALSE,
+  "max_per_future_enabled" => 0,
   "max_per_future" => 0,
-  "max_secs_per_day_enabled" => FALSE,
+  "max_secs_per_day_enabled" => 0,
   "max_secs_per_day" => 0,
-  "max_secs_per_week_enabled" => FALSE,
+  "max_secs_per_week_enabled" => 0,
   "max_secs_per_week" => 0,
-  "max_secs_per_month_enabled" => FALSE,
+  "max_secs_per_month_enabled" => 0,
   "max_secs_per_month" => 0,
-  "max_secs_per_year_enabled" => FALSE,
+  "max_secs_per_year_enabled" => 0,
   "max_secs_per_year" => 0,
-  "max_secs_per_future_enabled" => FALSE,
+  "max_secs_per_future_enabled" => 0,
   "max_secs_per_future" => 0,
-  "max_duration_enabled" => FALSE,
+  "max_duration_enabled" => 0,
   "max_duration_secs" => 0,
   "max_duration_periods" => 0,
-  "approval_enable" => FALSE,
-  "reminders_enabled" => FALSE,
-  "enable_periods" => FALSE,
+  "approval_enabled" => 0,
+  "reminders_enabled" => 0,
+  "enable_periods" => 0,
   "periods" => null,
-  "confirmation_enabled" => FALSE,
-  "confirmation_default" => null,
-  "times_along_top" => FALSE,
+  "confirmation_enabled" => 0,
+  "confirmed_default" => null,
+  "times_along_top" => 0,
   "default_type" => 'E',
   "parent_id" => -1
 ];
@@ -122,6 +122,7 @@ $room_vars = array(
   "show_meeting_name" => 1,
   "temporary_meeting" => 1
 );
+
 
 // First of all check that we've got an area or room name
 if (!isset($name) || ($name === '')) {
@@ -144,8 +145,12 @@ elseif ($type == "area") {
   $sql = "INSERT INTO " . _tbl("area") . "(";
   $params = array();
   foreach ($area_vars as $var => $default) {
+    $v = null;
+    if (isset($_POST[$var])) {
+      $v = $_POST[$var];
+    }
     $sql .= "$var,";
-    $params[] = $$var ?? $default;
+    $params[] = $v ?? $default;
   }
   $sql = substr($sql, 0, -1);
   $sql .= ") VALUES (";
@@ -184,8 +189,12 @@ elseif ($type == "area") {
   $sql = "INSERT INTO " . _tbl("room") . "(";
   $params = array();
   foreach ($room_vars as $var => $default) {
+    $v = null;
+    if (isset($_POST[$var])) {
+      $v = $_POST[$var];
+    }
     $sql .= "$var,";
-    $params[] = $$var ?? $default;
+    $params[] = $v ?? $default;
   }
   $sql = substr($sql, 0, -1);
   $sql .= ") VALUES (";

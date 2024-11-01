@@ -17,7 +17,7 @@ if (getLevel($_SESSION['user']) < 2){
 
 $device_id = $_POST['device_id'];
 
-if(empty($device)){
+if(empty($device_id)){
   ApiHelper::fail(get_vocab("missing_parameters"), ApiHelper::MISSING_PARAMETERS);
 }
 
