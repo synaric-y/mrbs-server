@@ -228,6 +228,7 @@ $vocab["group_not_exist"]                           = "사용자 그룹이 존�
 $vocab["group_cannot_unbind"]                       = "사용자 그룹은 바인딩을 해제할 수 없습니다";
 $vocab["group_cannot_modify"]                       = "사용자 그룹은 삭제할 수 없습니다";
 $vocab["group_cannot_bind_third"]                   = "최상위 사용자 그룹만 세 번째 서비스 사용자 그룹을 바인딩할 수 있습니다";
+$vocab["missing_ad_params"]                         = "Active Directory 매개변수가 구성되지 않았거나 연결할 수 없습니다.";
 
 $vocab["success"]           = "성공";
 $vocab["already_login"]    = "이미 로그인";

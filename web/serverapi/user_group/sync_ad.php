@@ -1,6 +1,8 @@
 <?php
 
 namespace MRBS;
+use LdapRecord\Container;
+use LdapRecord\Connection;
 
 /*
  * Synchronize User Groups and users structure from AD.
@@ -37,6 +39,30 @@ if (!empty($task)) {
 
 $config = DBHelper::one(_tbl("system_variable"), "1=1");
 $server_address = $config['server_address'];
+$AD_server = $config['AD_server'];
+$AD_port = $config['AD_port'];
+$AD_base_dn = $config['AD_base_dn'];
+$AD_username = $config['AD_username'];
+$AD_password = $config['AD_password'];
+
+if (empty($AD_server) || empty($AD_port) || empty($AD_base_dn) || empty($AD_username) || empty($AD_password)) {
+  ApiHelper::fail(get_vocab("missing_ad_params"), ApiHelper::MISSING_AD_PARAMS);
+}
+$connection = new Connection([
+  'hosts' => [$AD_server],
+  'port' => $AD_port,
+  'base_dn' => $AD_base_dn,
+  'username' => $AD_username,
+  'password' => $AD_password,
+]);
+try {
+  $connection->connect();
+} catch (\LdapRecord\Auth\BindException $e) {
+  $error = $e->getDetailedError();
+  ApiHelper::fail($error->getDiagnosticMessage(), ApiHelper::LDAP_CONNECT_ERROR);
+}
+
+
 $sync_version = md5(uniqid('', true));
 // In order to facilitate deployment, we did not choose Swoole or other asynchronous programming framework,
 // but sent a POST request for processing. This interface will return immediately and inform the requesting
