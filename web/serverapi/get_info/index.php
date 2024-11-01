@@ -19,6 +19,8 @@ global $datetime_formats;
  *    the timestamp and date of now
  */
 
+use DateInterval;
+
 function buildTree($data, $parent_id = -1)
 {
   $tree = [];
@@ -35,6 +37,13 @@ function buildTree($data, $parent_id = -1)
     }
   }
   return !empty($tree) ? $tree : null;
+}
+
+function secondsToTimeFormat($seconds) {
+  $dateTime = new DateTime("today");
+  $dateTime->setTime(0, 0); // 设置时间为今天的00:00:00
+  $dateTime->add(new DateInterval("PT{$seconds}S")); // 增加指定秒数
+  return $dateTime->format("h:iA"); // 格式化为12小时制
 }
 
 
@@ -155,8 +164,8 @@ if ($type == 'all'){
     $max_time = max($max_time, $area['eveningends'] * 60 + $area['eveningends_minutes']);
   }
 
-  $min_time = date("h:i A", $min_time * 60);
-  $max_time = date("h:i A", $max_time * 60);
+  $min_time = secondsToTimeFormat($min_time * 60);
+  $max_time = secondsToTimeFormat($max_time * 60);
 
 
   $areas = buildTree($areas);
@@ -249,8 +258,8 @@ if ($type == 'all'){
     $max_time = max($max_time, $area['eveningends'] * 60 + $area['eveningends_minutes']);
   }
 
-  $min_time = date("h:i A", $min_time * 60);
-  $max_time = date("h:i A", $max_time * 60);
+  $min_time = secondsToTimeFormat($min_time * 60);
+  $max_time = secondsToTimeFormat($max_time * 60);
 
 
   $areas = buildTree($areas, $root);
