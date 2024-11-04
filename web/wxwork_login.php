@@ -130,7 +130,7 @@ if ($retry == 2){
   ApiHelper::fail(\MRBS\get_vocab("unknown_error"), ApiHelper::UNKNOWN_ERROR);
 }
 
-$sql = "SELECT * FROM " . \MRBS\_tbl("users") . " WHERE email = " . $data['userid'];
+$sql = "SELECT * FROM " . \MRBS\_tbl("users") . " WHERE email = '" . $data['userid'] . "'";
 if (!empty($data['email'])) {
   $sql .= (" or email = '{$data['email']}'");
 }
@@ -140,8 +140,14 @@ if (!empty($data['userid'])) {
     $sql .= (" or name = '{$rName}'");
   }
 }
-$result = \MRBS\db()-> query($sql);
+try {
+  $result = \MRBS\db()->query($sql);
+} catch (\Exception $e) {
+  error_log("[" . date("Y-m-d H:i:s", time()) . "] " . $e->getMessage() . $e->getTraceAsString()."\n", 3, dirname(__DIR__) . "/log/wxwork_log.log");
+}
 if ($result -> count() < 1){
+  error_log("[" . date("Y-m-d H:i:s", time()) . "] " ."count < 1\n", 3, dirname(__DIR__) . "/log/wxwork_log.log");
+
   \MRBS\db()->begin();
   try{
     $transaction_ok = \MRBS\db()-> query("INSERT INTO " . \MRBS\_tbl("users") . "(level, name, display_name, password_hash, email, timestamp) VALUES (?, ?, ?, ?, ?, ?)", array(1, explode("@", $data['userid'])[0], str_replace(".", " ", explode("@", $data['userid'])[0]), $default_password_hash, $data['email'] ?? $data['userid'], date("Y-m-d H:i:s", time())));
