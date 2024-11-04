@@ -164,17 +164,18 @@ elseif ($type == "area") {
   db()->begin();
   db()->command($sql, $params);
   $area_id = db()->insert_id("", "");
-  if (!empty($group_ids)) {
-    $sql = "INSERT INTO " . _tbl("a2g_map") . "(area_id, group_id) VALUES ";
-    $params = array();
-    foreach ($group_ids as $group_id) {
-      $sql .= "(?, ?),";
-      $params[] = $area_id;
-      $params[] = $group_id;
-    }
-    $sql = substr($sql, 0, -1);
-    db()->command($sql, $params);
+  if (empty($group_ids)) {
+    $group_ids = [-1];
   }
+  $sql = "INSERT INTO " . _tbl("a2g_map") . "(area_id, group_id) VALUES ";
+  $params = array();
+  foreach ($group_ids as $group_id) {
+    $sql .= "(?, ?),";
+    $params[] = $area_id;
+    $params[] = $group_id;
+  }
+  $sql = substr($sql, 0, -1);
+  db()->command($sql, $params);
   db()->commit();
   ApiHelper::success(null);
 } elseif ($type == "room") {
@@ -210,17 +211,18 @@ elseif ($type == "area") {
   db()->begin();
   db()->command($sql, $params);
   $room_id = db()->insert_id("", "");
-  if (!empty($group_ids)) {
-    $sql = "INSERT INTO " . _tbl("r2g_map") . "(room_id, group_id) VALUES ";
-    $params = array();
-    foreach ($group_ids as $group_id) {
-      $sql .= "(?, ?),";
-      $params[] = $room_id;
-      $params[] = $group_id;
-    }
-    $sql = substr($sql, 0, -1);
-    db()->command($sql, $params);
+  if (empty($group_ids)) {
+    $group_ids = [-1];
   }
+  $sql = "INSERT INTO " . _tbl("r2g_map") . "(room_id, group_id) VALUES ";
+  $params = array();
+  foreach ($group_ids as $group_id) {
+    $sql .= "(?, ?),";
+    $params[] = $room_id;
+    $params[] = $group_id;
+  }
+  $sql = substr($sql, 0, -1);
+  db()->command($sql, $params);
   db()->commit();
   ApiHelper::success(null);
 }
