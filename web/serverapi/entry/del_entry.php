@@ -22,7 +22,7 @@ $series = boolval($_POST["entry_series"] ?? false);
 if (!$series){
   $result = db() -> query("SELECT * FROM " . _tbl("entry") . " WHERE id = ?", array($id));
   if ($result -> count() < 1){
-    ApiHelper::fail(get_vocab("entry_not_exist"), ApiHelper::ENTRY_NOT_EXIST);
+    ApiHelper::fail(get_vocab("edit_entry_not_exist"), ApiHelper::ENTRY_NOT_EXIST);
   }
   $row = $result -> next_row_keyed();
   if($row['end_time'] <= time()){

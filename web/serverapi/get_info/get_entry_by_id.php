@@ -38,7 +38,7 @@ else if ($is_series === 1)
 else
   ApiHelper::fail(get_vocab("invalid_types"), ApiHelper::INVALID_TYPES);
 if ($result -> count() === 0){
-  ApiHelper::fail(get_vocab("entry_not_exist"), ApiHelper::ENTRY_NOT_EXIST);
+  ApiHelper::fail(get_vocab("edit_entry_not_exist"), ApiHelper::ENTRY_NOT_EXIST);
 }
 
 

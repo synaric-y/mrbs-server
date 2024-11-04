@@ -118,7 +118,7 @@ $skip = boolval($skip);
 $edit_series = boolval($edit_series);
 
 if (!empty($id) && db()->query1("SELECT * FROM " . _tbl("entry") . " WHERE id = ?", array($id)) < 1){
-  ApiHelper::fail(get_vocab("entry_not_exist"), ApiHelper::ENTRY_NOT_EXIST);
+  ApiHelper::fail(get_vocab("edit_entry_not_exist"), ApiHelper::ENTRY_NOT_EXIST);
 }
 
 // Provide a default for $rep_interval (it could be null in an Ajax post request
