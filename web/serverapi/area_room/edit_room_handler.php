@@ -298,17 +298,18 @@ if (empty($errors))
     $sql_params[] = $room;
     db()->command($sql, $sql_params);
     db()->command("DELETE FROM " . _tbl("r2g_map") . " WHERE room_id = ?", array($room));
-    if (!empty($group_ids)){
-      $sql = "INSERT INTO " . _tbl("r2g_map") . "(room_id, group_id) VALUES ";
-      $params = array();
-      foreach ($group_ids as $group_id) {
-        $sql .= "(?, ?),";
-        $params[] = $room;
-        $params[] = $group_id;
-      }
-      $sql = substr($sql, 0, -1);
-      db()->command($sql, $params);
+    if (empty($group_ids)) {
+      $group_ids = [-1];
     }
+    $sql = "INSERT INTO " . _tbl("r2g_map") . "(room_id, group_id) VALUES ";
+    $params = array();
+    foreach ($group_ids as $group_id) {
+      $sql .= "(?, ?),";
+      $params[] = $room;
+      $params[] = $group_id;
+    }
+    $sql = substr($sql, 0, -1);
+    db()->command($sql, $params);
     // Commit the transaction
     db()->commit();
 
