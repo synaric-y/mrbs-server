@@ -19,6 +19,7 @@ $username = $_POST['username'];
 $password = $_POST['password'];
 
 if (!empty($_SESSION) && isset($_SESSION['user'])) {
+  setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("already_login"), ApiHelper::ALREADY_LOGIN);
 }
 setcookie("session_id", "", time() - 3600, "/web/");
