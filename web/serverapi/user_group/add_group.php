@@ -43,6 +43,10 @@ if ($parent_id != -1) {
   }
 }
 
+$exist_group = db()->query("SELECT id FROM " . _tbl("user_group") . " WHERE name = ? LIMIT 1", array($name));
+if ($exist_group->next_row_keyed()) {
+  ApiHelper::fail(get_vocab("duplicated_group_name"), ApiHelper::DUPLICATED_GROUP_NAME);
+}
 
 $insertGroup = array();
 $insertGroup['name'] = $name;

@@ -76,6 +76,8 @@ class ApiHelper
 
   public const MISSING_AD_PARAMS = -207;
 
+  public const DUPLICATED_GROUP_NAME = -208;
+
   public const NO_AREA = -47;
   public const INVALID_ROOM_ID = -48;
   public const DEVICE_EXISTS = -49;
