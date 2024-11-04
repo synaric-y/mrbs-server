@@ -91,7 +91,9 @@ $just_check = false;
 foreach ($form_vars as $var => $var_type) {
   if (isset($_POST[$var]))
     $$var = $_POST[$var];
-
+    if ($var_type == 'string') {
+      $$var = "" . $$var;
+    }
   // Trim the strings and truncate them to the maximum field length
   if (!empty($$var) && is_string($$var)) {
     $$var = trim($$var);
