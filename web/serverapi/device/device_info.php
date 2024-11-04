@@ -104,7 +104,9 @@ foreach ($devices as $key => &$device) {
   }
   if (isset($status) && $device['status'] != $status) {
     unset($devices[$key]);
+    $total_num --;
   }
 }
+$devices = array_values($devices);
 
 ApiHelper::success(["devices" => $devices, "total_num" => $total_num]);
