@@ -41,11 +41,12 @@ if ($type == "room") {
   try {
     // First take out all appointments for this room
     $result = db() -> query("SELECT id FROM " . _tbl("entry") . " WHERE room_id = ?", array($room)) -> all_rows_keyed();
-    $sql = "DELETE FROM " . _tbl('entry') . " WHERE room_id=?";
-    db()->command($sql, array($room));
+
     foreach ($result as $entry) {
       CalendarServerManager::deleteMeeting($entry['id']);
     }
+    $sql = "DELETE FROM " . _tbl('entry') . " WHERE room_id=?";
+    db()->command($sql, array($room));
     $sql = "DELETE FROM " . _tbl('repeat') . " WHERE room_id=?";
     db()->command($sql, array($room));
     db()->command("DELETE FROM " . _tbl("r2g_map") . " WHERE room_id=?", array($room));
