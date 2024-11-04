@@ -697,6 +697,15 @@ $vocab["type."]             = "Please select a type";
 $vocab["type.I"]            = "Internal";
 $vocab["type.E"]            = "External";
 
+// Repeat
+$vocab["duration.0"] = "Sun ";
+$vocab["duration.1"] = "Mon ";
+$vocab["duration.2"] = "Tue ";
+$vocab["duration.3"] = "Wed ";
+$vocab["duration.4"] = "Thu ";
+$vocab["duration.5"] = "Fri ";
+$vocab["duration.6"] = "Sat ";
+
 // General
 $vocab["fatal_error"]        = "Whoops! Unfortunately MRBS has encountered a fatal error.  Please consult your system administrator.";
 $vocab["resize_error"]       = "Whoops! Unfortunately MRBS encountered an error while trying to modify this booking. If this " .

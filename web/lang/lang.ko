@@ -211,6 +211,15 @@ $vocab["please_contact"]     = "자세한 사항은 다음 관리자에게 연�
 $vocab["type.I"]            = "내부회의";
 $vocab["type.E"]            = "외부회의";
 
+// Repeat
+$vocab["duration.0"] = "일요일 ";
+$vocab["duration.1"] = "월요일 ";
+$vocab["duration.2"] = "화요일 ";
+$vocab["duration.3"] = "수요일 ";
+$vocab["duration.4"] = "목요일 ";
+$vocab["duration.5"] = "금요일 ";
+$vocab["duration.6"] = "토요일 ";
+
 // CalendarServer
 $vocab["ic_meeting_accept"]                   = "사용자가 시작한 모임이 관리자에 의해 거부되었습니다.";
 $vocab["ic_meeting_decline"]                  = "사용자가 시작한 모임이 관리자에 의해 거부되었습니다， %s";

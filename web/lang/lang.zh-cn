@@ -605,6 +605,15 @@ $vocab["restore_original"]   = "恢复原样";
 $vocab["type.I"]             = "内部使用";
 $vocab["type.E"]             = "外部使用";
 
+// Repeat
+$vocab["duration.0"]             = "周日 ";
+$vocab["duration.1"]             = "周一 ";
+$vocab["duration.2"]             = "周二 ";
+$vocab["duration.3"]             = "周三 ";
+$vocab["duration.4"]             = "周四 ";
+$vocab["duration.5"]             = "周五 ";
+$vocab["duration.6"]             = "周六 ";
+
 // General
 $vocab["fatal_error"]        = "遇到了一个致命的错误。请联系管理员.";
 $vocab["fatal_db_error"]     = "致命错误: 非常不幸, 数据库现在不可用.";

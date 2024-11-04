@@ -86,6 +86,7 @@ $data = array();
 while ($row = $result->next_row_keyed()) {
   $row['start_time'] = intval($row['start_time']);
   $row['end_time'] = intval($row['end_time']);
+  $entry = array();
   $entry['id'] = $row['id'];
   $entry['room_name'] = $row['room_name'];
   $entry['area_name'] = $row['area_name'];
@@ -145,6 +146,7 @@ while ($row = $result->next_row_keyed()) {
   $repeat = db()->query("SELECT Re.*, R.room_name as room_name, A.area_name as area_name FROM " . _tbl("repeat") . " Re LEFT JOIN " . _tbl("room") . " R ON Re.room_id = R.id LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id WHERE Re.id = ?", array($row['repeat_id']))->next_row_keyed();
   $repeat['start_time'] = intval($repeat['start_time']);
   $repeat['end_time'] = intval($repeat['end_time']);
+  $entry = array();
   $entry['id'] = $repeat['id'];
   $entry['room_name'] = $repeat['room_name'];
   $entry['area_name'] = $repeat['area_name'];
@@ -159,31 +161,32 @@ while ($row = $result->next_row_keyed()) {
     if ($repeat['rep_opt'][$i] == '1') {
       switch ($i) {
         case 0:
-          $entry['duration'] .= "周日 ";
+          $entry['duration'] .= get_vocab("duration.0");
           break;
         case 1:
-          $entry['duration'] .= "周一 ";
+          $entry['duration'] .= get_vocab("duration.1");
           break;
         case 2:
-          $entry['duration'] .= "周二";
+          $entry['duration'] .= get_vocab("duration.2");
           break;
         case 3:
-          $entry['duration'] .= "周三";
+          $entry['duration'] .= get_vocab("duration.3");
           break;
         case 4:
-          $entry['duration'] .= "周四";
+          $entry['duration'] .= get_vocab("duration.4");
           break;
         case 5:
-          $entry['duration'] .= "周五";
+          $entry['duration'] .= get_vocab("duration.5");
           break;
         case 6:
-          $entry['duration'] .= "周六";
+          $entry['duration'] .= get_vocab("duration.6");
           break;
       }
     }
   }
   $entry['is_repeat'] = 1;
-  $entry['status'] = $entry['start_time'] > time() ? 0 : ($entry['end_time'] < time() ? 2 : 1);
+//  $entry['status'] = $entry['start_time'] > time() ? 0 : ($entry['end_time'] < time() ? 2 : 1);
+  $entry['status'] = $status ?? ($entry['start_time'] > time() ? 0 : ($entry['end_time'] < time() ? 2 : 1));
   $entry['create_by'] = $repeat['create_by'];
   $entry['days_of_week'] = $repeat['rep_opt'];
   $data[] = $entry;
