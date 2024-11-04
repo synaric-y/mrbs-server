@@ -133,7 +133,7 @@ if (!isset($name) || ($name === '')) {
 elseif ($type == "area") {
   $one = db()->query1("SELECT COUNT(*) FROM " . _tbl("area") . " WHERE area_name = ?", array($name));
   if ($one > 0) {
-    ApiHelper::fail(get_vocab("invalid_area"), ApiHelper::INVALID_AREA);
+    ApiHelper::fail(get_vocab("invalid_area_name"), ApiHelper::INVALID_AREA);
   }
   if (!empty($parent_id)) {
     $parent = db()->query1("SELECT COUNT(*) FROM " . _tbl("area") . " WHERE id = ?", array($parent_id));
