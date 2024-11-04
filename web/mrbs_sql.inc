@@ -2868,3 +2868,9 @@ function resolve_user_group_count()
     ";
   db()->command($sql);
 }
+
+function get_global_setting($select = "*")
+{
+  $row = db()->query("SELECT {$select} FROM " . _tbl("system_variable") . " LIMIT 1");
+  return $row->next_row_keyed();
+}

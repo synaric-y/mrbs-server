@@ -104,6 +104,14 @@ if(!$show_book){
   }
 }
 
+// Get inner-app address
+$global_config = get_global_setting("server_address, theme_type, time_type, now_version");
+if (!empty($global_config)) {
+  $global_config['inner_address'] = $global_config['server_address'] . "/display/" . $global_config['now_version'] . "/index.html";
+  unset($global_config['server_address']);
+  unset($global_config['now_version']);
+}
+
 $display_day = datetime_format($datetime_formats['view_day'], $now);
 $now_time = date("h:iA", $now);
 //$dateTime = new DateTime();
@@ -122,5 +130,6 @@ $result["area"] = $area;
 $result["now_entry"] = $now_entry;
 $result["entries"] = $entries;
 $result["room"] = $room;
+$result["global_config"] = $global_config;
 
 ApiHelper::success($result);
