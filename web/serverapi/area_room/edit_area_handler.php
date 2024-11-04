@@ -426,9 +426,9 @@ if ($areaExist > 0) {
   db()->begin();
   try{
     db()->command($sql, $sql_params);
-    db()->command("DELETE FROM " . _tbl("area_group") . " WHERE area_id = ?", array($area));
+    db()->command("DELETE FROM " . _tbl("a2g_map") . " WHERE area_id = ?", array($area));
     if(!empty($group_ids)){
-      $sql = "INSERT INTO " . _tbl("area_group") . " (area_id, group_id) VALUES ";
+      $sql = "INSERT INTO " . _tbl("a2g_map") . " (area_id, group_id) VALUES ";
       $params = array();
       foreach ($group_ids as $group_id) {
         $sql .= "(?, ?),";

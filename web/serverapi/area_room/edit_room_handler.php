@@ -297,9 +297,9 @@ if (empty($errors))
     $sql .= implode(",", $assign_array) . " WHERE id=?";
     $sql_params[] = $room;
     db()->command($sql, $sql_params);
-    db()->command("DELETE FROM " . _tbl("room_group") . " WHERE room_id = ?", array($room));
+    db()->command("DELETE FROM " . _tbl("r2g_map") . " WHERE room_id = ?", array($room));
     if (!empty($group_ids)){
-      $sql = "INSERT INTO " . _tbl("room_group") . "(room_id, group_id) VALUES ";
+      $sql = "INSERT INTO " . _tbl("r2g_map") . "(room_id, group_id) VALUES ";
       $params = array();
       foreach ($group_ids as $group_id) {
         $sql .= "(?, ?),";

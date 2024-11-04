@@ -314,8 +314,8 @@ VALUES ('local_db_version', '1');
 
 DROP TABLE IF EXISTS mrbs_system_variable;
 DROP TABLE IF EXISTS mrbs_device;
-DROP TABLE IF EXISTS mrbs_area_group;
-DROP TABLE IF EXISTS mrbs_room_group;
+DROP TABLE IF EXISTS mrbs_a2g_map;
+DROP TABLE IF EXISTS mrbs_r2g_map;
 DROP TABLE IF EXISTS mrbs_user_group;
 DROP TABLE IF EXISTS mrbs_g2g_map;
 DROP TABLE IF EXISTS mrbs_u2g_map;
@@ -380,7 +380,7 @@ CREATE TABLE mrbs_device
 
 
 
-CREATE TABLE mrbs_area_group
+CREATE TABLE mrbs_a2g_map
 (
   id       int NOT NULL auto_increment,
   area_id  int NOT NULL,
@@ -389,7 +389,7 @@ CREATE TABLE mrbs_area_group
 )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='table of the relation between area and group';
 
 
-CREATE TABLE mrbs_room_group
+CREATE TABLE mrbs_r2g_map
 (
   id       int NOT NULL auto_increment,
   room_id  int NOT NULL,

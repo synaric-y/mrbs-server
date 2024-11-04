@@ -165,7 +165,7 @@ elseif ($type == "area") {
   db()->command($sql, $params);
   $area_id = db()->insert_id("", "");
   if (!empty($group_ids)) {
-    $sql = "INSERT INTO " . _tbl("area_group") . "(area_id, group_id) VALUES ";
+    $sql = "INSERT INTO " . _tbl("a2g_map") . "(area_id, group_id) VALUES ";
     $params = array();
     foreach ($group_ids as $group_id) {
       $sql .= "(?, ?),";
@@ -211,7 +211,7 @@ elseif ($type == "area") {
   db()->command($sql, $params);
   $room_id = db()->insert_id("", "");
   if (!empty($group_ids)) {
-    $sql = "INSERT INTO " . _tbl("room_group") . "(room_id, group_id) VALUES ";
+    $sql = "INSERT INTO " . _tbl("r2g_map") . "(room_id, group_id) VALUES ";
     $params = array();
     foreach ($group_ids as $group_id) {
       $sql .= "(?, ?),";

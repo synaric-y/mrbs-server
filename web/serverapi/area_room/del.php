@@ -48,7 +48,7 @@ if ($type == "room") {
     }
     $sql = "DELETE FROM " . _tbl('repeat') . " WHERE room_id=?";
     db()->command($sql, array($room));
-    db()->command("DELETE FROM " . _tbl("room_group") . " WHERE room_id=?", array($room));
+    db()->command("DELETE FROM " . _tbl("r2g_map") . " WHERE room_id=?", array($room));
     db()->command("UPDATE " . _tbl("device") . " SET is_set=0, room_id=NULL WHERE room_id=?", array($room));
     // Now take out the room itself
     $sql = "DELETE FROM " . _tbl('room') . " WHERE id=?";
@@ -82,7 +82,7 @@ if ($type == "area") {
              WHERE id=?";
     try{
       db()->begin();
-      db()->command("DELETE FROM " . _tbl("area_group") . " WHERE area_id = ?", array($area));
+      db()->command("DELETE FROM " . _tbl("a2g_map") . " WHERE area_id = ?", array($area));
       db()->command($sql, array($area));
       db()->commit();
     }catch(Exception $e){
