@@ -20,13 +20,14 @@ if ($result -> count() < 1){
   ApiHelper::success(null);
 }
 
-$down_set = RedisConnect::zRangeByScore("heart_beat", time() - 30, time());
+//$down_set = RedisConnect::zRangeByScore("heart_beat", time() - 30, time());
 
 $data = [];
 while($row = $result -> next_row_keyed()){
-  if (in_array($row['device_id'], $down_set)){
-    $data[] = $row;
-  }
+//  if (in_array($row['device_id'], $down_set)){
+//    $data[] = $row;
+//  }
+  $data[] = $row;
 }
 
 ApiHelper::success(empty($data) ? null : $data);
