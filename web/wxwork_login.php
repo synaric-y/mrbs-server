@@ -67,7 +67,7 @@ while ($retry < 2) {
           log_wxwork("net error or redis error");
           ApiHelper::fail("net error or redis error", ApiHelper::INTERNAL_ERROR);
         } else if ($result != 0) {
-          log_wxwork("refresh_access_token: {$result}\n", 3, dirname(__DIR__));
+          log_wxwork("refresh_access_token: {$result}");
           ApiHelper::fail("wxwork errcode: {$result}", ApiHelper::INTERNAL_ERROR);
         }
       } catch (\Exception $e) {
@@ -151,7 +151,8 @@ if (!empty($data['userid'])) {
 try {
   $result = \MRBS\db()->query($sql);
 } catch (\Exception $e) {
-  log_wxwork($e->getMessage() . "\n" . $e->getTraceAsString());
+  log_wxwork($e->getMessage());
+  log_wxwork($e->getTraceAsString());
 }
 if ($result->count() < 1) {
   log_wxwork("count < 1");
