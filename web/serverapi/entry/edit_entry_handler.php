@@ -158,7 +158,8 @@ foreach (['allow_registration', 'registrant_limit_enabled', 'registration_opens_
 
 // If they're not an admin and multi-day bookings are not allowed, then
 // set the end date to the start date
-if (!is_book_admin($rooms) && $auth['only_admin_can_book_multiday']) {
+//if (!is_book_admin($rooms) && $auth['only_admin_can_book_multiday']) {
+if ($auth['only_admin_can_book_multiday']) {
   $end_date = $start_date;
 }
 
@@ -170,6 +171,7 @@ list($start_year, $start_month, $start_day) = $start_date_split;
 if (false === ($end_date_split = split_iso_date($end_date))) {
   ApiHelper::fail(get_vocab("invalid_end_time"), ApiHelper::INVALID_END_TIME);
 }
+
 list($end_year, $end_month, $end_day) = $end_date_split;
 
 $result = db() -> query("SELECT * FROM " . _tbl("room") . " WHERE id = ?", $rooms);
