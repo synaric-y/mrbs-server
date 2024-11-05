@@ -1509,7 +1509,7 @@ $auth['only_admin_can_book_repeat'] = false;
 
 // If you want only administrators to be able to make bookings spanning
 // more than one day, set this variable to true.
-$auth['only_admin_can_book_multiday'] = false;
+$auth['only_admin_can_book_multiday'] = true;
 
 // If you want only administrators to be able to select multiple rooms
 // on the booking form then set this to true.  (It doesn't stop ordinary users
