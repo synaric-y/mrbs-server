@@ -26,17 +26,23 @@ require_once "./lib/Wxwork/api/src/Utils.php";
 
 global $corpid, $secret, $default_password_hash;
 
+function log_wxwork()
+{
+  $aglist = func_get_args();
+  log_by_name("wxwork_", $aglist);
+}
+
 $config = DBHelper::one(_tbl("system_variable"), "1=1");
 
 $corpid = $config['corpid'];
 $secret = $config['secret'];
 if (isset($_SESSION) && !empty($_SESSION['user'])){
-  error_log("[" . date("Y-m-d H:i:s", time()) . "]" . \MRBS\get_vocab('already_login') . "\n", 3, dirname(__DIR__) . "/log/wxwork_log.log");
+  log_wxwork( \MRBS\get_vocab('already_login'));
   \MRBS\ApiHelper::success(\MRBS\get_vocab('already_login'));
 }
 
 if (!isset($_GET) || empty($_GET["code"])) {
-  error_log("[" . date("Y-m-d H:i:s", time()) . "]" . \MRBS\get_vocab("invalid_code") . "\n", 3, dirname(__DIR__) . "/log/wxwork_log.log");
+  log_wxwork(\MRBS\get_vocab("invalid_code"));
   \MRBS\ApiHelper::fail(\MRBS\get_vocab("invalid_code"), \MRBS\ApiHelper::INVALID_CODE);
 }
 
@@ -51,7 +57,7 @@ while ($retry < 1){
   $data = json_decode($json, true);
 
   if ($data['errcode'] != 0) {
-    error_log("[" . date("Y-m-d H:i:s", time()) . "]" . "wxwork errcode: {$data['errcode']}\n", 3, dirname(__DIR__) . "/log/wxwork_log.log");
+    log_wxwork("wxwork errcode: {$data['errcode']}");
     ApiHelper::fail("wxwork errcode: $json", ApiHelper::INTERNAL_ERROR);
 
     $file = fopen("./lib/Wxwork/api/src/mutex_lock.lock", "w+");
@@ -59,10 +65,10 @@ while ($retry < 1){
       try{
         $result = refresh_access_token($corpid, $secret);
         if($result === false || $result === -1) {
-          error_log("[" . date("Y-m-d H:i:s", time()) . "]" . "net error or redis error\n", 3, dirname(__DIR__) . "/log/wxwork_log.log");
+          log_wxwork("net error or redis error");
           ApiHelper::fail("net error or redis error", ApiHelper::INTERNAL_ERROR);
         }else if ($result != 0){
-          error_log("[" . date("Y-m-d H:i:s", time()) . "]" . "refresh_access_token: {$result}\n", 3, dirname(__DIR__) . "/log/wxwork_log.log");
+          log_wxwork("refresh_access_token: {$result}\n", 3, dirname(__DIR__));
           ApiHelper::fail("wxwork errcode: {$result}", ApiHelper::INTERNAL_ERROR);
         }
       }catch (\Exception $e){
@@ -99,10 +105,10 @@ while($retry < 2){
   $json = HttpUtils::httpPost($url, json_encode($data));
   /** @noinspection PhpStrictTypeCheckingInspection */
   $data = json_decode($json, true);
-  error_log("[" . date("Y-m-d H:i:s", time()) . "]" . "resp: $json\n", 3, dirname(__DIR__) . "/log/wxwork_log.log");
+  log_wxwork("resp: $json");
   if ($data['errcode'] != 0) {
     if ($retry != 0){
-      error_log("[" . date("Y-m-d H:i:s", time()) . "]" . "wxwork errcode: {$data['errcode']}\n", 3, dirname(__DIR__) . "/log/wxwork_log.log");
+      log_wxwork("wxwork errcode: {$data['errcode']}");
       ApiHelper::fail("wxwork errcode: {$data['errcode']}", ApiHelper::UNKNOWN_ERROR);
     }
     $file = fopen("./lib/Wxwork/api/src/mutex_lock.lock", "w+");
@@ -143,10 +149,10 @@ if (!empty($data['userid'])) {
 try {
   $result = \MRBS\db()->query($sql);
 } catch (\Exception $e) {
-  error_log("[" . date("Y-m-d H:i:s", time()) . "] " . $e->getMessage() . $e->getTraceAsString()."\n", 3, dirname(__DIR__) . "/log/wxwork_log.log");
+  log_wxwork($e->getMessage() ."\n". $e->getTraceAsString());
 }
 if ($result -> count() < 1){
-  error_log("[" . date("Y-m-d H:i:s", time()) . "] " ."count < 1\n", 3, dirname(__DIR__) . "/log/wxwork_log.log");
+  log_wxwork("count < 1");
 
   \MRBS\db()->begin();
   try{
@@ -159,7 +165,8 @@ if ($result -> count() < 1){
     }
   }catch (\Exception $e){
     \MRBS\db()->rollback();
-    error_log("[" . date("Y-m-d H:i:s", time()) . "] " . $e->getMessage() . $e->getTraceAsString() . "\n", 3, dirname(__DIR__) . "/log/wxwork_log.log");
+    log_wxwork("insert user transaction failed");
+    log_wxwork($e->getMessage() . $e->getTraceAsString());
     ApiHelper::fail(\MRBS\get_vocab("fail_to_create_user"), ApiHelper::FAIL_TO_CREATE_USER);
   }
 }else{
@@ -169,7 +176,7 @@ if ($result -> count() < 1){
 }
 
 session_write_close();
-error_log("[" . date("Y-m-d H:i:s", time()) . "]" . "success\n", 3, "./log/wxwork_log.log");
+log_wxwork("success");
 ApiHelper::success(null);
 
 

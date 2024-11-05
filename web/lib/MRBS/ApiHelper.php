@@ -6,11 +6,13 @@ class ApiHelper
 {
 
   public const  SUCCESS = 0;
+
   public const PLEASE_LOGIN = -99;
 
   public const ACCESS_DENIED = -98;
   public const UNKNOWN_ERROR = -97;
   public const INTERNAL_ERROR = -96;
+  public const INVALID_PARAM = -95;
   public const ALREADY_LOGIN = 1;
   public const INVALID_USERNAME_OR_PASSWORD = -2;
   public const INVALID_START_TIME = -3;
