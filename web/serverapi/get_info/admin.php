@@ -52,12 +52,14 @@ $data = array();
   $data = buildTree($data);
   ApiHelper::success($data);
 }else if ($type == 'room'){
+   $query_room = "SELECT R.*, GROUP_CONCAT(D.device_id SEPARATOR ',') AS device_ids FROM "
+     . _tbl("room") . " R LEFT JOIN ". _tbl("device") . " D ON D.room_id = R.id GROUP BY R.id";
   if (!empty($area)){
     $areaExist = db() -> query("SELECT id FROM " . _tbl("area") . " WHERE id = ?", array($area));
     if ($areaExist -> count() == 0){
       ApiHelper::fail(get_vocab("area_not_exist"), ApiHelper::AREA_NOT_EXIST);
     }
-    $sql = "SELECT *  FROM " . _tbl("room") . " WHERE area_id = ?";
+    $sql = $query_room . " WHERE area_id = ?";
     $result = db() -> query($sql, array($area));
     if ($result -> count() === 0){
       ApiHelper::fail(get_vocab("no_room_in_area"), ApiHelper::NO_ROOM_IN_AREA);
@@ -72,7 +74,7 @@ $data = array();
       ApiHelper::success($data);
     }
   }else{
-    $result = db() -> query("SELECT * FROM " . _tbl("room"));
+    $result = db() -> query($query_room);
     if ($result -> count() === 0){
       ApiHelper::fail(get_vocab("room_not_exist"), ApiHelper::ROOM_NOT_EXIST);
     }
