@@ -148,6 +148,7 @@ if (!empty($action) && ($action == "edit")){
   $user["name"] = $name;
   $user["display_name"] = $display_name;
   $user["email"] = $email;
+  $user["level"] = $level;
   $user["remark"] = $remark;
   $sql = "UPDATE " . _tbl("users") . " SET ";
   foreach ($user as $key => $value) {
