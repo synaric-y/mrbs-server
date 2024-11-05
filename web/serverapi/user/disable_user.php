@@ -24,8 +24,11 @@ if (empty($id)){
 }
 
 $result = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE id = ?", array($id));
+$user = $result->next_row_keyed();
 if ($result -> count() < 1){
   ApiHelper::fail(get_vocab("user_not_exist"), ApiHelper::USER_NOT_EXIST);
+} elseif ($user['source'] == 'ad') {
+  ApiHelper::fail(get_vocab("user_not_exist"), ApiHelper::USER_CANNOT_EDIT);
 }else{
   $row = $result -> next_row_keyed();
   if ($row['name'] == $_SESSION['user']){

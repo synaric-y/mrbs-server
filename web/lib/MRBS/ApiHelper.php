@@ -60,6 +60,8 @@ class ApiHelper
   public const INVALID_SECRET = -45;
   public const INVALID_CORPID = -46;
 
+  public const USER_CANNOT_EDIT = -47;
+
   /*
    * User Group Start
    * */
