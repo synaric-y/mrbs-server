@@ -153,7 +153,7 @@ $errors = array();
 $id = get_area_id($area_name);
 if (isset($id) && ($id != $area))
 {
-  ApiHelper::fail(get_vocab("area_not_exist"), ApiHelper::AREA_NOT_EXIST);
+  ApiHelper::fail(get_vocab("invalid_area_name"), ApiHelper::INVALID_AREA);
 }
 
 // Clean up the address list replacing newlines by commas and removing duplicates
