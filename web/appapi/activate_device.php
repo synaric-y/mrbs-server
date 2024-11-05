@@ -40,7 +40,7 @@ if ($result > 0){
 
 
 
-$sql = "INSERT INTO " . _tbl("device") . "(device_id, version, description, resolution, is_charging, battery_level, is_set, room_id, set_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+$sql = "INSERT INTO " . _tbl("device") . "(device_id, version, description, resolution, is_charging, battery_level, is_set, room_id, set_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 db() -> command($sql, array($device_id, $version, $description, $resolution, $is_charge, $battery_level, $status, $room_id, time()));
 
 ApiHelper::success(null);
