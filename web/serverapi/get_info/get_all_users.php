@@ -47,7 +47,8 @@ $pagesize = intval($_POST["pagesize"]);
 $pagenum = intval($_POST["pagenum"]);
 
 $params = array();
-$sql = "SELECT id, level, name, display_name, email, create_time, remark, disabled FROM " . _tbl("users");
+$select = "SELECT id, level, name, display_name, email, timestamp, remark, disabled";
+$sql = "$select FROM " . _tbl("users");
 $vars = array_values($vars);
 if (!empty($vars)){
   $sql .= " WHERE ";
@@ -67,7 +68,7 @@ if (!empty($vars)){
 $start_num = ($pagenum - 1) * $pagesize;
 $sql .= " LIMIT $start_num, $pagesize";
 $result = db() -> query($sql, $params);
-$sql = str_replace("id, level, name, display_name, email, create_time, remark, disabled", "COUNT(*)", $sql);
+$sql = str_replace("$select", "SELECT COUNT(*)", $sql);
 $sql = str_replace(" LIMIT $start_num, $pagesize", "", $sql);
 $total_num = db() -> query1($sql, $params);
 if ($result -> count() == 0){
