@@ -19,6 +19,9 @@ if (!checkAuth()){
 }
 
 $creator = $_SESSION['user'];
+$pagesize = intval($_POST['pagesize']);
+$pagenum = intval($_POST['pagenum']);
 
-$result = db() -> query("SELECT * FROM " . _tbl("entry") . " WHERE create_by = ?", array($creator));
+$offset = ($pagenum - 1) * $pagesize;
+$result = db() -> query("SELECT * FROM " . _tbl("entry") . " WHERE create_by = ?  LIMIT {$offset}, {$pagesize}", array($creator));
 ApiHelper::success($result -> all_rows_keyed());
