@@ -52,10 +52,17 @@ $vars = array(
 );
 
 $params = array();
+$last_setting = db() -> query("SELECT * FROM " . _tbl("system_variable")) -> next_row_keyed();
+
 foreach ($vars as $var) {
   if (isset($_POST[$var]) && $_POST[$var] !== '') {
-    if ($var === 'server_address')
+    if ($var === 'server_address') {
       $_POST[$var] = urldecode($_POST[$var]);
+    } elseif ($var === 'resolution') {
+      if ($_POST[$var] > $last_setting['resolution']) {
+        ApiHelper::fail(get_vocab("cannot_edit_resolution"), ApiHelper::INVALID_RESOLUTION);
+      }
+    }
     $params[$var] = $_POST[$var];
   }
 }

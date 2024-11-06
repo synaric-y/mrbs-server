@@ -59,8 +59,27 @@ class ApiHelper
   public const FAIL_TO_CREATE_USER = -44;
   public const INVALID_SECRET = -45;
   public const INVALID_CORPID = -46;
-
   public const USER_CANNOT_EDIT = -47;
+  public const NO_AREA = -47;
+  public const INVALID_ROOM_ID = -48;
+  public const DEVICE_EXISTS = -49;
+  public const DEVICE_NOT_BIND = -50;
+  public const VERSION_NOT_EXIST = -51;
+  public const VERSION_IS_DELETED = -52;
+  public const FILE_NOT_EXIST = -53;
+  public const UNSUPPORT_FILE_TYPE = -54;
+  public const INVALID_FILE_NAME = -55;
+  public const UNABLE_TO_OPEN_ZIP = -56;
+  public const FAIL_TO_UPLOAD = -57;
+  public const VERSION_EXISTS = -58;
+  public const NOT_ACTIVATE = -59;
+  public const NOT_BIND = -60;
+  public const GROUP_LIMIT = -61;
+  public const DISABLED_SELF = -62;
+  public const DELETE_ONE_WITH_CHILD = -63;
+  public const DEVICE_DOWN = -64;
+  public const LDAP_CONNECT_ERROR = -65;
+
 
   /*
    * User Group Start
@@ -81,28 +100,6 @@ class ApiHelper
   public const MISSING_AD_PARAMS = -207;
 
   public const DUPLICATED_GROUP_NAME = -208;
-
-  public const NO_AREA = -47;
-  public const INVALID_ROOM_ID = -48;
-  public const DEVICE_EXISTS = -49;
-  public const DEVICE_NOT_BIND = -50;
-  public const VERSION_NOT_EXIST = -51;
-  public const VERSION_IS_DELETED = -52;
-  public const FILE_NOT_EXIST = -53;
-  public const UNSUPPORT_FILE_TYPE = -54;
-  public const INVALID_FILE_NAME = -55;
-  public const UNABLE_TO_OPEN_ZIP = -56;
-  public const FAIL_TO_UPLOAD = -57;
-  public const VERSION_EXISTS = -58;
-  public const NOT_ACTIVATE = -59;
-  public const NOT_BIND = -60;
-  public const GROUP_LIMIT = -61;
-  public const DISABLED_SELF = -62;
-  public const DELETE_ONE_WITH_CHILD = -63;
-
-  public const DEVICE_DOWN = -64;
-
-  public const LDAP_CONNECT_ERROR = -65;
 
   static function value($key)
   {
