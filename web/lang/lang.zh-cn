@@ -264,7 +264,7 @@ $vocab["none_outstanding"]   = "您没有待批准的预约.";
 // Authentication stuff
 
 $vocab["accessdenied"]       = "访问被拒绝";
-$vocab["norights"]           = "您无权限访问该页面!";
+$vocab["norights"]           = "您无权限访问或已被禁用";
 $vocab["please_login"]       = "请登录";
 $vocab["users.name"]         = "用户登录名";
 $vocab["users.display_name"]        = "用户姓名";

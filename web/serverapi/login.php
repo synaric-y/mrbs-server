@@ -36,8 +36,11 @@ setcookie("session_id", session_id(), [
   "httponly" => true,
   "samesite" => "None"
 ]);
-$result = db() -> query("SELECT level, display_name FROM " . _tbl("users") . " WHERE name = ?", array($username));
+$result = db() -> query("SELECT level, display_name, disabled FROM " . _tbl("users") . " WHERE name = ?", array($username));
 $row = $result -> next_row_keyed();
+if ($row['disabled'] == 1) {
+  ApiHelper::fail(get_vocab("norights"), ApiHelper::ACCESS_DENIED);
+}
 $data = array(
   "username" => $username,
   "level" => $row['level'],
