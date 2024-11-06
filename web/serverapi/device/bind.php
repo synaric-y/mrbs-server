@@ -31,17 +31,17 @@ if ($device < 1){
 }
 
 //check if room exists
-$room = db() -> query1("SELECT COUNT(*) FROM " . _tbl("room") . " WHERE room_id = ?", array($room_id));
+$room = db() -> query1("SELECT COUNT(*) FROM " . _tbl("room") . " WHERE id = ?", array($room_id));
 if ($room < 1){
   ApiHelper::fail(get_vocab("room_not_exist"), ApiHelper::ROOM_NOT_EXIST);
 }
 
 //check if device is online
-$down_set = RedisConnect::zRangeByScore("heart_beat", time() - 30, time());
-if (!in_array($device, $down_set)){
-  ApiHelper::fail(get_vocab('device_down'), ApiHelper::DEVICE_DOWN);
-}
+//$down_set = RedisConnect::zRangeByScore("heart_beat", time() - 30, time());
+//if (!in_array($device, $down_set)){
+//  ApiHelper::fail(get_vocab('device_down'), ApiHelper::DEVICE_DOWN);
+//}
 
-db() -> command("UPDATE " . _tbl("device") . " SET room_id = ? WHERE room_id = ?", array($room_id, $device_id));
+db() -> command("UPDATE " . _tbl("device") . " SET room_id = ? WHERE id = ?", array($room_id, $device_id));
 
 ApiHelper::success(null);
