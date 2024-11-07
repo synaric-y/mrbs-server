@@ -42,6 +42,6 @@ if ($room < 1){
 //  ApiHelper::fail(get_vocab('device_down'), ApiHelper::DEVICE_DOWN);
 //}
 
-db() -> command("UPDATE " . _tbl("device") . " SET room_id = ? WHERE device_id = ?", array($room_id, $device_id));
+db() -> command("UPDATE " . _tbl("device") . " SET room_id = ?, is_set=1, set_time=? WHERE device_id = ?", array($room_id, time(), $device_id));
 
 ApiHelper::success(null);
