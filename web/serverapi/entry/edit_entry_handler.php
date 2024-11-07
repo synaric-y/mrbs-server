@@ -103,7 +103,7 @@ foreach ($form_vars as $var => $var_type) {
 }
 
 
-if (!empty($_POST['edit_series'])) {
+if (empty($_POST['edit_series'])) {
   if ($end_seconds < time()) {
     ApiHelper::fail(get_vocab("expired_end_time"), ApiHelper::EXPIRED_END_TIME);
   }
