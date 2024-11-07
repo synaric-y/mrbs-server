@@ -19,7 +19,7 @@ if (!checkAuth()){
 }
 
 $creator = $_SESSION['user'];
-$status = $_SESSION['status'];
+$status = intval($_POST['status']);
 $pagesize = intval($_POST['pagesize']);
 $pagenum = intval($_POST['pagenum']);
 
@@ -40,6 +40,6 @@ if (isset($status)) {
   }
 }
 
-$offset = ($pagenum - 1) * $pagesize;
+$offset = ($pagesize - 1) * $pagenum;
 $result = db() -> query("SELECT * FROM " . _tbl("entry") . " E WHERE create_by = ? $filter ORDER BY timestamp DESC LIMIT {$offset}, {$pagesize}", $params);
 ApiHelper::success($result -> all_rows_keyed());
