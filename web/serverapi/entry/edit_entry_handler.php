@@ -630,11 +630,6 @@ try {
   db()->begin();
   $transaction_ok = true;
 
-  // TODO
-  //  For fear of unexpected bug, we do not allow to modify a repeatable entry. That means you can
-  //  only modify one entry once. If you want to modify entry, you should do modify several times.
-  //  We will handle this problem later.
-
 
   $result = mrbsMakeBookings($bookings, $this_id, $just_check, $skip, $original_room_id, $send_mail, $edit_series);
   // Notify the third-party Calendar service that a meeting has been created
@@ -656,10 +651,9 @@ try {
     if ($result["new_details"]) {
       foreach ($result["new_details"] as $d) {
         if($edit_series) {
-//          $fetch = db()->query("SELECT id FROM " . _tbl("entry") . " WHERE repeat_id = ?", array($d['id']));
-//          while($row = $fetch->next_row_keyed())
-//            CalendarServerManager::updateMeeting($row['id']);
+          // Actually delete old Calendar Item
           CalendarServerManager::updateRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
+          // Then create a new one
           CalendarServerManager::createRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
         }else
           CalendarServerManager::updateMeeting($d['id']);

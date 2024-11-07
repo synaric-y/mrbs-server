@@ -726,6 +726,7 @@ $vocab["ic_xs_meeting"]                       = "%s's Meeting";
 $vocab["ic_tp_meeting"]                       = "Quick Meeting";
 $vocab["fast_meeting_time"]                   = "Are you sure you want to book a quick meeting between %s - %s？";
 $vocab["ic_recurring_decline"]                = "Periodic meetings are not supported yet.";
+$vocab["ic_unsupported_recurring_type"]       = "Please select a weekly recurring meeting with a clear end date.";
 
 // User Group
 $vocab["invalid_group_name"]                        = "Invalid group name";

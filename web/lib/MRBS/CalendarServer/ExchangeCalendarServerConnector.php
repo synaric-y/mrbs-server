@@ -205,7 +205,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
       if ($recurrence->getWeeklyRecurrence() == null || $recurrence->getEndDateRecurrence() == null) {
         \MRBS\log_i($this::$TAG, "not support calendar type: RecurringMaster");
         try {
-          $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
+          $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_unsupported_recurring_type"));
         } catch (\Exception $e) {
           \MRBS\log_i($this::$TAG, $e->getMessage());
           \MRBS\log_i($this::$TAG, $e->getTraceAsString());

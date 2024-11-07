@@ -630,6 +630,7 @@ $vocab["ic_xs_meeting"]                       = "%s的会议";
 $vocab["ic_tp_meeting"]                       = "临时会议";
 $vocab["fast_meeting_time"]                   = "确定要预约 %s - %s的快速会议吗？";
 $vocab["ic_recurring_decline"]                = "暂不支持周期性会议";
+$vocab["ic_unsupported_recurring_type"]       = "请选择有明确结束日期的、按周的周期性会议";
 
 // User Group
 $vocab["invalid_group_name"]                        = "用户组名无效";
