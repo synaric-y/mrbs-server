@@ -14,10 +14,6 @@ if (!checkAuth()){
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
-if (getLevel($_SESSION['user']) < 2){
-  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
-}
-
 $vars = array(
   "use_wxwork",
   "use_exchange",
@@ -58,6 +54,12 @@ foreach ($vars as $var) {
   if (empty($_POST[$var])){
     unset($result[$var]);
   }
+  if (getLevel($_SESSION['user']) < 2){
+    if (!in_array($var, ['logo_dir', 'app_logo_dir', 'company_name', 'server_address'])) {
+      unset($result[$var]);
+    }
+  }
 }
+
 
 ApiHelper::success($result);
