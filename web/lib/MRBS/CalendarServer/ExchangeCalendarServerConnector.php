@@ -69,21 +69,22 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     \MRBS\log_i($this::$TAG, "getCalendarItems: $searchCalendarStart ~ $searchCalendarEnd");
 
     $calendar = $this->getCalendar();
-    $items = $calendar->getCalendarItems($searchCalendarStart, $searchCalendarEnd);
-    $calendarItemList = $items->getItems()->getCalendarItem();
     // get recent change list
     $changesSinceLsatCheck = $calendar->listChanges($this->room["exchange_sync_state"] ?? null);
-    if (!empty($calendarItemList)) {
-      if (!is_array($calendarItemList)) {
-        $calendarItemList = array($calendarItemList);
-      }
+
+//    $items = $calendar->getCalendarItems($searchCalendarStart, $searchCalendarEnd);
+//    $calendarItemList = $items->getItems()->getCalendarItem();
+//    if (!empty($calendarItemList)) {
+//      if (!is_array($calendarItemList)) {
+//        $calendarItemList = array($calendarItemList);
+//      }
 //      \MRBS\log_i($this::$TAG, "-----------------------------");
 //      \MRBS\log_i($this::$TAG, "| print queried calendar");
 //      \MRBS\log_i($this::$TAG, "-----------------------------");
 //      foreach ($calendarItemList as $ci) {
 //        $this->printCalenderItem($ci);
 //      }
-    }
+//    }
 
     return $this->handleChangeList($changesSinceLsatCheck);
   }
