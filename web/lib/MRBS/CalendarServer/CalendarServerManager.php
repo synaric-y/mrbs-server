@@ -104,4 +104,22 @@ class CalendarServerManager
       }
     }
   }
+
+  public static function updateRepeatMeeting($id, $end_date){
+    if (empty($id)) {
+      return;
+    }
+    global $thirdCalendarService, $exchange_server;
+    $entry = get_repeat($id);
+    foreach ($thirdCalendarService as $serviceName => $config) {
+      if ($config["sync"] == "two-way") {
+        $room = get_room_details($entry["room_id"]);
+        $area = get_area_details($room["area_id"]);
+        if ($area[$config['switch']] != 1)
+          continue;
+        $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
+        $connector->updateRepeatMeeting($entry, $end_date);
+      }
+    }
+  }
 }

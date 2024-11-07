@@ -514,10 +514,10 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     }
   }
 
-  public function createRepeatMeeting($entry, $end_date){
-    $id = $entry["id"];
+  public function createRepeatMeeting($repeat, $end_date){
+    $id = $repeat["id"];
     $adapter = new CalendarAdapter(CalendarAdapter::$MODE_ADD);
-    $exchangeCalendar = $adapter->entryToExchangeCalendarRepeat($entry, $end_date);
+    $exchangeCalendar = $adapter->entryToExchangeCalendarRepeat($repeat, $end_date);
     try {
       $createdItemIds = $this->getCalendar()->createCalendarItems($exchangeCalendar);
       if ($createdItemIds) {
@@ -531,6 +531,31 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
       echo $e->getTraceAsString();
     }
     \MRBS\log_i($this::$TAG, "createRepeatingMeeting: $id");
+  }
+
+  function updateRepeatMeeting($repeat, $end_date)
+  {
+    if (empty($repeat["exchange_id"]) || empty($repeat["exchange_key"])) {
+      return;
+    }
+    $id = $repeat["id"];
+    $itemId = new API\Type\ItemIdType();
+    $itemId->setId($repeat["exchange_id"]);
+    $itemId->setChangeKey($repeat["exchange_key"]);
+
+    $adapter = new CalendarAdapter(CalendarAdapter::$MODE_UPDATE);
+    $exchangeCalendar = $adapter->entryToExchangeCalendarRepeat($repeat, $end_date);
+    try {
+      $updateItems = $this->getCalendar()->updateCalendarItem($itemId, $exchangeCalendar);
+      $newItemId = $updateItems[0]->getItemId();
+      $exchange_id = $newItemId->getId();
+      $exchange_key = $newItemId->getChangeKey();
+      DBHelper::update(_tbl("repeat"), array("exchange_id" => $exchange_id, "exchange_key" => $exchange_key), "id = $id");
+      DBHelper::update(_tbl("entry"), array("exchange_id" => $exchange_id, "exchange_key" => $exchange_key), "repeat_id = $id");
+    } catch (\Exception $e) {
+      echo $e->getMessage();
+      echo $e->getTraceAsString();
+    }
   }
 }
 

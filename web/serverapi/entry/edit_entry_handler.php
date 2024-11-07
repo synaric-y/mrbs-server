@@ -656,9 +656,11 @@ try {
     if ($result["new_details"]) {
       foreach ($result["new_details"] as $d) {
         if($edit_series) {
-          $fetch = db()->query("SELECT id FROM " . _tbl("entry") . " WHERE repeat_id = ?", array($d['id']));
-          while($row = $fetch->next_row_keyed())
-            CalendarServerManager::updateMeeting($row['id']);
+//          $fetch = db()->query("SELECT id FROM " . _tbl("entry") . " WHERE repeat_id = ?", array($d['id']));
+//          while($row = $fetch->next_row_keyed())
+//            CalendarServerManager::updateMeeting($row['id']);
+          CalendarServerManager::updateRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
+          CalendarServerManager::createRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
         }else
           CalendarServerManager::updateMeeting($d['id']);
       }

@@ -244,7 +244,9 @@ class CalendarAdapter
     $result["Subject"] = $entry["name"];
     $result["Start"] = $start->format('c');
     $result["End"] = $end->format('c');
-    $result["StartDate"] = $start->format('Y-m-d');
+    if ($this->mode == $this::$MODE_ADD) {
+      $result["StartDate"] = $start->format('Y-m-d');
+    }
     $result["Recurrence"] = array(
       "WeeklyRecurrence" => array(
         "DaysOfWeek" => $days,
