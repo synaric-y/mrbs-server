@@ -14,10 +14,6 @@ if (!checkAuth()) {
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
-if (getLevel($_SESSION['user']) < 2) {
-  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
-}
-
 global $time_type;
 
 $vars = array(
