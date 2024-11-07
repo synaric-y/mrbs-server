@@ -151,8 +151,8 @@ class CalendarAdapter
     global $registration_closes_enabled_default;
 
     $result = array();
-    $result["start_time"] = $this->iOSTimeToTimeStamp($calendarItem->getRecurrence()->getEndDateRecurrence()->getStartDate());
-    $result["end_time"] = $this->iOSTimeToTimeStamp($calendarItem->getRecurrence()->getEndDateRecurrence()->getEndDate());
+    $result["start_time"] = $this->iOSTimeToTimeStamp($calendarItem->getFirstOccurrence()->getStart());
+    $result["end_time"] = $this->iOSTimeToTimeStamp($calendarItem->getFirstOccurrence()->getEnd());
     $result["entry_type"] = 0;
     $result["room_id"] = $room["id"];
 //    $result["skip"] = false;

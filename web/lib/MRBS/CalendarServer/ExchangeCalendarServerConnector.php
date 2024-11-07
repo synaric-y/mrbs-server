@@ -212,95 +212,45 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
         }
         return;
       } else {
-        //TODO Weekly Recurrence
         $end_date_recurrence = $recurrence -> getEndDateRecurrence();
         $weekly_recurrence = $recurrence -> getWeeklyRecurrence();
         $days_of_week = $weekly_recurrence -> getDaysOfWeek();
         if ($end_date_recurrence !== null) {
-          $start_time = new DateTime($end_date_recurrence->getStartDate());
-          $end_time = $end_date_recurrence->getEndDate();
+          $start_time = new DateTime($ci->getFirstOccurrence()->getStart(), new DateTimeZone($this->timezone));
+          $end_time = new \MRBS\DateTime($ci->getLastOccurrence()->getEnd(), new DateTimeZone($this->timezone));
           switch (intval(date("w", $start_time -> getTimestamp()))) {
             case 0:
-              if (!strpos($days_of_week, "Sunday")) {
-                \MRBS\log_i($this::$TAG, "today of week should be include");
-                try {
-                  $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
-                } catch (\Exception $e) {
-                  \MRBS\log_i($this::$TAG, $e->getMessage());
-                  \MRBS\log_i($this::$TAG, $e->getTraceAsString());
-                }
+              if (!$this->checkRDay($days_of_week, "Sunday", $ci)) {
                 return;
               }
               break;
             case 1:
-              if (!strpos($days_of_week, "Monday")) {
-                \MRBS\log_i($this::$TAG, "today of week should be include");
-                try {
-                  $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
-                } catch (\Exception $e) {
-                  \MRBS\log_i($this::$TAG, $e->getMessage());
-                  \MRBS\log_i($this::$TAG, $e->getTraceAsString());
-                }
+              if (!$this->checkRDay($days_of_week, "Monday", $ci)) {
                 return;
               }
               break;
             case 2:
-              if (!strpos($days_of_week, "Tuesday")) {
-                \MRBS\log_i($this::$TAG, "today of week should be include");
-                try {
-                  $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
-                } catch (\Exception $e) {
-                  \MRBS\log_i($this::$TAG, $e->getMessage());
-                  \MRBS\log_i($this::$TAG, $e->getTraceAsString());
-                }
+              if (!$this->checkRDay($days_of_week, "Tuesday", $ci)) {
                 return;
               }
               break;
             case 3:
-              if (!strpos($days_of_week, "Wednesday")) {
-                \MRBS\log_i($this::$TAG, "today of week should be include");
-                try {
-                  $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
-                } catch (\Exception $e) {
-                  \MRBS\log_i($this::$TAG, $e->getMessage());
-                  \MRBS\log_i($this::$TAG, $e->getTraceAsString());
-                }
+              if (!$this->checkRDay($days_of_week, "Wednesday", $ci)) {
                 return;
               }
               break;
             case 4:
-              if (!strpos($days_of_week, "Thursday")) {
-                \MRBS\log_i($this::$TAG, "today of week should be include");
-                try {
-                  $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
-                } catch (\Exception $e) {
-                  \MRBS\log_i($this::$TAG, $e->getMessage());
-                  \MRBS\log_i($this::$TAG, $e->getTraceAsString());
-                }
+              if (!$this->checkRDay($days_of_week, "Thursday", $ci)) {
                 return;
               }
               break;
             case 5:
-              if (!strpos($days_of_week, "Friday")) {
-                \MRBS\log_i($this::$TAG, "today of week should be include");
-                try {
-                  $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
-                } catch (\Exception $e) {
-                  \MRBS\log_i($this::$TAG, $e->getMessage());
-                  \MRBS\log_i($this::$TAG, $e->getTraceAsString());
-                }
+              if (!$this->checkRDay($days_of_week, "Friday", $ci)) {
                 return;
               }
               break;
             case 6:
-              if (!strpos($days_of_week, "Saturday")) {
-                \MRBS\log_i($this::$TAG, "today of week should be include");
-                try {
-                  $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
-                } catch (\Exception $e) {
-                  \MRBS\log_i($this::$TAG, $e->getMessage());
-                  \MRBS\log_i($this::$TAG, $e->getTraceAsString());
-                }
+              if (!$this->checkRDay($days_of_week, "Saturday", $ci)) {
                 return;
               }
               break;
@@ -350,7 +300,7 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
             return;
           }
           $rep_rule -> setDays($days_of_week);
-          $rep_rule -> setEndDate(new \MRBS\DateTime($end_time));
+          $rep_rule -> setEndDate($end_time);
           $rep_rule -> setInterval($weekly_recurrence->getInterval());
           $adapter = new CalendarAdapter(CalendarAdapter::$MODE_ADD);
           $this -> fmtChangeList['create'][] = array(
@@ -431,6 +381,21 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
 //      echo $e->getMessage();
 //      echo $e->getTraceAsString();
 //    }
+  }
+
+  private function checkRDay($days_of_week, $needle, $ci)
+  {
+    if (strpos($days_of_week, $needle) === false) {
+      \MRBS\log_i($this::$TAG, "today of week should be include");
+      try {
+        $this->getCalendar()->declineMeeting($ci->getItemId(), get_vocab("ic_recurring_decline"));
+      } catch (\Exception $e) {
+        \MRBS\log_i($this::$TAG, $e->getMessage());
+        \MRBS\log_i($this::$TAG, $e->getTraceAsString());
+      }
+      return false;
+    }
+    return true;
   }
 
   private function handleMeetingUpdate(CalendarItemType $ui)
