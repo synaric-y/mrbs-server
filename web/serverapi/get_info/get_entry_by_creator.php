@@ -19,9 +19,27 @@ if (!checkAuth()){
 }
 
 $creator = $_SESSION['user'];
+$status = $_SESSION['status'];
 $pagesize = intval($_POST['pagesize']);
 $pagenum = intval($_POST['pagenum']);
 
+$filter = "";
+$params = [$creator];
+if (isset($status)) {
+  $filter .= " AND ";
+  if ($status === 0) {
+    $filter .= "E.start_time >= ?";
+    $params[] = time();
+  } else if ($status === 1) {
+    $filter .= "E.start_time <= ? AND E.end_time >= ?";
+    $params[] = time();
+    $params[] = time();
+  } else if ($status === 2) {
+    $filter .= "E.end_time <= ?";
+    $params[] = time();
+  }
+}
+
 $offset = ($pagenum - 1) * $pagesize;
-$result = db() -> query("SELECT * FROM " . _tbl("entry") . " WHERE create_by = ?  LIMIT {$offset}, {$pagesize}", array($creator));
+$result = db() -> query("SELECT * FROM " . _tbl("entry") . " E WHERE create_by = ? $filter ORDER BY timestamp DESC LIMIT {$offset}, {$pagesize}", $params);
 ApiHelper::success($result -> all_rows_keyed());
