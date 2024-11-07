@@ -524,9 +524,11 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
         $exchange_id = $createdItemIds[0]->getId();
         $exchange_key = $createdItemIds[0]->getChangeKey();
         DBHelper::update(_tbl("repeat"), array("exchange_id" => $exchange_id, "exchange_key" => $exchange_key), "id = $id");
+        DBHelper::update(_tbl("entry"), array("exchange_id" => $exchange_id, "exchange_key" => $exchange_key), "repeat_id = $id");
       }
     } catch (\Exception $e) {
-
+      echo $e->getMessage();
+      echo $e->getTraceAsString();
     }
     \MRBS\log_i($this::$TAG, "createRepeatingMeeting: $id");
   }

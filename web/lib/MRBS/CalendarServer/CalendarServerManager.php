@@ -100,7 +100,7 @@ class CalendarServerManager
         if ($area[$config['switch']] != 1)
           continue;
         $connector = CalendarServerManager::getServer($config, $exchange_server, $area['timezone'], $room);
-        $connector->createMeeting($entry, $end_date);
+        $connector->createRepeatMeeting($entry, $end_date);
       }
     }
   }

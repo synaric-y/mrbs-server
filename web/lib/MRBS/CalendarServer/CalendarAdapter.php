@@ -202,17 +202,11 @@ class CalendarAdapter
 
   public function entryToExchangeCalendarRepeat($entry, $end_date)
   {
-    $calendarItem = new CalendarItemType();
-    $calendarItem->setSubject($entry["name"]);
-    $recurrence = new RecurrenceType();
-    $weeklyPattern = new WeeklyRecurrencePatternType();
-    $weeklyPattern->setInterval($entry['rep_interval']);
-    $endDateRecurrence = new EndDateRecurrenceRangeType();
     $start = new DateTime();
-    $end = DateTime::createFromFormat("Y-m-d", $end_date);
     $start->setTimestamp($entry['start_time']);
-    $endDateRecurrence->setStartDate($start);
-    $endDateRecurrence->setEndDate($end);
+    $end = new DateTime();
+    $end->setTimestamp($entry['end_time']);
+
     for ($i = 0; $i < strlen($entry['rep_opt']); $i++) {
       if ($entry['rep_opt'][$i] == '1') {
         switch ($i) {
@@ -240,12 +234,28 @@ class CalendarAdapter
         }
       }
     }
-    $weeklyPattern->setDaysOfWeek($days);
-    $recurrence->setWeeklyRecurrence($weeklyPattern);
-    $recurrence->setEndDateRecurrence($endDateRecurrence);
-    $calendarItem->setRecurrence($recurrence);
-    $calendarItem->setIsRecurring(true);
-    $calendarItem->setCalendarItemType("RecurringMaster");
-    return $calendarItem;
+
+    $result = array();
+    $start = new DateTime();
+    $end = new DateTime();
+    $start->setTimestamp($entry["start_time"]);
+    $end->setTimestamp($entry["end_time"]);
+
+    $result["Subject"] = $entry["name"];
+    $result["Start"] = $start->format('c');
+    $result["End"] = $end->format('c');
+    $result["StartDate"] = $start->format('Y-m-d');
+    $result["Recurrence"] = array(
+      "WeeklyRecurrence" => array(
+        "DaysOfWeek" => $days,
+        "Interval" => $entry['rep_interval']
+      ),
+      "EndDateRecurrence" => array(
+        "StartDate" => $start->format('Y-m-d'),
+        "EndDate" => $end_date
+      )
+    );
+
+    return $result;
   }
 }
