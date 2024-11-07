@@ -2547,7 +2547,7 @@ function get_bookings_in_series(?int $repeat_id): array
 function add_user_group($group, $parent_id): int
 {
   db()->begin();
-  db()->command("INSERT INTO " . _tbl('user_group') . "(name, third_id, third_parent_id, source, sync_state, disabled) VALUES (?, ?, ?, ?, ?)", array($group['name'], $group['third_id'] ?? "", $group['third_parent_id'] ?? "", $group['source'], $group['sync_state'], $group['disabled']));
+  db()->command("INSERT INTO " . _tbl('user_group') . "(name, third_id, third_parent_id, source, sync_state, disabled) VALUES (?, ?, ?, ?, ?, ?)", array($group['name'], $group['third_id'] ?? "", $group['third_parent_id'] ?? "", $group['source'], $group['sync_state'], $group['disabled']));
   $group_id = db()->insert_id(_tbl("user_group"), "id");
   // if a group without parent, then we only need add a relation into the table
   if ($parent_id == -1) {
