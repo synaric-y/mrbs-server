@@ -72,7 +72,7 @@ while (true) {
             foreach ($reps as $rep) {
               $start = $rep;
               $end = $rep + $create['data']['duration'] * 60;
-              $one = DBHelper::one(\MRBS\_tbl("entry"), "(room_id = {$create['data']['room_id']} AND (start_time <= {$start} AND end_time > {$start}) OR (start_time < {$end} AND end_time >= {$end}) OR (start_time >= {$start} AND start_time < {$end}) OR (end_time >= {$end} AND end_time < {$end}))");
+              $one = DBHelper::one(\MRBS\_tbl("entry"), "room_id = {$create['data']['room_id']} AND ((start_time <= {$start} AND end_time > {$start}) OR (start_time < {$end} AND end_time >= {$end}) OR (start_time >= {$start} AND start_time < {$end}) OR (end_time >= {$end} AND end_time < {$end}))");
               if (!empty($one)) {
                 foreach ($thirdCalendarService as $serviceName => $config) {
                   if ($area[$config["switch"]] != 1)
