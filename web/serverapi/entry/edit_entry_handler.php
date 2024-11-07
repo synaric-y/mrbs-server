@@ -653,13 +653,13 @@ try {
         if($edit_series) {
           // Actually delete old Calendar Item
           CalendarServerManager::updateRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
+          CalendarServerManager::deleteMeeting($id);
           // Then create a new one
           CalendarServerManager::createRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
         }else
           CalendarServerManager::updateMeeting($d['id']);
       }
     }
-    CalendarServerManager::deleteMeeting($id);
     $transaction_ok = mrbsDelEntry($id, $edit_series, true);
 
   }
