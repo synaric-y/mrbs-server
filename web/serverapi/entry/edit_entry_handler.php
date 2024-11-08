@@ -654,6 +654,8 @@ try {
           // Actually delete old Calendar Item
 //          CalendarServerManager::updateRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
           CalendarServerManager::deleteMeeting($id);
+c          // Wait Exchange Server to delete old one
+          sleep(1);
           // Then create a new one
           CalendarServerManager::createRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
         }else

@@ -660,6 +660,11 @@ $datetime_formats['date_and_time'] = array(
   'time_type' => IntlDateFormatter::SHORT
 );
 
+$datetime_formats['date_and_time_short'] = array(
+  'date_type' => IntlDateFormatter::MEDIUM,
+  'time_type' => IntlDateFormatter::SHORT
+);
+
 // The format used for dates with times on the Help page
 $datetime_formats['date_and_time_help'] = array(
   'date_type' => IntlDateFormatter::FULL,

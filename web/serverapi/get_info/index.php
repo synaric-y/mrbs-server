@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MRBS;
 
 
@@ -27,11 +28,11 @@ function buildTree($data, $parent_id = -1)
   foreach ($data as $row) {
     if ($row['parent_id'] == $parent_id) {
       $children = buildTree($data, $row['area_id']);
-      if (!empty($children) || !empty($row['rooms'])){
+      if (!empty($children) || !empty($row['rooms'])) {
         if (!empty($children))
           $row['children'] = $children;
         $tree[] = $row;
-      }else{
+      } else {
         unset($row['children']);
       }
     }
@@ -39,7 +40,8 @@ function buildTree($data, $parent_id = -1)
   return !empty($tree) ? $tree : null;
 }
 
-function secondsToTimeFormat($seconds) {
+function secondsToTimeFormat($seconds)
+{
   $dateTime = new DateTime("today");
   $dateTime->setTime(0, 0); // 设置时间为今天的00:00:00
   $dateTime->add(new DateInterval("PT{$seconds}S")); // 增加指定秒数
@@ -47,7 +49,7 @@ function secondsToTimeFormat($seconds) {
 }
 
 
-if(isset($_POST['type'])) {
+if (isset($_POST['type'])) {
   $type = $_POST['type'];
 }
 if (isset($_POST['id'])) {
@@ -55,19 +57,19 @@ if (isset($_POST['id'])) {
 }
 if (isset($_POST['start_time'])) {
   $start_time = $_POST['start_time'];
-}else{
+} else {
   $start_time = strtotime("today midnight");
 }
 if (isset($_POST['end_time'])) {
   $end_time = $_POST['end_time'];
-}else{
+} else {
   $end_time = strtotime("tomorrow midnight");
 }
 if (isset($_POST['timezone'])) {
   $timezone = $_POST['timezone'];
 }
 
-if(empty($type) || ($type != "all" && $type != "area" && $type != "room")){
+if (empty($type) || ($type != "all" && $type != "area" && $type != "room")) {
   ApiHelper::fail(get_vocab("invalid_types"), ApiHelper::INVALID_TYPES);
 }
 
@@ -89,31 +91,31 @@ if ($type != 'all') {
 }
 
 $sql = "SELECT E.id AS id, area_id, room_id, start_time, end_time, E.name AS name, create_by, book_by, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, R.room_name, area_name, A.disabled as area_disabled, R.disabled as room_disabled, timezone, R.description as description, resolution, capacity, repeat_id FROM " . _tbl("entry") . " E LEFT JOIN " . _tbl("room") .
-" R ON E.room_id = R.id " . "LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id";
-if ($type == 'area'){
+  " R ON E.room_id = R.id " . "LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id";
+if ($type == 'area') {
   $sql .= " WHERE A.id = ? AND start_time >= ? AND end_time <= ?";
-}else if ($type == 'room') {
+} else if ($type == 'room') {
   $sql .= " WHERE R.id = ? AND start_time >= ? AND end_time <= ?";
-} else if($type != 'all'){
+} else if ($type != 'all') {
   ApiHelper::fail(get_vocab("invalid_types"), ApiHelper::INVALID_TYPES);
-}else{
+} else {
   $sql .= " WHERE start_time >= ? AND end_time <= ?";
 }
 
 if ($type != 'all')
-  $result = db() -> query($sql, array($id, $start_time, $end_time));
+  $result = db()->query($sql, array($id, $start_time, $end_time));
 else
-  $result = db() -> query($sql, array($start_time, $end_time));
+  $result = db()->query($sql, array($start_time, $end_time));
 
-if ($type == 'all'){
-  $entries = $result -> all_rows_keyed();
-  $areas = db() -> query("SELECT id, area_name, disabled, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, resolution, parent_id FROM " . _tbl("area")) -> all_rows_keyed();
-  $rooms = db() -> query("SELECT id, disabled, description, capacity, area_id, room_name FROM " . _tbl("room")) -> all_rows_keyed();
+if ($type == 'all') {
+  $entries = $result->all_rows_keyed();
+  $areas = db()->query("SELECT id, area_name, disabled, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, resolution, parent_id FROM " . _tbl("area"))->all_rows_keyed();
+  $rooms = db()->query("SELECT id, disabled, description, capacity, area_id, room_name FROM " . _tbl("room"))->all_rows_keyed();
   $data = [];
-  if (empty($rooms) || empty($areas)){
+  if (empty($rooms) || empty($areas)) {
     $data["min_time"] = "08:00 AM";
     $data["max_time"] = "09:00 PM";
-    $data["time"] = datetime_format($datetime_formats['date_and_time'], time());
+    $data["time"] = datetime_format($datetime_formats['date_and_time_short'], time());
     $data["timestamp"] = time();
     ApiHelper::success($data);
   }
@@ -121,7 +123,7 @@ if ($type == 'all'){
 
   foreach ($entries as $entry) {
     foreach ($rooms as &$room) {
-      if ($entry['room_id'] == $room['id']){
+      if ($entry['room_id'] == $room['id']) {
         $room['entries'][] = array(
           'entry_id' => $entry['id'],
           'start_time' => $entry['start_time'],
@@ -150,11 +152,11 @@ if ($type == 'all'){
     unset($area);
   }
   unset($room);
-  foreach ($areas as &$area){
-      $area['start_time'] = sprintf("%02d", $area['morningstarts'] > 12 ? $area['morningstarts'] - 12 : $area['morningstarts']) . ":" . sprintf("%02d", $area['morningstarts_minutes']) . ($area['morningstarts'] > 12 ? " PM" : " AM");
-      $area['end_time'] = sprintf("%02d", $area['eveningends'] > 12 ? $area['eveningends'] - 12 : $area['eveningends']) . ":" . sprintf("%02d", $area['eveningends_minutes']) . ($area['eveningends'] > 12 ? " PM" : " AM");
-      $area['area_id'] = $area['id'];
-      unset($area['id']);
+  foreach ($areas as &$area) {
+    $area['start_time'] = sprintf("%02d", $area['morningstarts'] > 12 ? $area['morningstarts'] - 12 : $area['morningstarts']) . ":" . sprintf("%02d", $area['morningstarts_minutes']) . ($area['morningstarts'] > 12 ? " PM" : " AM");
+    $area['end_time'] = sprintf("%02d", $area['eveningends'] > 12 ? $area['eveningends'] - 12 : $area['eveningends']) . ":" . sprintf("%02d", $area['eveningends_minutes']) . ($area['eveningends'] > 12 ? " PM" : " AM");
+    $area['area_id'] = $area['id'];
+    unset($area['id']);
   }
   unset($area);
   $min_time = 10000000;
@@ -173,37 +175,37 @@ if ($type == 'all'){
   $data['areas'] = $areas;
   $data['min_time'] = $min_time;
   $data['max_time'] = $max_time;
-  $data['time'] = datetime_format($datetime_formats['date_and_time'], time());
+  $data['time'] = datetime_format($datetime_formats['date_and_time_short'], time());
   $data['timestamp'] = time();
   ApiHelper::success($data);
 
 
-}else{
-  $entries = $result -> all_rows_keyed();
+} else {
+  $entries = $result->all_rows_keyed();
   foreach ($entries as &$entry) {
     $entry['status'] = $entry['start_time'] > time() ? 0 : ($entry['end_time'] < time() ? 2 : 1);
   }
   unset($entry);
-  $area = db() -> query("SELECT id as area_id, area_name, disabled, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, resolution, parent_id FROM " . _tbl("area") . " WHERE id = ?", array($id)) -> next_row_keyed();
+  $area = db()->query("SELECT id as area_id, area_name, disabled, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, resolution, parent_id FROM " . _tbl("area") . " WHERE id = ?", array($id))->next_row_keyed();
   $root = $area['parent_id'];
   $rooms = [];
   $areas[] = $area;
   $parent_ids[] = $area['area_id'];
-  while(1){
+  while (1) {
     $parent_string = "(";
     foreach ($parent_ids as $parent_id) {
       $parent_string .= $parent_id . ",";
     }
     $parent_string = substr($parent_string, 0, -1);
     $parent_string .= ")";
-    $tmp_a = db() -> query("SELECT id as area_id, area_name, disabled, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, resolution, parent_id FROM " . _tbl("area") . " WHERE parent_id in " . $parent_string);
-    $count = $tmp_a -> count();
-    $tmp_a = $tmp_a -> all_rows_keyed();
+    $tmp_a = db()->query("SELECT id as area_id, area_name, disabled, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, resolution, parent_id FROM " . _tbl("area") . " WHERE parent_id in " . $parent_string);
+    $count = $tmp_a->count();
+    $tmp_a = $tmp_a->all_rows_keyed();
     $areas = array_merge($areas, $tmp_a);
-    $tmp_r = db() -> query("SELECT id as room_id, disabled, description, capacity, area_id, room_name FROM " . _tbl("room") . " WHERE area_id in " . $parent_string) -> all_rows_keyed();
+    $tmp_r = db()->query("SELECT id as room_id, disabled, description, capacity, area_id, room_name FROM " . _tbl("room") . " WHERE area_id in " . $parent_string)->all_rows_keyed();
     $rooms = array_merge($rooms, $tmp_r);
 
-    if ($count == 0){
+    if ($count == 0) {
       break;
     }
     $parent_ids = [];
@@ -213,16 +215,16 @@ if ($type == 'all'){
 
   }
   $data = [];
-  if (empty($rooms) || empty($areas)){
+  if (empty($rooms) || empty($areas)) {
     $data["min_time"] = "08:00 AM";
     $data["max_time"] = "09:00 PM";
-    $data["time"] = datetime_format($datetime_formats['date_and_time'], time());
+    $data["time"] = datetime_format($datetime_formats['date_and_time_short'], time());
     $data["timestamp"] = time();
     ApiHelper::success($data);
   }
   foreach ($entries as $entry) {
     foreach ($rooms as &$room) {
-      if ($entry['room_id'] == $room['room_id']){
+      if ($entry['room_id'] == $room['room_id']) {
         $item = [];
         $item['entry_id'] = $entry['id'];
         $item['start_time'] = $entry['start_time'];
@@ -264,11 +266,11 @@ if ($type == 'all'){
 
   $areas = buildTree($areas, $root);
 
-  if(!empty($areas))
+  if (!empty($areas))
     $data['areas'] = $areas;
   $data['min_time'] = $min_time;
   $data['max_time'] = $max_time;
-  $data['time'] = datetime_format($datetime_formats['date_and_time'], time());
+  $data['time'] = datetime_format($datetime_formats['date_and_time_short'], time());
   $data['timestamp'] = time();
   ApiHelper::success($data);
 

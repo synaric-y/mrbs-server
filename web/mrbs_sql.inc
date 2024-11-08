@@ -2263,10 +2263,18 @@ function mrbsMakeBookings(array $bookings, ?int $id = null, bool $just_check = f
 
   // Check for any schedule conflicts in each room we're going to try and
   // book in; also check that the booking conforms to the policy
+  if ($edit_series && empty($bookings)) {
+    $violation_status = 'errors';
+    $violations[$violation_status][] = get_vocab("invalid_end_time");
+    $valid_booking = false;
+  }
   foreach ($bookings as $booking) {
     $skip_lists[$booking['room_id']] = $booking['skip_list'] ?? [];
     if ($booking['repeat_rule']->getType() != RepeatRule::NONE && !empty($reps)) {
       if (count($reps) < $max_rep_entrys) {
+
+        $at_least_one_future_entry = false;
+
         for ($i = 0; $i < count($reps); $i++) {
           // Ignore conflicts in the booking's skip list, because they won't be made.
           if (isset($booking['skip_list']) && in_array($reps[$i], $booking['skip_list'])) {
@@ -2279,6 +2287,9 @@ function mrbsMakeBookings(array $bookings, ?int $id = null, bool $just_check = f
           $this_booking = $booking;
           $this_booking['start_time'] = $reps[$i];
           $this_booking['end_time'] = $reps[$i] + $diff;
+          if (time() < $this_booking['end_time']) {
+            $at_least_one_future_entry = true;
+          }
 
           // Check that this entry doesn't overlap with the next in the series.
           // (This can happen if people mistake the end date for the repeat end date.)
@@ -2320,6 +2331,11 @@ function mrbsMakeBookings(array $bookings, ?int $id = null, bool $just_check = f
             }
           }
         } // for
+        if (!$at_least_one_future_entry) {
+          $violation_status = 'errors';
+          $violations[$violation_status][] = get_vocab("invalid_end_time");
+          $valid_booking = false;
+        }
       } else {
         if (is_book_admin($booking['room_id'])) {
           $violation_status = 'notices';
