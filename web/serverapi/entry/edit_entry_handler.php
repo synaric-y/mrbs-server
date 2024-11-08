@@ -652,7 +652,7 @@ try {
       foreach ($result["new_details"] as $d) {
         if($edit_series) {
           // Actually delete old Calendar Item
-          CalendarServerManager::updateRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
+//          CalendarServerManager::updateRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
           CalendarServerManager::deleteMeeting($id);
           // Then create a new one
           CalendarServerManager::createRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
