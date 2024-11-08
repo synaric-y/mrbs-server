@@ -35,7 +35,8 @@ if (empty($room_id)){
 
 $result = db()->query1("SELECT COUNT(*) FROM " . _tbl("device") . " WHERE device_id = ?", array($device_id));
 if ($result > 0){
-  ApiHelper::fail(get_vocab("device_exists"), ApiHelper::DEVICE_EXISTS);
+//  ApiHelper::fail(get_vocab("device_exists"), ApiHelper::DEVICE_EXISTS);
+  ApiHelper::success(null);
 }
 
 
