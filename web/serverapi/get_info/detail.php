@@ -33,7 +33,7 @@ if ($type == 'area'){
   $back = $result->all_rows_keyed();
   $sql = "SELECT G.id, G.name, G.source FROM " . _tbl("a2g_map") . " A2G LEFT JOIN " . _tbl("user_group") . " G ON" .
     " A2G.group_id = G.id WHERE A2G.area_id = ? AND group_id != -1";
-  $groups = db() -> query($sql, [$id])->next_row_keyed();
+  $groups = db() -> query($sql, [$id])->all_rows_keyed();
   if (!empty($back[0]) && !empty($groups)) {
     $back[0]['groups'] = $groups;
   }
