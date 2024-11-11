@@ -200,7 +200,7 @@ if (empty($errors))
     $assign_array = array();
     foreach ($fields as $field)
     {
-      if ($field['name'] != 'id')  // don't do anything with the id field
+      if ($field['name'] != 'id' && isset($_POST[$field['name']]))  // don't do anything with the id field
       {
         switch ($field['name'])
         {
