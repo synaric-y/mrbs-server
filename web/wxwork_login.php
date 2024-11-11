@@ -35,6 +35,8 @@ $config = DBHelper::one(_tbl("system_variable"), "1=1");
 
 $corpid = $config['corpid'];
 $secret = $config['secret'];
+log_wxwork("======================================================");
+log_wxwork("wxwork corpid: $corpid, secret: $secret");
 if (isset($_SESSION) && !empty($_SESSION['user'])) {
   log_wxwork(\MRBS\get_vocab('already_login'));
   \MRBS\ApiHelper::success(\MRBS\get_vocab('already_login'));
@@ -49,12 +51,12 @@ $retry = 0;
 while ($retry < 2) {
   $access_token = get_access_token($corpid, $secret);
   $code = $_GET['code'];
-
+  log_wxwork("wxwork access_token: $access_token");
   $url = HttpUtils::MakeUrl("/cgi-bin/auth/getuserinfo?access_token={$access_token}&code={$code}");
   $json = HttpUtils::httpGet($url);
   /** @noinspection PhpStrictTypeCheckingInspection */
   $data = json_decode($json, true);
-
+  log_wxwork("resp: $json");
   if ($data['errcode'] != 0) {
     log_wxwork("wxwork errcode: {$data['errcode']}");
     ApiHelper::fail("wxwork errcode: $json", ApiHelper::INTERNAL_ERROR);

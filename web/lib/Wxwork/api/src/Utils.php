@@ -10,16 +10,19 @@ function get_access_token(string $corpid, string $secret)
   if (!empty($access_token)) return $access_token;
   $file = fopen("./mutex_lock.lock", "w+");
   if (flock($file, LOCK_EX)) {
-    if (\MRBS\RedisConnect::get($string)) {
-      try{
+    $access_token = \MRBS\RedisConnect::get($string);
+    try{
+      if (empty($access_token)) {
         $result = refresh_access_token($corpid, $secret);
-        if($result === false || $result === -1) return $result;
-      }catch (\Exception $e){
-        return -1;
-      } finally {
-        flock($file, LOCK_UN);
-        fclose($file);
+        if ($result === false || $result === -1) return $result;
+      } else {
+        return $access_token;
       }
+    }catch (\Exception $e){
+      return -1;
+    } finally {
+      flock($file, LOCK_UN);
+      fclose($file);
     }
   }
   return $access_token;
