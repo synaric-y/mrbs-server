@@ -32,9 +32,14 @@ setcookie("session_id", session_id(), [
   "expires" => time() + 24 * 60 * 60,
   "path" => "/web/",
   "domain" => null,
+  // 域名访问
   "secure" => true,
   "httponly" => true,
-  "samesite" => "None"
+  "samesite" => "None",
+  // IP访问
+//  "secure" => false,
+//  "httponly" => true,
+//  "samesite" => "Strict"
 ]);
 $result = db() -> query("SELECT level, display_name, disabled FROM " . _tbl("users") . " WHERE name = ?", array($username));
 $row = $result -> next_row_keyed();
