@@ -2764,14 +2764,14 @@ function log_by_name($file, $aglist)
     mkdir($hopedir, 0777, true);
   }
   $nowdate = date('Y-m-d', time());
-  if (!file_exists($hopedir . 'log/' . $nowdate . '.php'))//创建文件
+  if (!file_exists($hopedir . 'log/' . $file . $nowdate . '.php'))//创建文件
   {
     if (!is_dir($hopedir . 'log')) {
       mkdir($hopedir . 'log', 0777);
     }
-    $fp = @fopen($hopedir . 'log/' . $nowdate . '.php', 'w');
+    $fp = @fopen($hopedir . 'log/' . $file . $nowdate . '.php', 'w');
     if($fp){
-      chmod($hopedir . 'log/' . $nowdate . '.php', 0777);
+      chmod($hopedir . 'log/' . $file . $nowdate . '.php', 0777);
       @fclose($fp);
     }
   }
