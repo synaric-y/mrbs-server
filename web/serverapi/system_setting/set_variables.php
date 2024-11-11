@@ -59,7 +59,7 @@ foreach ($vars as $var) {
     if ($var === 'server_address') {
       $_POST[$var] = urldecode($_POST[$var]);
     } elseif ($var === 'resolution') {
-      if ($_POST[$var] > $last_setting['resolution']) {
+      if (!empty($last_setting['resolution']) && $_POST[$var] > $last_setting['resolution']) {
         ApiHelper::fail(get_vocab("cannot_edit_resolution"), ApiHelper::INVALID_RESOLUTION);
       }
     }
