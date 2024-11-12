@@ -52,6 +52,8 @@ if($file['error'] === UPLOAD_ERR_OK){
   $dir = dirname(__DIR__, 3) . "/display/";
   if (!is_dir($dir)) {
     mkdir($dir, 0755, true);
+  } else {
+    deleteDirectory($dir . "/" . $version);
   }
   $dir .= "/" . $version . ".zip";
   if (move_uploaded_file($file['tmp_name'], $dir)){

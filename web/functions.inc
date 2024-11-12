@@ -2716,6 +2716,25 @@ function get_user_field(array $params, bool $datalist=false)
   return $field;
 }
 
+// Recursive delete all files and dirs in given path.
+function deleteDirectory($dirPath) {
+  if (!is_dir($dirPath)) {
+    return;
+  }
+  if (substr($dirPath, strlen($dirPath) - 1, 1) != '/') {
+    $dirPath .= '/';
+  }
+  $files = glob($dirPath . '*', GLOB_MARK);
+  foreach ($files as $file) {
+    if (is_dir($file)) {
+      deleteDirectory($file); // 递归调用删除子目录
+    } else {
+      unlink($file); // 删除文件
+    }
+  }
+  rmdir($dirPath); // 删除空目录
+}
+
 
 function post_url_no_result($url, $data)
 {
