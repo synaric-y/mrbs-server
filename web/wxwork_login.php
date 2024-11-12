@@ -50,8 +50,8 @@ if (!isset($_GET) || empty($_GET["code"])) {
 
 $retry = 0;
 while ($retry < 2) {
-  $access_token = get_access_token($corpid, $secret);
   $code = $_GET['code'];
+  $access_token = get_access_token($corpid, $secret);
   log_wxwork("wxwork access_token: $access_token");
   // Retry
   if (empty($access_token)) {

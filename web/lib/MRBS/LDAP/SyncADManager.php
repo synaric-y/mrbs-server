@@ -213,6 +213,7 @@ class SyncADManager
       unset($mergedUser['_third_parent_id']);
       $mergedUser['source'] = $CREATE_SOURCE;
       $mergedUser['sync_state'] = 1;
+      $mergedUser['level'] = 1;
       $mergedUser['last_sync_time'] = time();
       $mergedUser['sync_version'] = $this->sync_version;
       $mergedUser['password_hash'] = $config['default_password_hash'];
