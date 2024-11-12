@@ -19,7 +19,8 @@ global $time_type;
 $vars = array(
   "status",                   //0未开始，1进行中，2已结束
   "area_id",
-  "room_id"
+  "room_id",
+  "create_by"
 );
 
 $pagesize = $_POST['pagesize'] ?? 20;
@@ -49,6 +50,9 @@ if (!empty($vars)) {
       $params[] = $$var;
     } else if ($var === 'area_id') {
       $sql .= "A.id = ?";
+      $params[] = $$var;
+    } else if ($var === 'create_by') {
+      $sql .= "E.create_by = ?";
       $params[] = $$var;
     }
     if ($i != count($vars) - 1) {
@@ -110,6 +114,9 @@ if (!empty($vars)) {
       $params[] = $$var;
     } else if ($var === 'area_id') {
       $sql .= "A.id = ?";
+      $params[] = $$var;
+    } else if ($var === 'create_by') {
+      $sql .= "E.create_by = ?";
       $params[] = $$var;
     }
     if ($i != count($vars) - 1) {
