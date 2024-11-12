@@ -24,6 +24,8 @@ function get_access_token(string $corpid, string $secret)
       flock($file, LOCK_UN);
       fclose($file);
     }
+  } else {
+    \MRBS\log_by_name('wxwork_', 'flock failed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
   }
   return $access_token;
 }

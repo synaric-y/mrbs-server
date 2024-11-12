@@ -37,6 +37,7 @@ $corpid = $config['corpid'];
 $secret = $config['secret'];
 log_wxwork("======================================================");
 log_wxwork("wxwork corpid: $corpid, secret: $secret");
+log_wxwork("wxwork code: " . $_GET["code"]);
 if (isset($_SESSION) && !empty($_SESSION['user'])) {
   log_wxwork(\MRBS\get_vocab('already_login'));
   \MRBS\ApiHelper::success(\MRBS\get_vocab('already_login'));
@@ -52,6 +53,10 @@ while ($retry < 2) {
   $access_token = get_access_token($corpid, $secret);
   $code = $_GET['code'];
   log_wxwork("wxwork access_token: $access_token");
+  // Retry
+  if (empty($access_token)) {
+    $access_token = get_access_token($corpid, $secret);
+  }
   $url = HttpUtils::MakeUrl("/cgi-bin/auth/getuserinfo?access_token={$access_token}&code={$code}");
   $json = HttpUtils::httpGet($url);
   /** @noinspection PhpStrictTypeCheckingInspection */
@@ -177,7 +182,7 @@ if ($result->count() < 1) {
 } else {
   $row = $result->next_row_keyed();
   $_SESSION['user'] = $row['name'];
-  setcookie("session_id", session_id(), time() + 24 * 60 * 60, "/web/", "", false, true);
+  setcookie("session_id", session_id(), time() + 365 * 24 * 60 * 60, "/web/", "", false, true);
 }
 
 session_write_close();
