@@ -57,8 +57,12 @@ if (!empty($vars)){
     if (!isset($$var) || $$var === ''){
       continue;
     }
-    $sql .= $vars[$i] . " = ?";
-    $params[] = $$var;
+    if ($vars[$i] == 'display_name' || $vars[$i] == 'name') {
+      $sql .= $vars[$i] . " like '%{$$var}%'";
+    } else {
+      $sql .= $vars[$i] . " = ?";
+      $params[] = $$var;
+    }
     if ($i < count($vars) - 1){
       $sql .= " AND ";
     }
