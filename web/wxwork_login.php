@@ -181,6 +181,7 @@ if ($result->count() < 1) {
   }
 } else {
   $row = $result->next_row_keyed();
+  log_wxwork("found user: id = {$row['id']} , name = {$row['name']}");
   $_SESSION['user'] = $row['name'];
   setcookie("session_id", session_id(), time() + 365 * 24 * 60 * 60, "/web/", "", false, true);
 }

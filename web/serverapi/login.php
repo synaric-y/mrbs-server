@@ -29,7 +29,7 @@ if (!$result) {
 }
 $_SESSION['user'] = $username;
 setcookie("session_id", session_id(), [
-  "expires" => time() + 24 * 60 * 60,
+  "expires" => time() + 15 * 24 * 60 * 60,
   "path" => "/web/",
   "domain" => null,
   // 域名访问
