@@ -356,6 +356,7 @@ CREATE TABLE mrbs_system_variable
   init_status            int     NOT NULL DEFAULT 0 COMMENT '0/1/2/3',
   server_address         varchar(255) NULL DEFAULT '' COMMENT 'backend server address',
   theme_type             int     NOT NULL DEFAULT 1 COMMENT 'theme type',
+  lang                   varchar(255) NULL DEFAULT 'zh' COMMENT 'default language',
 
   PRIMARY KEY (id)
 )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='system variables';
