@@ -58,6 +58,8 @@ foreach ($vars as $var) {
   if (isset($_POST[$var]) && $_POST[$var] !== '') {
     if ($var === 'server_address') {
       $_POST[$var] = urldecode($_POST[$var]);
+    } else if ($var === 'default_password_hash') {
+      $_POST[$var] = password_hash($_POST[$var], PASSWORD_DEFAULT);
     } elseif ($var === 'resolution') {
       if (!empty($last_setting['resolution']) && $_POST[$var] > $last_setting['resolution']) {
         ApiHelper::fail(get_vocab("cannot_edit_resolution"), ApiHelper::INVALID_RESOLUTION);
