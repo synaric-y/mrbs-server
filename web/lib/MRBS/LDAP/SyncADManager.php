@@ -216,9 +216,9 @@ class SyncADManager
       $mergedUser['level'] = 1;
       $mergedUser['last_sync_time'] = time();
       $mergedUser['sync_version'] = $this->sync_version;
-      $mergedUser['password_hash'] = $config['default_password_hash'];
 
       if (empty($localUser)) {
+        $mergedUser['password_hash'] = $config['default_password_hash'];
         DBHelper::insert(_tbl($TABLE_USER), $mergedUser);
         $insertId = DBHelper::insert_id(_tbl($TABLE_USER), "id");
         $mergedUser['id'] = $insertId;
