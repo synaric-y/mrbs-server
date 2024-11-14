@@ -38,11 +38,12 @@ function sanitize_room_id($id): int
 }
 
 $create_by = $_SESSION['user'];
+$book_by = $_SESSION['user'];
 
 // Get non-standard form variables
 $form_vars = array(
   'name' => 'string',
-  'book_by' => 'string',
+//  'book_by' => 'string',
   'description' => 'string',
   'start_seconds' => 'int',
   'start_date' => 'string',
