@@ -6,19 +6,19 @@ A conference room reservation system developed based on PHP, with a web manageme
 ![](https://scrutinizer-ci.com/g/synaric-y/mrbs-server/badges/build.png?b=main)
 ![](https://scrutinizer-ci.com/g/synaric-y/mrbs-server/badges/code-intelligence.svg?b=main)
 
-![demo.png](doc/img/2.png?t=1723515608897)
-![demo2.png](doc/img/3.png?t=1723515608897)
+![img.png](doc/img/2.png)
 
-For details on the display project, please see[mrbs-app](https://github.com/synaric-y/mrbs-app)。
+For details on the display project, please see [mrbs-display](https://github.com/synaric-y/mrbs-display)。
 
 # Features
 
 - Area/Meeting/Room Management
 - Tablet screen displays conference room status and reservation information
 - Sync Calendar with Microsoft Exchange, extensible third-party Calendar support
+- Import users and groups from Active Directory
 - I18n support, Chinese/English/Korean...
-- Booking Fast Meeting
-- Remote Update
+- Booking from tablet/webpage/Wxwork
+- Remote Update tablet app
 
 # Install
 
@@ -37,7 +37,6 @@ Please install the following dependencies in order.
 - php-iconv
 - php-soap
 - php-ldap
-- [php-ews](https://github.com/Garethp/php-ews)(composer)
 
 ## Steps
 
@@ -95,18 +94,19 @@ Package ```web``` and ```image``` directories to the Web server.
 nohup php /path-to-your-project/web/task/sync_tpcs.php > /dev/null 2>&1 &
 ```
 
-# Other
+(Optional) Start an AD synchronization task within crontab:
 
-## Support
+```
+# add this line
+0 1 * * * php /www/wwwroot/172.16.89.91/web/task/sync_ad.php
+```
+
+# Support
 
 ![BCCGloballogo.jpg](doc/img/1.jpg?t=1723515608897)
 
 ## TODO
 
-- Wxwork Meeting Room Management support
 - More templates
-- Temp meeting
 - Area-level multiple data source management
-- Room-level reservation time management
 - Multi-language mixed display on tablet
-- APP/mini program
