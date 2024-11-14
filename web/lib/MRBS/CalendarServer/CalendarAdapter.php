@@ -55,7 +55,7 @@ class CalendarAdapter
         // See: https://learn.microsoft.com/en-us/exchange/troubleshoot/client-connectivity/calendar-shows-organizer-name
         $result["name"] = $calendarItem->getSubject() ? get_vocab("ic_xs_meeting", $calendarItem->getSubject()) : "Unknown Meeting";
       } else {
-        $result["name"] = $calendarItem->getSubject() ?: get_vocab("ic_xs_meeting", $calendarItem->getSubject());
+        $result["name"] = $calendarItem->getSubject() ?: get_vocab("ic_xs_meeting", $calendarItem->getOrganizer()->getMailbox()->getName());
       }
       $result["description"] = "";
       $result["book_by"] = $calendarItem->getOrganizer()->getMailbox()->getName() ?? "Unknown";
