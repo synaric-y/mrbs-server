@@ -2695,7 +2695,7 @@ function del_user_group($group_id)
   db()->command("
     INSERT INTO " . _tbl("a2g_map") . " (area_id, group_id)
     SELECT DISTINCT A.id, -1
-    FROM " . _tbl("area") . " R
+    FROM " . _tbl("area") . " A
     LEFT JOIN " . _tbl("a2g_map") . " A2G ON A.id = A2G.area_id
     WHERE A2G.area_id IS NULL;
   ");
