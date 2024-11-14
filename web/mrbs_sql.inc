@@ -2663,7 +2663,6 @@ function edit_user_group($group): bool
 function del_user_group($group_id)
 {
   db()->begin();
-  db()->command("DELETE FROM " . _tbl("user_group") . " WHERE id = ?", array($group_id));
   $result = db()->query("SELECT * FROM ". _tbl("g2g_map") . " WHERE group_id = ? ", array($group_id));
   $sql = "
       DELETE FROM  ". _tbl("u2g_map") . "
@@ -2682,6 +2681,25 @@ function del_user_group($group_id)
     db()->command($sql, array($row['parent_id'], $row['deep'] + 1, $row['parent_id'], $row['deep'] + 1));
   }
   db()->command("DELETE FROM " . _tbl("g2g_map") . " WHERE parent_id = ? OR group_id = ? ", array($group_id, $group_id));
+  db()->command("DELETE FROM " . _tbl("r2g_map") . "  WHERE group_id = ?", array($group_id));
+  // If room_id not exists in r2g_map, insert a default row (room_id, -1)
+  db()->command("
+    INSERT INTO " . _tbl("r2g_map") . " (room_id, group_id)
+    SELECT DISTINCT R.id, -1
+    FROM " . _tbl("room") . " R
+    LEFT JOIN " . _tbl("r2g_map") . " R2G ON R.id = R2G.room_id
+    WHERE R2G.room_id IS NULL;
+  ");
+  db()->command("DELETE FROM " . _tbl("a2g_map") . "  WHERE group_id = ?", array($group_id));
+  // If area_id not exists in a2g_map, insert a default row (area_id, -1)
+  db()->command("
+    INSERT INTO " . _tbl("a2g_map") . " (area_id, group_id)
+    SELECT DISTINCT A.id, -1
+    FROM " . _tbl("area") . " R
+    LEFT JOIN " . _tbl("a2g_map") . " A2G ON A.id = A2G.area_id
+    WHERE A2G.area_id IS NULL;
+  ");
+  db()->command("DELETE FROM " . _tbl("user_group") . " WHERE id = ?", array($group_id));
   resolve_user_group_count();
   db()->commit();
   return true;
