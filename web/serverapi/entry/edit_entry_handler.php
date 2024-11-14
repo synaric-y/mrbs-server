@@ -138,6 +138,16 @@ $row = $result -> next_row_keyed();
 if ($row['room_disabled'] == 1 || $row['area_disabled'] == 1){
   ApiHelper::fail(get_vocab("area_or_room_disabled"), ApiHelper::AREA_OR_ROOM_DISABLED);
 }
+// Query old entry and reset create_by
+if (!empty($id)) {
+  $old_entry = db()->query("SELECT * FROM " . _tbl("entry") . " WHERE id = ?", array($id))->next_row_keyed();
+  if (empty($old_entry)) {
+    ApiHelper::fail(get_vocab("edit_entry_not_exist"), ApiHelper::ENTRY_NOT_EXIST);
+  }
+  $create_by = $old_entry['create_by'];
+  $book_by = $old_entry['book_by'];
+}
+
 // Convert the registration opens and closes times into seconds
 if (isset($registration_opens_value) && isset($registration_opens_units)) {
   $registration_opens = $registration_opens_value;
