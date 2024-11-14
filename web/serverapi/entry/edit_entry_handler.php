@@ -41,7 +41,6 @@ $create_by = $_SESSION['user'];
 
 // Get non-standard form variables
 $form_vars = array(
-  'create_by' => 'string',
   'name' => 'string',
   'book_by' => 'string',
   'description' => 'string',
