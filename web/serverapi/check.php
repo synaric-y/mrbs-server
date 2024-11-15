@@ -39,15 +39,22 @@ function user_can_book($name, $room)
     return true;
   }
 //  if ($result->count() == 0) {
-    $result = db()->query("SELECT * FROM " . _tbl("area") . " A INNER JOIN " . _tbl("a2g_map") . " AG ON A.id = AG.area_id INNER JOIN " . _tbl("u2g_map") . " u2g ON u2g.parent_id = AG.group_id WHERE A.id = ?", array($room['area_id']));
-    if ($result->count() == 0) {
-      return false;
+  $check_is_free = db()->query("SELECT * FROM " . _tbl("a2G_map") . " WHERE area_id = ? AND group_id = -1", array($room['area_id']))->next_row_keyed();
+  if (!empty($check_is_free)) {
+      return true;
+  }
+  $sql = "SELECT * FROM " . _tbl("area") . " A INNER JOIN " . _tbl("a2g_map") .
+    " AG ON A.id = AG.area_id INNER JOIN " . _tbl("u2g_map") .
+    " U2G ON U2G.parent_id = AG.group_id WHERE A.id = ? AND U2G.parent_id != -1 GROUP BY U2G.user_id";
+  $result = db()->query($sql, array($room['area_id']));
+  if ($result->count() == 0) {
+    return false;
+  }
+  while ($row = $result->next_row_keyed()) {
+    if ($row['user_id'] == $user['id']) {
+      return true;
     }
-    while ($row = $result->next_row_keyed()) {
-      if ($row['user_id'] == $user['id']) {
-        return true;
-      }
-    }
+  }
 //  }
 
 
