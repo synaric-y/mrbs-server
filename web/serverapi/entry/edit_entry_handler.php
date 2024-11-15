@@ -190,7 +190,7 @@ list($end_year, $end_month, $end_day) = $end_date_split;
 $result = db() -> query("SELECT * FROM " . _tbl("room") . " WHERE id = ?", $rooms);
 $room = $result -> next_row_keyed();
 if (!user_can_book($mrbs_username, $room)){
-  ApiHelper::fail(get_vocab("group_limit", $room['group_ids']), ApiHelper::GROUP_LIMIT);
+  ApiHelper::fail(get_vocab("group_limit"), ApiHelper::GROUP_LIMIT);
 }
 
 // Get custom form variables

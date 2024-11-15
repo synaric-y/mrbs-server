@@ -33,9 +33,9 @@ function getLevel($name)
  */
 function user_can_book($name, $room)
 {
-  $result = db()->query("SELECT * FROM " . _tbl("r2g_map") . " WHERE room_id = ?", array($room['id']));
+//  $result = db()->query("SELECT * FROM " . _tbl("r2g_map") . " WHERE room_id = ?", array($room['id']));
   $user = db()->query("SELECT * FROM " . _tbl("users") . " WHERE name = ?", array($name))->next_row_keyed();
-  if ($result->count() == 0) {
+//  if ($result->count() == 0) {
     $result = db()->query("SELECT * FROM " . _tbl("area") . " A INNER JOIN " . _tbl("a2g_map") . " AG ON A.id = AG.area_id INNER JOIN " . _tbl("u2g_map") . " u2g ON u2g.parent_id = AG.group_id WHERE A.id = ?", array($room['area_id']));
     if ($result->count() == 0) {
       return false;
@@ -45,17 +45,17 @@ function user_can_book($name, $room)
         return true;
       }
     }
-  }
+//  }
 
 
-  while ($row = $result->next_row_keyed()) {
-    if ($row['group_id'] == -1) {
-      return true;
-    }
-    $result = db()->query1("SELECT COUNT(*) FROM " . _tbl("u2g_map") . " WHERE user_id = ? AND parent_id = ?", array($user['id'], $row['group_id']));
-    if ($result > 0) {
-      return true;
-    }
-  }
+//  while ($row = $result->next_row_keyed()) {
+//    if ($row['group_id'] == -1) {
+//      return true;
+//    }
+//    $result = db()->query1("SELECT COUNT(*) FROM " . _tbl("u2g_map") . " WHERE user_id = ? AND parent_id = ?", array($user['id'], $row['group_id']));
+//    if ($result > 0) {
+//      return true;
+//    }
+//  }
   return false;
 }
