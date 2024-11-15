@@ -40,6 +40,6 @@ if (isset($status)) {
   }
 }
 
-$offset = ($pagesize - 1) * $pagenum;
+$offset = ($pagenum - 1) * $pagesize;
 $result = db() -> query("SELECT * FROM " . _tbl("entry") . " E WHERE create_by = ? $filter ORDER BY timestamp DESC LIMIT {$offset}, {$pagesize}", $params);
 ApiHelper::success($result -> all_rows_keyed());
