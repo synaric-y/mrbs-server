@@ -18,9 +18,9 @@ if (!checkAuth()){
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
-if (getLevel($_SESSION['user']) < $min_booking_admin_level){
-  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
-}
+//if (getLevel($_SESSION['user']) < $min_booking_admin_level){
+//  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
+//}
 
 $mrbs_username = $_SESSION['user'];
 
@@ -646,18 +646,18 @@ try {
 
   $result = mrbsMakeBookings($bookings, $this_id, $just_check, $skip, $original_room_id, $send_mail, $edit_series);
   // Notify the third-party Calendar service that a meeting has been created
-  if (!$just_check && $result['valid_booking'] && empty($id)) {
-    if ($result["new_details"][0]['id']) {
-      foreach ($result["new_details"] as $d) {
-        if ($edit_series) {
-          CalendarServerManager::createRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
-        }else{
-          CalendarServerManager::createMeeting($d['id']);
+    if (!$just_check && $result['valid_booking'] && empty($id)) {
+      if ($result["new_details"][0]['id']) {
+        foreach ($result["new_details"] as $d) {
+          if ($edit_series) {
+            CalendarServerManager::createRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
+          }else{
+            CalendarServerManager::createMeeting($d['id']);
+          }
         }
       }
     }
-  }
-  // If we weren't just checking and this was a successful booking and
+    // If we weren't just checking and this was a successful booking and
   // we were editing an existing booking, then delete the old booking
   if (!$just_check && $result['valid_booking'] && !empty($id)) {
     // Notify the third-party Calendar service that a meeting has been updated
