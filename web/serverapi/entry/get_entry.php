@@ -20,7 +20,8 @@ $vars = array(
   "status",                   //0未开始，1进行中，2已结束
   "area_id",
   "room_id",
-  "create_by"
+  "create_by",
+  "awaiting_approval"
 );
 
 $pagesize = $_POST['pagesize'] ?? 20;
@@ -54,6 +55,9 @@ if (!empty($vars)) {
     } else if ($var === 'create_by') {
       $sql .= "E.create_by = ?";
       $params[] = $$var;
+    } else if ($var === 'awaiting_approval') {
+      $sql .= "E.status&" . STATUS_AWAITING_APPROVAL . " = ?";
+      $params[] = STATUS_AWAITING_APPROVAL;
     }
     if ($i != count($vars) - 1) {
       $sql .= " AND ";
