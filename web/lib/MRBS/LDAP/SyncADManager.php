@@ -219,12 +219,15 @@ class SyncADManager
 
       if (empty($localUser)) {
         $mergedUser['password_hash'] = $config['default_password_hash'];
+
         DBHelper::insert(_tbl($TABLE_USER), $mergedUser);
         $insertId = DBHelper::insert_id(_tbl($TABLE_USER), "id");
         $mergedUser['id'] = $insertId;
         $localUserList[$mergedUser['third_id']] = $mergedUser;
         $syncResult->user_insert += 1;
       } else {
+        unset($mergedUser['level']);
+
         DBHelper::update(_tbl($TABLE_USER), $mergedUser, "third_id = '$thirdId' or name = '$rName'");
         $localUserList[$localUser['third_id']] = $localUser;
         if ($mergedUser['disabled'] != $localUser['disabled']) {
