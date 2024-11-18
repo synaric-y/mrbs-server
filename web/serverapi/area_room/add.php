@@ -179,6 +179,7 @@ elseif ($type == "area") {
   db()->commit();
   ApiHelper::success(null);
 } elseif ($type == "room") {
+  $area_id = $_POST['area_id'];
   if (empty($area)) {
     ApiHelper::fail(get_vocab("missing_parameters"), ApiHelper::MISSING_PARAMETERS);
   }
@@ -186,7 +187,7 @@ elseif ($type == "area") {
   if ($one < 1) {
     ApiHelper::fail(get_vocab("area_not_exist"), ApiHelper::AREA_NOT_EXIST);
   }
-  $one = db()->query1("SELECT COUNT(*) FROM " . _tbl("room") . " WHERE room_name = ?", array($name));
+  $one = db()->query1("SELECT COUNT(*) FROM " . _tbl("room") . " WHERE room_name = ? AND area_id = ?", array($name, $area_id));
   if ($one > 0) {
     ApiHelper::fail(get_vocab("invalid_room_name"), ApiHelper::INVALID_ROOM_NAME);
   }
