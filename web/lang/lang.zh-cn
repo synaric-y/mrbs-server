@@ -642,6 +642,7 @@ $vocab["group_cannot_unbind"]                       = "用户组无法解绑";
 $vocab["group_cannot_modify"]                       = "用户组无法编辑或删除";
 $vocab["group_cannot_bind_third"]                   = "仅顶级用户组可以同步第三方用户组";
 $vocab["missing_ad_params"]                         = "Active Directory参数未配置或无法联通，请配置";
+$vocab["sync_user_group_running"]                   = "正在同步用户和用户组，请勿重复操作";
 
 $vocab["success"]            = "成功";
 $vocab["already_login"]      = "已经登录了";

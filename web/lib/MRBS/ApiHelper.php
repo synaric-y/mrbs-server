@@ -101,6 +101,8 @@ class ApiHelper
 
   public const DUPLICATED_GROUP_NAME = -208;
 
+  public const SYNC_USER_GROUP_RUNNING = -209;
+
   static function value($key)
   {
     return $_POST[$key];

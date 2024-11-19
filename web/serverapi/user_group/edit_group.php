@@ -22,6 +22,10 @@ if (getLevel($_SESSION['user']) < 2){
   ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
 }
 
+if (check_sync_ad_running()) {
+  ApiHelper::fail(get_vocab("sync_user_group_running"), ApiHelper::SYNC_USER_GROUP_RUNNING);
+}
+
 $group_id = $_POST['group_id'];
 $name = $_POST['name'];
 $third_id = $_POST['third_id'];
