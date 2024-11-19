@@ -28,7 +28,7 @@ if (!empty($_SESSION['user'])) {
 
 
 if ($type == 'all'){
-  $result = get_room_and_area_at_home($user);
+  $result = get_room_and_area_by_user($user);
   if ($result -> count() < 1){
     ApiHelper::fail(get_vocab("room_not_exist"), ApiHelper::ROOM_NOT_EXIST);
   }

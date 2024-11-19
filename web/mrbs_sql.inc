@@ -1867,6 +1867,9 @@ function get_area_names(bool $all = false): array
   return $areas;
 }
 
+// Get an array of area.
+// Areas without any reservation restrictions and user groups that limit reservations,
+// and areas where the current user is in the group will be returned
 function get_area_by_user($user)
 {
   if (empty($user) || $user['level'] >= 2) {
@@ -1876,40 +1879,43 @@ function get_area_by_user($user)
   } else {
     $area_sql = "
       SELECT A.id, A.area_name, A.disabled, A.morningstarts, A.morningstarts_minutes, A.eveningends, A.eveningends_minutes, A.resolution, A.parent_id
-      FROM mrbs_area A
-      JOIN mrbs_a2g_map A2G ON A.id = A2G.area_id
-      JOIN mrbs_u2g_map U2G ON A2G.group_id = U2G.parent_id
+      FROM " . _tbl('area') . " A
+      JOIN " . _tbl('a2g_map') . " A2G ON A.id = A2G.area_id
+      JOIN " . _tbl('u2g_map') . " U2G ON A2G.group_id = U2G.parent_id
       WHERE U2G.user_id = ? AND A2G.group_id = U2G.parent_id
 
       UNION
       SELECT A.id, A.area_name, A.disabled, A.morningstarts, A.morningstarts_minutes, A.eveningends, A.eveningends_minutes, A.resolution, A.parent_id
-      FROM mrbs_area A
-      JOIN mrbs_a2g_map A2G ON A.id = A2G.area_id
+      FROM " . _tbl('area') . " A
+      JOIN " . _tbl('a2g_map') . " A2G ON A.id = A2G.area_id
       WHERE A2G.group_id = -1
     ";
     return db()->query($area_sql, array($user['id']))->all_rows_keyed();
   }
 }
 
-function get_room_and_area_at_home($user)
+// Get an array of area and room.
+// Areas without any reservation restrictions and user groups that limit reservations,
+// and areas where the current user is in the group will be returned
+function get_room_and_area_by_user($user)
 {
   if (empty($user) || $user['level'] >= 2) {
     $area_sql =  "SELECT R.id as room_id, R.disabled as room_disabled, A.disabled as area_disabled, resolution, capacity, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id";
     return db()->query($area_sql);
   }
   $sql = "
-    SELECT R.id as room_id, R.disabled as room_disabled, AU.disabled as area_disabled, resolution, capacity, R.*, AU.* FROM mrbs_room R LEFT JOIN (
+    SELECT R.id as room_id, R.disabled as room_disabled, AU.disabled as area_disabled, resolution, capacity, R.*, AU.* FROM " . _tbl('room') . " R LEFT JOIN (
 
         SELECT A.id, A.area_name, A.disabled, A.morningstarts, A.morningstarts_minutes, A.eveningends, A.eveningends_minutes, A.resolution, A.parent_id
-        FROM mrbs_area A
-        JOIN mrbs_a2g_map A2G ON A.id = A2G.area_id
-        JOIN mrbs_u2g_map U2G ON A2G.group_id = U2G.parent_id
+        FROM " . _tbl('area') . " A
+        JOIN " . _tbl('a2g_map') . " A2G ON A.id = A2G.area_id
+        JOIN " . _tbl('u2g_map') . " U2G ON A2G.group_id = U2G.parent_id
         WHERE U2G.user_id = 3 AND A2G.group_id = U2G.parent_id
 
         UNION
         SELECT A.id, A.area_name, A.disabled, A.morningstarts, A.morningstarts_minutes, A.eveningends, A.eveningends_minutes, A.resolution, A.parent_id
-        FROM mrbs_area A
-        JOIN mrbs_a2g_map A2G ON A.id = A2G.area_id
+        FROM " . _tbl('area') . " A
+        JOIN " . _tbl('a2g_map') . " A2G ON A.id = A2G.area_id
         WHERE A2G.group_id = -1
     ) AU ON R.area_id = AU.id
   ";
