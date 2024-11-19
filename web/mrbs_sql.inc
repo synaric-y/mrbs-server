@@ -1871,7 +1871,7 @@ function get_area_by_user($user)
 {
   if (empty($user) || $user['level'] >= 2) {
     $area_sql =  "SELECT A.id, A.area_name, A.disabled, A.morningstarts, A.morningstarts_minutes, A.eveningends, A.eveningends_minutes, A.resolution, A.parent_id FROM
-    " . _tbl("area");
+    " . _tbl("area") . " A";
     return db()->query($area_sql)->all_rows_keyed();
   } else {
     $area_sql = "
