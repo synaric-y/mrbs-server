@@ -19,25 +19,25 @@ function getTimeZoneByRoom($roomId)
 
 // Query the room bound to the device in the database based on the actual device, and then return the meeting information in the room to the terminal device.
 $device_id = $_POST['device_id'];
-$is_charge = $_POST['is_charge'];
+$is_charging = $_POST['is_charging'];
 $battery_level = $_POST['battery_level'];
 $result = db() -> query("SELECT * FROM " . _tbl("device") . " WHERE device_id = ?", array($device_id));
 if($result -> count() == 0){
   ApiHelper::fail(get_vocab("not_activate"), ApiHelper::NOT_ACTIVATE);
 }
 
-if (!empty($is_charge) || !empty($battery_level)) {
+if (!empty($is_charging) || !empty($battery_level)) {
   if (!empty($device_id)) {
     $sql = "UPDATE " . _tbl("device") . " SET ";
-    if (!empty($battery_level) && empty($is_charge)) {
+    if (!empty($battery_level) && empty($is_charging)) {
       $sql .= "battery_level = ? WHERE device_id = ?";
       db()->command($sql, [$battery_level, $device_id]);
-    }else if (empty($battery_level) && !empty($is_charge)) {
+    }else if (empty($battery_level) && !empty($is_charging)) {
       $sql .= "is_charging = ? WHERE device_id = ?";
-      db()->command($sql, [$is_charge, $device_id]);
+      db()->command($sql, [$is_charging, $device_id]);
     }else {
       $sql .= "battery_level = ?, is_charging = ? WHERE device_id = ?";
-      db()->command($sql, [$battery_level, $is_charge, $device_id]);
+      db()->command($sql, [$battery_level, $is_charging, $device_id]);
     }
   }
 }
