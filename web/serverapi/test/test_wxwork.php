@@ -12,13 +12,16 @@ require_once dirname(__DIR__, 2) . "/lib/Wxwork/api/src/Utils.php";
 
 use MRBS\ApiHelper;
 
+$corpid = $_POST['corpid'];
+$secret = $_POST['secret'];
+
 $url = HttpUtils::MakeUrl(
-  "/cgi-bin/gettoken?corpid=&corpsecret=");
+  "/cgi-bin/gettoken?corpid=$corpid&corpsecret=$secret");
 
 try{
   $jspRawStr = HttpUtils::httpGet($url);
   $data = json_decode($jspRawStr, true);
-  if (!empty($data['errcode'])) {
+  if ($data['errcode'] == 0) {
     ApiHelper::success(null);
   }
 }catch(Exception $e){
