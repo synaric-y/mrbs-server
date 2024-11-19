@@ -21,29 +21,14 @@ if (isset($_POST['id'])) {
   $id = $_POST['id'];
 }
 
-$device_id = $_POST['device_id'] ?? null;
-$is_charge = $_POST['is_charge'] ?? null;
-$battery_level = $_POST['battery_level'] ?? null;
-
-if (!empty($is_charge) || !empty($battery_level)) {
-  if (!empty($device_id)) {
-    $sql = "UPDATE " . _tbl("device") . " SET ";
-    if (!empty($battery_level) && empty($is_charge)) {
-      $sql .= "battery_level = ? WHERE device_id = ?";
-      db()->command($sql, [$battery_level, $device_id]);
-    }else if (empty($battery_level) && !empty($is_charge)) {
-      $sql .= "is_charge = ? WHERE device_id = ?";
-      db()->command($sql, [$is_charge, $device_id]);
-    }else {
-      $sql .= "battery_level = ?, is_charge = ? WHERE device_id = ?";
-      db()->command($sql, [$battery_level, $is_charge, $device_id]);
-    }
-  }
+$user = null;
+if (!empty($_SESSION['user'])) {
+  $user = db()->query("SELECT * FROM " . _tbl("users") . " WHERE name = ?", array($_SESSION['user']))->next_row_keyed();
 }
 
 
 if ($type == 'all'){
-  $result = db() -> query("SELECT R.id as room_id, R.disabled as room_disabled, A.disabled as area_disabled, resolution, capacity, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id");
+  $result = get_room_and_area_at_home($user);
   if ($result -> count() < 1){
     ApiHelper::fail(get_vocab("room_not_exist"), ApiHelper::ROOM_NOT_EXIST);
   }

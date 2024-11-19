@@ -1891,6 +1891,31 @@ function get_area_by_user($user)
   }
 }
 
+function get_room_and_area_at_home($user)
+{
+  if (empty($user) || $user['level'] >= 2) {
+    $area_sql =  "SELECT R.id as room_id, R.disabled as room_disabled, A.disabled as area_disabled, resolution, capacity, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id";
+    return db()->query($area_sql);
+  }
+  $sql = "
+    SELECT R.id as room_id, R.disabled as room_disabled, AU.disabled as area_disabled, resolution, capacity, R.*, AU.* FROM mrbs_room R LEFT JOIN (
+
+        SELECT A.id, A.area_name, A.disabled, A.morningstarts, A.morningstarts_minutes, A.eveningends, A.eveningends_minutes, A.resolution, A.parent_id
+        FROM mrbs_area A
+        JOIN mrbs_a2g_map A2G ON A.id = A2G.area_id
+        JOIN mrbs_u2g_map U2G ON A2G.group_id = U2G.parent_id
+        WHERE U2G.user_id = 3 AND A2G.group_id = U2G.parent_id
+
+        UNION
+        SELECT A.id, A.area_name, A.disabled, A.morningstarts, A.morningstarts_minutes, A.eveningends, A.eveningends_minutes, A.resolution, A.parent_id
+        FROM mrbs_area A
+        JOIN mrbs_a2g_map A2G ON A.id = A2G.area_id
+        WHERE A2G.group_id = -1
+    ) AU ON R.area_id = AU.id
+  ";
+  return db()->query($sql);
+}
+
 
 // Get all the area details for $area_id.
 // Returns NULL if $area_id does not exist.
