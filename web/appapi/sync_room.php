@@ -26,13 +26,13 @@ if($result -> count() == 0){
   ApiHelper::fail(get_vocab("not_activate"), ApiHelper::NOT_ACTIVATE);
 }
 
-if (!empty($is_charging) || !empty($battery_level)) {
+if (isset($is_charging) || !empty($battery_level)) {
   if (!empty($device_id)) {
     $sql = "UPDATE " . _tbl("device") . " SET ";
-    if (!empty($battery_level) && empty($is_charging)) {
+    if (!empty($battery_level) && !isset($is_charging)) {
       $sql .= "battery_level = ? WHERE device_id = ?";
       db()->command($sql, [$battery_level, $device_id]);
-    }else if (empty($battery_level) && !empty($is_charging)) {
+    }else if (empty($battery_level) && isset($is_charging)) {
       $sql .= "is_charging = ? WHERE device_id = ?";
       db()->command($sql, [$is_charging, $device_id]);
     }else {
