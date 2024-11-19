@@ -1867,6 +1867,30 @@ function get_area_names(bool $all = false): array
   return $areas;
 }
 
+function get_area_by_user($user)
+{
+  if (empty($user)) {
+    $area_sql =  "SELECT A.id, A.area_name, A.disabled, A.morningstarts, A.morningstarts_minutes, A.eveningends, A.eveningends_minutes, A.resolution, A.parent_id FROM
+    " . _tbl("area");
+    return db()->query($area_sql)->all_rows_keyed();
+  } else {
+    $area_sql = "
+      SELECT A.id, A.area_name, A.disabled, A.morningstarts, A.morningstarts_minutes, A.eveningends, A.eveningends_minutes, A.resolution, A.parent_id
+      FROM mrbs_area A
+      JOIN mrbs_a2g_map A2G ON A.id = A2G.area_id
+      JOIN mrbs_u2g_map U2G ON A2G.group_id = U2G.parent_id
+      WHERE U2G.user_id = ? AND A2G.group_id = U2G.parent_id
+
+      UNION
+      SELECT A.id, A.area_name, A.disabled, A.morningstarts, A.morningstarts_minutes, A.eveningends, A.eveningends_minutes, A.resolution, A.parent_id
+      FROM mrbs_area A
+      JOIN mrbs_a2g_map A2G ON A.id = A2G.area_id
+      WHERE A2G.group_id = -1
+    ";
+    return db()->query($area_sql, array($user['id']))->all_rows_keyed();
+  }
+}
+
 
 // Get all the area details for $area_id.
 // Returns NULL if $area_id does not exist.

@@ -33,6 +33,8 @@ include_once "defaultincludes.inc";
 include_once "functions_table.inc";
 include_once "mrbs_sql.inc";
 
+include_once "./serverapi/user_group/user_group_utils.php";
+
 
 
 $act = $_GET["act"];

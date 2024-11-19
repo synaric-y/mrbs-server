@@ -80,6 +80,11 @@ if (empty($end_time)) {
   $end_time = strtotime("tomorrow midnight");
 }
 
+$user = null;
+if (!empty($_SESSION['user'])) {
+  $user = db()->query("SELECT * FROM " . _tbl("users") . " WHERE name = ?", array($_SESSION['user']))->next_row_keyed();
+}
+
 if ($type != 'all') {
   $roomExist = db()->query1("SELECT COUNT(*) FROM " . _tbl($type) . " WHERE id = ?", array($id));
   if ($roomExist <= 0) {
@@ -109,7 +114,7 @@ else
 
 if ($type == 'all') {
   $entries = $result->all_rows_keyed();
-  $areas = db()->query("SELECT id, area_name, disabled, morningstarts, morningstarts_minutes, eveningends, eveningends_minutes, resolution, parent_id FROM " . _tbl("area"))->all_rows_keyed();
+  $areas = get_area_by_user($user);
   $rooms = db()->query("SELECT id, disabled, description, capacity, area_id, room_name FROM " . _tbl("room"))->all_rows_keyed();
   $data = [];
   if (empty($rooms) || empty($areas)) {
