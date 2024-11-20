@@ -4,6 +4,15 @@ declare(strict_types=1);
 
 namespace MRBS;
 
+/*
+ * Force end entry.
+ * @Param
+ * id:    Specify the list of entry to be ended.
+ * @Return
+ * No Return
+ */
+
+
 global $min_booking_admin_level;
 
 $entry_id = $_POST['id'];
