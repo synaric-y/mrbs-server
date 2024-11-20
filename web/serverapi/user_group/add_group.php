@@ -59,9 +59,12 @@ $insertGroup['disabled'] = 0;
 $insertGroup['sync_state'] = 0;
 $insertGroup['user_count'] = 0;
 $insertGroup['third_id'] = $third_id;
-add_user_group($insertGroup, $parent_id);
+$insert_id = add_user_group($insertGroup, $parent_id);
+$insertGroup['id'] = $insert_id;
 
-$result = array();
+$result = array(
+  'group' => $insertGroup
+);
 ApiHelper::success($result);
 
 
