@@ -3,7 +3,7 @@
 
 A conference room reservation system developed based on PHP, with a web management backend and a conference room tablet display.
 
-![](https://scrutinizer-ci.com/g/synaric-y/mrbs-server/badges/build.png?b=main)
+[//]: # (![]&#40;https://scrutinizer-ci.com/g/synaric-y/mrbs-server/badges/build.png?b=main&#41;)
 ![](https://scrutinizer-ci.com/g/synaric-y/mrbs-server/badges/code-intelligence.svg?b=main)
 
 ![img.png](doc/img/2.png)
