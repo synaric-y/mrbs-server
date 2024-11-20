@@ -300,8 +300,8 @@ CREATE TABLE mrbs_users
 INSERT INTO mrbs_users (level, name, display_name, email)
 values (1, 'exchange', 'exchange', '');
 
-INSERT INTO mrbs_users (level, name, display_name, email)
-values (2, 'admin', 'admin', '');
+-- INSERT INTO mrbs_users (level, name, display_name, email)
+-- values (2, 'admin', 'admin', '');
 
 INSERT INTO mrbs_variables (variable_name, variable_content)
 VALUES ('db_version', '82');
@@ -319,7 +319,6 @@ DROP TABLE IF EXISTS mrbs_r2g_map;
 DROP TABLE IF EXISTS mrbs_user_group;
 DROP TABLE IF EXISTS mrbs_g2g_map;
 DROP TABLE IF EXISTS mrbs_u2g_map;
-
 
 CREATE TABLE mrbs_system_variable
 (
