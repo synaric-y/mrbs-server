@@ -79,7 +79,7 @@ foreach ($entries as $entry) {
 
 if(!$show_meeting_name){
   foreach ($entries as $entry) {
-    if ($entry['entry_type'] == 99)
+    if ($entry['entry_type'] == ENTRY_FAST)
       $entry['name'] = get_vocab('ic_tp_meeting');
   }
 }else{
@@ -89,7 +89,7 @@ if(!$show_meeting_name){
 }
 
 if (isset($now_entry)) {
-  if ($now_entry['entry_type'] == 99)
+  if ($now_entry['entry_type'] == ENTRY_FAST)
     $now_entry['name'] = get_vocab('ic_tp_meeting');
 }
 if (isset($now_entry) && !$show_meeting_name){

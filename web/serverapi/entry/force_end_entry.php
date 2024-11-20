@@ -21,7 +21,7 @@ $entry = get_entry_by_id($entry_id);
 if (empty($entry)) {
   ApiHelper::fail(get_vocab("edit_entry_not_exist"), ApiHelper::ENTRY_NOT_EXIST);
 }
-if ($entry['entry_type'] != 99) {
+if ($entry['entry_type'] != ENTRY_FAST) {
   // Not a fast meeting, need login
   if (!checkAuth()){
     setcookie("session_id", "", time() - 3600, "/web/");

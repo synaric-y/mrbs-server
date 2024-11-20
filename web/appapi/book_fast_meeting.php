@@ -88,7 +88,7 @@ if (!empty($queryOne)) {
 $result = array();
 $result["start_time"] = $begin_time;
 $result["end_time"] = $end_time;
-$result["entry_type"] = 99;
+$result["entry_type"] = ENTRY_FAST;
 $result["room_id"] = $roomId;
 $result["create_by"] = $booker ?: "admin";
 $result["name"] = $theme ?: get_vocab("ic_tp_meeting");

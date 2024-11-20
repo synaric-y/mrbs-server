@@ -305,6 +305,7 @@ define('REGEX_HHMM', '/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/');  // A time 
  define('ENTRY_SINGLE',       0);  // A single entry that is not part of a series
  define('ENTRY_RPT_ORIGINAL', 1);  // An entry that is part of a series and has not been modified
  define('ENTRY_RPT_CHANGED',  2);  // An entry that is part of a series and has been modified
+ define('ENTRY_FAST',        99);  // An entry that is booked anonymously on tablet
 
 
 /*************************************************
