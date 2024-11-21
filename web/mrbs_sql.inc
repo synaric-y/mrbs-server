@@ -2790,7 +2790,7 @@ function get_user_group_tree($group_id, $search, $source, $page = 1)
     SELECT t1.id, t1.name, t1.third_id, t1.disabled, t1.user_count, t1.source, t1.sync_state, IF(t3.parent_id IS NULL, 0, 1) AS has_child FROM " . _tbl("g2g_map") . " t2
     LEFT JOIN " . _tbl("user_group") . " t1 ON t1.id = t2.group_id
     LEFT JOIN " . _tbl("g2g_map") . " t3 ON t1.id = t3.parent_id
-    WHERE t1.id IS NOT NULL AND t2.parent_id = ? AND t2.deep = 1 AND t2.source = ? $searchSQL2 GROUP BY t1.id
+    WHERE t1.id IS NOT NULL AND t2.parent_id = ? AND t2.deep = 1 AND t2.source = ? $searchSQL2 GROUP BY t1.id ORDER BY t1.name ASC
   ";
   $result = db()->query($sql,
     array($group_id, $source)
@@ -2829,7 +2829,7 @@ function get_user_group_members($group_id, $search, $source, $in_group, $page)
         SELECT t1.id, t1.display_name, t1.name, t1.email, t1.timestamp, t1.disabled, t1.source, t1.third_id,
              CASE WHEN EXISTS(SELECT 1 FROM " . _tbl("u2g_map") . " WHERE user_id = t1.id AND parent_id = ?) THEN 1 ELSE 0 END AS is_bind
         FROM " . _tbl("users") . " t1
-        WHERE t1.disabled = 0 $searchSQL $sourceSQL GROUP BY t1.id ORDER BY is_bind DESC
+        WHERE t1.disabled = 0 $searchSQL $sourceSQL GROUP BY t1.id ORDER BY is_bind DESC, t1.name ASC
       ) sub WHERE $inGroupSQL LIMIT $start, 10
     ";
   $users = [];
