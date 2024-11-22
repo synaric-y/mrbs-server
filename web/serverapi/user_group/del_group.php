@@ -34,7 +34,7 @@ if ($group['source'] == 'ad') {
 }
 $peek = DBHelper::one(_tbl("g2g_map"), " parent_id = $group_id");
 if (!empty($peek)) {
-  ApiHelper::fail(get_vocab("group_cannot_modify"), ApiHelper::GROUP_CANNOT_DEL_OR_UPDATE);
+  ApiHelper::fail(get_vocab("group_cannot_delete"), ApiHelper::GROUP_CANNOT_DEL_OR_UPDATE);
 }
 
 del_user_group($group_id);
