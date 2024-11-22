@@ -4,6 +4,19 @@ declare(strict_types=1);
 
 namespace MRBS;
 
+/*
+ * Get device info.
+ * @Param
+ * device_id:         Device ID to be filtered.
+ * room_id:           Room ID to be filtered.
+ * pagenum:
+ * pagesize:
+ * battery_start:     (Optional) Filter the lowest value of battery.
+ * battery_end:       (Optional) Filter the highest value of power
+ * @Return
+ * Added User Group info
+ */
+
 if (!checkAuth()) {
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
