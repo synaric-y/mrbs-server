@@ -2772,7 +2772,7 @@ function get_user_group_tree($group_id, $search, $source, $page = 1)
   }
   if ($group_id != -1) {
     $sql = "
-      SELECT t1.name, t1.third_id, t1.disabled, t1.user_count, t1.source, t1.sync_state,
+      SELECT t1.id, t1.name, t1.third_id, t1.disabled, t1.user_count, t1.source, t1.sync_state,
              CASE WHEN EXISTS(SELECT 1 FROM " . _tbl("g2g_map") . " WHERE group_id = t1.id AND parent_id = -1 AND deep = 1) THEN 1 ELSE 0 END AS top_level
       FROM " . _tbl("user_group") . " t1
       WHERE t1.id = ? $searchSQL AND t1.source = ?
