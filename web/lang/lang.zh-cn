@@ -677,6 +677,7 @@ $vocab["area_disabled"]               = "该区域以禁用";
 $vocab["room_disabled"]               = "该房间以禁用";
 $vocab["invalid_confirm"]             = "confirm不能为空，且应该为1或0";
 $vocab["expired_end_time"]            = "已过时，不可预约、编辑或删除会议";
+$vocab["NOT_SUPPORT_MULTI_DAY"]       = "会议预约不能跨天";
 $vocab["capacity_too_large"]          = "房间容量过大";
 $vocab["no_right"]                    = "用户无权进行该操作";
 $vocab["area_or_room_disabled"]       = "区域或房间禁用，不可预约会议";

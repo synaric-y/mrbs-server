@@ -79,6 +79,7 @@ class ApiHelper
   public const DELETE_ONE_WITH_CHILD = -63;
   public const DEVICE_DOWN = -64;
   public const LDAP_CONNECT_ERROR = -65;
+  public const NOT_SUPPORT_MULTI_DAY = -66;
 
 
   /*
