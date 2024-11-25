@@ -108,7 +108,7 @@ if (empty($_POST['edit_series'])) {
     ApiHelper::fail(get_vocab("expired_end_time"), ApiHelper::EXPIRED_END_TIME);
   }
   if ($start_date != $end_date) {
-    ApiHelper::fail(get_vocab("expired_end_time"), ApiHelper::NOT_SUPPORT_MULTI_DAY);
+    ApiHelper::fail(get_vocab("not_support_multi_day"), ApiHelper::NOT_SUPPORT_MULTI_DAY);
   }
   if ($start_date == $end_date && $end_seconds < $start_seconds) {
     ApiHelper::fail(get_vocab("expired_end_time"), ApiHelper::EXPIRED_END_TIME);
