@@ -13,7 +13,7 @@ use MRBS\CalendarServer\CalendarServerManager;
 global $min_booking_admin_level;
 
 
-if (!checkAuth()){
+if (!checkAuth()) {
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
@@ -91,9 +91,9 @@ $just_check = false;
 foreach ($form_vars as $var => $var_type) {
   if (isset($_POST[$var]))
     $$var = $_POST[$var];
-    if ($var_type == 'string') {
-      $$var = "" . $$var;
-    }
+  if ($var_type == 'string') {
+    $$var = "" . $$var;
+  }
   // Trim the strings and truncate them to the maximum field length
   if (!empty($$var) && is_string($$var)) {
     $$var = trim($$var);
@@ -123,7 +123,7 @@ $confirmed = "";
 $skip = boolval($skip);
 $edit_series = boolval($edit_series);
 
-if (!empty($id) && db()->query1("SELECT * FROM " . _tbl("entry") . " WHERE id = ?", array($id)) < 1){
+if (!empty($id) && db()->query1("SELECT * FROM " . _tbl("entry") . " WHERE id = ?", array($id)) < 1) {
   ApiHelper::fail(get_vocab("edit_entry_not_exist"), ApiHelper::ENTRY_NOT_EXIST);
 }
 
@@ -136,12 +136,12 @@ if (!isset($rep_interval)) {
 // Sanitize the room ids
 $rooms = array_map(__NAMESPACE__ . '\sanitize_room_id', $rooms);
 
-$result = db() -> query("SELECT R.disabled as room_disabled, A.disabled as area_disabled FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id WHERE R.id = ?", array($rooms[0]));
-if ($result -> count() < 1){
+$result = db()->query("SELECT R.disabled as room_disabled, A.disabled as area_disabled FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id WHERE R.id = ?", array($rooms[0]));
+if ($result->count() < 1) {
   ApiHelper::fail(get_vocab("room_not_exist"), ApiHelper::ROOM_NOT_EXIST);
 }
-$row = $result -> next_row_keyed();
-if ($row['room_disabled'] == 1 || $row['area_disabled'] == 1){
+$row = $result->next_row_keyed();
+if ($row['room_disabled'] == 1 || $row['area_disabled'] == 1) {
   ApiHelper::fail(get_vocab("area_or_room_disabled"), ApiHelper::AREA_OR_ROOM_DISABLED);
 }
 // Query old entry and reset create_by
@@ -190,9 +190,9 @@ if (false === ($end_date_split = split_iso_date($end_date))) {
 
 list($end_year, $end_month, $end_day) = $end_date_split;
 
-$result = db() -> query("SELECT * FROM " . _tbl("room") . " WHERE id = ?", $rooms);
-$room = $result -> next_row_keyed();
-if (!user_can_book($mrbs_username, $room)){
+$result = db()->query("SELECT * FROM " . _tbl("room") . " WHERE id = ?", $rooms);
+$room = $result->next_row_keyed();
+if (!user_can_book($mrbs_username, $room)) {
   ApiHelper::fail(get_vocab("group_limit"), ApiHelper::GROUP_LIMIT);
 }
 
@@ -400,7 +400,6 @@ foreach ($fields as $field) {
 }
 
 
-
 // When All Day is checked, $start_seconds and $end_seconds are disabled and so won't
 // get passed through by the form.   We therefore need to set them.
 if (!empty($all_day)) {
@@ -559,7 +558,6 @@ $area = mrbsGetRoomArea($room);
 // Now construct the new query string
 
 
-
 // Check to see whether this is a repeat booking and if so, whether the user
 // is allowed to make/edit repeat bookings.   (The edit_entry form should
 // prevent you ever getting here, but this check is here as a safeguard in
@@ -594,9 +592,9 @@ foreach ($rooms as $room_id) {
   $booking['end_time'] = $end_time;
   $ical_uid = generate_global_uid($name);
   $booking['ical_uid'] = $ical_uid;
-  if (!empty($id)){
-    $ical_sequence = db() -> query("SELECT ical_sequence FROM " . _tbl("entry") . " WHERE id = ?", array($id)) -> next_row_keyed()['ical_sequence'] + 1;
-  }else{
+  if (!empty($id)) {
+    $ical_sequence = db()->query("SELECT ical_sequence FROM " . _tbl("entry") . " WHERE id = ?", array($id))->next_row_keyed()['ical_sequence'] + 1;
+  } else {
     $ical_sequence = 1;
   }
   $booking['ical_sequence'] = $ical_sequence;
@@ -649,32 +647,31 @@ try {
 
   $result = mrbsMakeBookings($bookings, $this_id, $just_check, $skip, $original_room_id, $send_mail, $edit_series);
   // Notify the third-party Calendar service that a meeting has been created
-    if (!$just_check && $result['valid_booking'] && empty($id)) {
-      if ($result["new_details"][0]['id']) {
-        foreach ($result["new_details"] as $d) {
-          if ($edit_series) {
-            CalendarServerManager::createRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
-          }else{
-            CalendarServerManager::createMeeting($d['id']);
-          }
+  if (!$just_check && $result['valid_booking'] && empty($id)) {
+    if ($result["new_details"][0]['id']) {
+      foreach ($result["new_details"] as $d) {
+        if ($edit_series) {
+          CalendarServerManager::createRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
+        } else {
+          CalendarServerManager::createMeeting($d['id']);
         }
       }
     }
-    // If we weren't just checking and this was a successful booking and
+  }
+  // If we weren't just checking and this was a successful booking and
   // we were editing an existing booking, then delete the old booking
   if (!$just_check && $result['valid_booking'] && !empty($id)) {
     // Notify the third-party Calendar service that a meeting has been updated
     if ($result["new_details"]) {
       foreach ($result["new_details"] as $d) {
-        if($edit_series) {
+        if ($edit_series) {
           // Actually delete old Calendar Item
-//          CalendarServerManager::updateRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
           CalendarServerManager::deleteMeeting($id);
           // Wait Exchange Server to delete old one
           sleep(1);
           // Then create a new one
           CalendarServerManager::createRepeatMeeting($result["new_details"][0]['id'], $rep_end_date);
-        }else
+        } else
           CalendarServerManager::updateMeeting($d['id']);
       }
     }
@@ -691,9 +688,10 @@ try {
         foreach ($result["new_details"] as $d) {
           if ($edit_series) {
             $fetch = db()->query("SELECT id FROM " . _tbl("entry") . " WHERE repeat_id = ?", array($d['id']));
-            while ($row = $fetch->next_row_keyed())
+            while ($row = $fetch->next_row_keyed()) {
               CalendarServerManager::deleteMeeting($row['id']);
-          }else{
+            }
+          } else {
             CalendarServerManager::deleteMeeting($d['id']);
           }
         }
@@ -703,28 +701,31 @@ try {
     ApiHelper::fail(get_vocab("no_access_no_policy"), ApiHelper::NO_ACCESS_NO_POLICY);
   }
 
-}
-
-catch (\Exception $e) {
-ApiHelper::fail("", ApiHelper::UNKNOWN_ERROR);
+} catch (\Exception $e) {
+  ApiHelper::fail("", ApiHelper::UNKNOWN_ERROR);
 }
 if ($result['valid_booking']) {
   if ($result['new_details'][0]['id'] != 0) {
-    if (!empty($result['conflicts']))
+    if (!empty($result['conflicts'])) {
       foreach ($result['conflicts'] as $conflict)
         $data1["conflicts"][] = $conflict;
-    $entries = array_column($result['new_details'], 'id');
-    if ($edit_series)
-      $result = db() -> query("SELECT id, start_time, end_time, entry_type, room_id, create_by, name, type, description, book_by FROM " . _tbl("entry") . " WHERE repeat_id = ?", $entries);
-    else
-      $result = db() -> query("SELECT id, start_time, end_time, entry_type, room_id, create_by, name, type, description, book_by FROM " . _tbl("entry") . " WHERE id = ?", $entries);
-    $data1["entries"] = $result -> all_rows_keyed();
+    }
+    $entries_id = array_column($result['new_details'], 'id');
+    $query_sql = "SELECT id, start_time, end_time, entry_type, room_id, create_by, name, type, description, book_by FROM " . _tbl("entry");
+    if ($edit_series){
+      $query_sql .= " WHERE repeat_id = ?";
+    }
+    else {
+      $query_sql .= " WHERE id = ?";
+    }
+    $query_result = db()->query($query_sql, $entries_id);
+    $data1["entries"] = $query_result->all_rows_keyed();
     ApiHelper::success($data1);
-  }else{
+  } else {
     ApiHelper::fail(get_vocab("repeat_entry_conflict"), ApiHelper::REPEAT_ENTRY_CONFLICT);
   }
-}else if ($result['new_details'][0]['id'] != 0){
+} else if ($result['new_details'][0]['id'] != 0) {
   ApiHelper::fail(get_vocab("entry_conflict"), ApiHelper::ENTRY_CONFLICT, $result['conflicts']);
-}else{
+} else {
   ApiHelper::fail(get_vocab("entry_conflict"), ApiHelper::ENTRY_CONFLICT, $result['conflicts']);
 }
