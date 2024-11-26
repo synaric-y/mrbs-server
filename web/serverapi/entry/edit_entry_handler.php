@@ -126,7 +126,9 @@ $midnight = strtotime("midnight", intval($start_seconds));
 $start_seconds -= $midnight;
 $midnight = strtotime("midnight", intval($end_seconds));
 $end_seconds -= $midnight;
-$confirmed = "";
+if (!isset($confirmed)) {
+  $confirmed = "";
+}
 $skip = boolval($skip);
 $edit_series = boolval($edit_series);
 
