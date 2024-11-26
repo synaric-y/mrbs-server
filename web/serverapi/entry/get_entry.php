@@ -38,9 +38,7 @@ foreach ($vars as $key => $var) {
   }
 }
 
-$sql = "SELECT E.*, R.room_name as room_name, A.area_name as area_name FROM " . _tbl("entry") .
-  " E LEFT JOIN " . _tbl("room") . " R ON E.room_id = R.id LEFT JOIN " . _tbl("area") .
-  " A ON R.area_id = A.id " . " WHERE repeat_id IS NULL";
+$sql = "SELECT E.*, R.room_name as room_name, A.area_name as area_name FROM " . _tbl("entry") . " E LEFT JOIN " . _tbl("room") . " R ON E.room_id = R.id LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id " . " WHERE repeat_id IS NULL";
 
 $params = [];
 $vars = array_values($vars);
@@ -109,9 +107,7 @@ while ($row = $result->next_row_keyed()) {
   $data[] = $entry;
 }
 
-$sql = "SELECT E.repeat_id as repeat_id, MIN(E.start_time) as start_time, MAX(E.end_time) as end_time FROM " . _tbl("entry") .
-  " E LEFT JOIN " . _tbl("room") . " R ON E.room_id = R.id LEFT JOIN " . _tbl("area") .
-  " A ON R.area_id = A.id " . " WHERE repeat_id IS NOT NULL";
+$sql = "SELECT E.repeat_id as repeat_id, MIN(E.start_time) as start_time, MAX(E.end_time) as end_time FROM " . _tbl("entry") . " E LEFT JOIN " . _tbl("room") . " R ON E.room_id = R.id LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id " . " WHERE repeat_id IS NOT NULL";
 
 $params = [];
 if (!empty($vars)) {
@@ -155,9 +151,7 @@ $sql = "SELECT COUNT(*) FROM (" . $sql . ") AS subquery";
 $total_num += db()->query1($sql, $params);
 
 while ($row = $result->next_row_keyed()) {
-  $repeat = db()->query("SELECT Re.*, R.room_name as room_name, A.area_name as area_name FROM " . _tbl("repeat") .
-    " Re LEFT JOIN " . _tbl("room") . " R ON Re.room_id = R.id LEFT JOIN " . _tbl("area") .
-    " A ON R.area_id = A.id WHERE Re.id = ?", array($row['repeat_id']))->next_row_keyed();
+  $repeat = db()->query("SELECT Re.*, R.room_name as room_name, A.area_name as area_name FROM " . _tbl("repeat") . " Re LEFT JOIN " . _tbl("room") . " R ON Re.room_id = R.id LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id WHERE Re.id = ?", array($row['repeat_id']))->next_row_keyed();
   $repeat['start_time'] = intval($repeat['start_time']);
   $repeat['end_time'] = intval($repeat['end_time']);
   $entry = array();
