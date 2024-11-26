@@ -12,6 +12,13 @@ use MRBS\CalendarServer\CalendarServerManager;
 
 global $min_booking_admin_level;
 
+/*
+ * Edit an entry.
+ * @Param
+ *    for full param list, please see $form_vars.
+ * @Return
+ * No Return
+ */
 
 if (!checkAuth()) {
   setcookie("session_id", "", time() - 3600, "/web/");
