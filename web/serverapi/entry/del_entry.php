@@ -15,6 +15,8 @@ use MRBS\CalendarServer\CalendarServerManager;
 
 require_once dirname(__DIR__, 2) . "/functions_mail.inc";
 
+global $mail_settings;
+
 
 $id = $_POST["entry_id"];
 $series = boolval($_POST["entry_series"] ?? false);
