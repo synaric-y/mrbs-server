@@ -16,12 +16,12 @@ namespace MRBS;
  * user information and total number of users
  */
 
-if (!checkAuth()){
+if (!checkAuth()) {
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
-if (getLevel($_SESSION['user']) < 2){
+if (getLevel($_SESSION['user']) < 2) {
   ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
 }
 $username = $_SESSION['user'];
@@ -36,9 +36,9 @@ $vars = array(
 );
 
 foreach ($vars as $key => $var) {
-  if (isset($_POST[$var]) && $_POST[$var] !== ''){
+  if (isset($_POST[$var]) && $_POST[$var] !== '') {
     $$var = $_POST[$var];
-  }else{
+  } else {
     unset($vars[$key]);
   }
 }
@@ -50,11 +50,11 @@ $params = array();
 $select = "SELECT id, level, name, display_name, email, timestamp, remark, disabled";
 $sql = "$select FROM " . _tbl("users");
 $vars = array_values($vars);
-if (!empty($vars)){
+if (!empty($vars)) {
   $sql .= " WHERE ";
-  for ($i = 0; $i < count($vars); $i++){
+  for ($i = 0; $i < count($vars); $i++) {
     $var = $vars[$i];
-    if (!isset($$var) || $$var === ''){
+    if (!isset($$var) || $$var === '') {
       continue;
     }
     if ($vars[$i] == 'display_name' || $vars[$i] == 'name') {
@@ -63,7 +63,7 @@ if (!empty($vars)){
       $sql .= $vars[$i] . " = ?";
       $params[] = $$var;
     }
-    if ($i < count($vars) - 1){
+    if ($i < count($vars) - 1) {
       $sql .= " AND ";
     }
   }
@@ -71,22 +71,22 @@ if (!empty($vars)){
 
 $start_num = ($pagenum - 1) * $pagesize;
 $sql .= " LIMIT $start_num, $pagesize";
-$result = db() -> query($sql, $params);
+$result = db()->query($sql, $params);
 $sql = str_replace("$select", "SELECT COUNT(*)", $sql);
 $sql = str_replace(" LIMIT $start_num, $pagesize", "", $sql);
-$total_num = db() -> query1($sql, $params);
-if ($result -> count() == 0){
+$total_num = db()->query1($sql, $params);
+if ($result->count() == 0) {
   ApiHelper::success(['total_num' => $total_num]);
-}else{
-  while($row = $result -> next_row_keyed()){
-    if ($row['name'] == $username){
+} else {
+  while ($row = $result->next_row_keyed()) {
+    if ($row['name'] == $username) {
       $row['is_self'] = 1;
-    }else{
+    } else {
       $row['is_self'] = 0;
     }
     $data1['users'][] = $row;
   }
-  if ($total_num != 0){
+  if ($total_num != 0) {
     $data1['total_num'] = $total_num;
   }
   ApiHelper::success($data1 ?? null);

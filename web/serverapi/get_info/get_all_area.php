@@ -19,18 +19,18 @@ if (!empty($is_charge) || !empty($battery_level)) {
     if (!empty($battery_level) && empty($is_charge)) {
       $sql .= "battery_level = ? WHERE device_id = ?";
       db()->command($sql, [$battery_level, $device_id]);
-    }else if (empty($battery_level) && !empty($is_charge)) {
+    } else if (empty($battery_level) && !empty($is_charge)) {
       $sql .= "is_charge = ? WHERE device_id = ?";
       db()->command($sql, [$is_charge, $device_id]);
-    }else {
+    } else {
       $sql .= "battery_level = ?, is_charge = ? WHERE device_id = ?";
       db()->command($sql, [$battery_level, $is_charge, $device_id]);
     }
   }
 }
 
-$result = db() -> query("SELECT id, area_name FROM " . _tbl("area"));
-if ($result -> count() == 0) {
+$result = db()->query("SELECT id, area_name FROM " . _tbl("area"));
+if ($result->count() == 0) {
   ApiHelper::fail(get_vocab("area_not_exist"), ApiHelper::AREA_NOT_EXIST);
 }
 

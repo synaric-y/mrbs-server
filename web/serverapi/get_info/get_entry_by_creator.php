@@ -13,7 +13,7 @@ namespace MRBS;
  * all entries created by user self
  */
 
-if (!checkAuth()){
+if (!checkAuth()) {
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
@@ -41,5 +41,5 @@ if (isset($status)) {
 }
 
 $offset = ($pagenum - 1) * $pagesize;
-$result = db() -> query("SELECT * FROM " . _tbl("entry") . " E WHERE create_by = ? $filter ORDER BY timestamp DESC LIMIT {$offset}, {$pagesize}", $params);
-ApiHelper::success($result -> all_rows_keyed());
+$result = db()->query("SELECT * FROM " . _tbl("entry") . " E WHERE create_by = ? $filter ORDER BY timestamp DESC LIMIT {$offset}, {$pagesize}", $params);
+ApiHelper::success($result->all_rows_keyed());

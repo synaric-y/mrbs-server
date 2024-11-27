@@ -14,29 +14,29 @@ namespace MRBS;
 
 $id = $_POST['id'];
 
-if (!checkAuth()){
+if (!checkAuth()) {
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
 
-if (getLevel($_SESSION['user']) < 2){
+if (getLevel($_SESSION['user']) < 2) {
   ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
 }
 
 session_write_close();
 
 
-if (empty($id)){
+if (empty($id)) {
   ApiHelper::fail(get_vocab("search_without_id"), ApiHelper::SEARCH_WITHOUT_ID);
 }
 
-$result = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE id = ?", array($id));
+$result = db()->query("SELECT * FROM " . _tbl("users") . " WHERE id = ?", array($id));
 
-if ($result -> count() < 1){
+if ($result->count() < 1) {
   ApiHelper::fail(get_vocab("user_not_exist"), ApiHelper::USER_NOT_EXIST);
 }
 
-$user = $result -> next_row_keyed();
+$user = $result->next_row_keyed();
 unset($user['password_hash']);
 unset($user['timestamp']);
 unset($user['reset_key_hash']);

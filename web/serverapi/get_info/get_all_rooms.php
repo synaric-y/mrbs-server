@@ -27,18 +27,18 @@ if (!empty($_SESSION['user'])) {
 }
 
 
-if ($type == 'all'){
+if ($type == 'all') {
   $result = get_room_and_area_by_user($user);
-  if ($result -> count() < 1){
+  if ($result->count() < 1) {
     ApiHelper::fail(get_vocab("room_not_exist"), ApiHelper::ROOM_NOT_EXIST);
   }
-  $rows = $result -> all_rows_keyed();
-  foreach ($rows as $row){
+  $rows = $result->all_rows_keyed();
+  foreach ($rows as $row) {
     $areaId = $row['area_id'];
     $roomId = $row['room_id'];
     $roomName = $row['room_name'];
     $areaName = $row['area_name'];
-    if (!isset($tmp[$areaId])){
+    if (!isset($tmp[$areaId])) {
       $tmp[$areaId] = array(
         'area_id' => $areaId,
         'area_name' => $areaName,
@@ -50,7 +50,7 @@ if ($type == 'all'){
       );
     }
 
-    if (!isset($tmp[$areaId]['rooms'][$roomId])){
+    if (!isset($tmp[$areaId]['rooms'][$roomId])) {
       $tmp[$areaId]['rooms'][$roomId] = array(
         'room_id' => $roomId,
         'room_name' => $roomName,
@@ -68,14 +68,15 @@ if ($type == 'all'){
     $area['rooms'] = array_values($area['rooms']);
   }
   ApiHelper::success($result);
-}else if ($type == 'area'){
-  $result = db() -> query("SELECT R.id as room_id,R.disabled as room_disabled, A.disabled as area_disabled, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id WHERE A.id = ?", array($id));
-  if ($result -> count() < 1){
+} else if ($type == 'area') {
+  $result = db()->query("SELECT R.id as room_id,R.disabled as room_disabled, A.disabled as area_disabled, R.*, A.* FROM "
+    . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id WHERE A.id = ?", array($id));
+  if ($result->count() < 1) {
     ApiHelper::fail(get_vocab("room_not_exist"), ApiHelper::ROOM_NOT_EXIST);
   }
-  $rows = $result -> all_rows_keyed();
-  foreach ($rows as $row){
-    if (!isset($area)){
+  $rows = $result->all_rows_keyed();
+  foreach ($rows as $row) {
+    if (!isset($area)) {
       $area = array(
         'area_id' => $row['area_id'],
         'area_name' => $row['area_name'],
@@ -97,12 +98,13 @@ if ($type == 'all'){
   }
   $data1['areas'] = $area;
   ApiHelper::success($data1);
-}else if($type == 'room'){
-  $result = db() -> query("SELECT R.id as room_id, R.disabled as room_disabled, A.disabled as area_disabled, R.*, A.* FROM " . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id WHERE R.id = ?", array($id));
-  if ($result -> count() != 1){
+} else if ($type == 'room') {
+  $result = db()->query("SELECT R.id as room_id, R.disabled as room_disabled, A.disabled as area_disabled, R.*, A.* FROM "
+    . _tbl("room") . " R LEFT JOIN " . _tbl("area") . " A ON R.area_id = A.id WHERE R.id = ?", array($id));
+  if ($result->count() != 1) {
     ApiHelper::fail(get_vocab("room_not_exist"), ApiHelper::ROOM_NOT_EXIST);
   }
-  $row = $result -> next_row_keyed();
+  $row = $result->next_row_keyed();
   $area = array(
     'area_id' => $row['area_id'],
     'area_name' => $row['area_name'],
@@ -121,6 +123,6 @@ if ($type == 'all'){
     'disabled' => $row['area_disabled'] == 1 ? 1 : $row['room_disabled']
   );
   ApiHelper::success($area);
-}else{
+} else {
   ApiHelper::fail(get_vocab("invalid_types"), ApiHelper::INVALID_TYPES);
 }
