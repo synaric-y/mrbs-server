@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MRBS;
 
 require_once dirname(__DIR__, 3) . '/vendor/autoload.php';
@@ -22,18 +23,18 @@ $id = $_POST["entry_id"];
 $note = $_POST["note"] ?: "";
 $series = boolval($_POST["entry_series"] ?? false);
 
-if (!$series){
-  $result = db() -> query("SELECT * FROM " . _tbl("entry") . " WHERE id = ?", array($id));
-  if ($result -> count() < 1){
+if (!$series) {
+  $result = db()->query("SELECT * FROM " . _tbl("entry") . " WHERE id = ?", array($id));
+  if ($result->count() < 1) {
     ApiHelper::fail(get_vocab("edit_entry_not_exist"), ApiHelper::ENTRY_NOT_EXIST);
   }
-  $row = $result -> next_row_keyed();
-  if($row['end_time'] <= time()){
+  $row = $result->next_row_keyed();
+  if ($row['end_time'] <= time()) {
     ApiHelper::fail(get_vocab("expired_end_time"), ApiHelper::EXPIRED_END_TIME);
   }
 }
 
-if (!checkAuth()){
+if (!checkAuth()) {
   setcookie("session_id", "", time() - 3600, "/web/");
   ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
 }
@@ -42,8 +43,8 @@ if (!checkAuth()){
 //  ApiHelper::fail(get_vocab("no_right"), ApiHelper::ACCESS_DENIED);
 //}
 
-$user = db() -> query("SELECT * FROM " . _tbl("users") . " WHERE name = ?", array($_SESSION['user']));
-$user = $user -> next_row_keyed();
+$user = db()->query("SELECT * FROM " . _tbl("users") . " WHERE name = ?", array($_SESSION['user']));
+$user = $user->next_row_keyed();
 session_write_close();
 // Check the CSRF token
 //Form::checkToken();
@@ -62,30 +63,26 @@ session_write_close();
 //
 //  $returl .= 'index.php?' . http_build_query($vars, '', '&');
 //}
-if ($info = get_booking_info($id, FALSE, TRUE))
-{
+if ($info = get_booking_info($id, FALSE, TRUE)) {
   // check that the user is allowed to delete this entry
-  if ($user['level'] == 2 || $user['name'] == $info['create_by']){
+  if ($user['level'] == 2 || $user['name'] == $info['create_by']) {
     $authorised = true;
-  }else
+  } else
     $authorised = false;
-  if ($authorised)
-  {
-    $area  = mrbsGetRoomArea($info["room_id"]);
+  if ($authorised) {
+    $area = mrbsGetRoomArea($info["room_id"]);
     // Get the settings for this area (they will be needed for policy checking)
     get_area_settings($area);
 
     $notify_by_email = $mail_settings['on_delete'] && need_to_send_mail();
 
-    if ($notify_by_email)
-    {
+    if ($notify_by_email) {
       // Gather all fields values for use in emails.
       $mail_previous = get_booking_info($id, FALSE);
       // If this is an individual entry of a series then force the entry_type
       // to be a changed entry, so that when we create the iCalendar object we know that
       // we only want to delete the individual entry
-      if (!$series && ($mail_previous['repeat_rule']->getType() != RepeatRule::NONE))
-      {
+      if (!$series && ($mail_previous['repeat_rule']->getType() != RepeatRule::NONE)) {
         $mail_previous['entry_type'] = ENTRY_RPT_CHANGED;
       }
     }
@@ -99,25 +96,19 @@ if ($info = get_booking_info($id, FALSE, TRUE))
     // example if a booking policy is in force that prevents the deletion of entries
     // in the past.   It would be better to inform the user that the operation has
     // been unsuccessful or only partially successful]
-    if (($start_times !== FALSE) && (count($start_times) > 0))
-    {
+    if (($start_times !== FALSE) && (count($start_times) > 0)) {
       // Send a mail to the Administrator
-      if ($notify_by_email)
-      {
+      if ($notify_by_email) {
         // Now that we've finished with mrbsDelEntry, change the id so that it's
         // the repeat_id if we're looking at a series.   (This is a complete hack,
         // but brings us back into line with the rest of MRBS until the anomaly
         // of del_entry is fixed)
-        if ($series)
-        {
+        if ($series) {
           $mail_previous['id'] = $mail_previous['repeat_id'];
         }
-        if (isset($action) && ($action == "reject"))
-        {
+        if (isset($action) && ($action == "reject")) {
           notifyAdminOnDelete($mail_previous, $start_times, $series, $action, $note);
-        }
-        else
-        {
+        } else {
           notifyAdminOnDelete($mail_previous, $start_times, $series);
         }
       }

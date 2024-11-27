@@ -721,10 +721,9 @@ if ($result['valid_booking']) {
     }
     $entries_id = array_column($result['new_details'], 'id');
     $query_sql = "SELECT id, start_time, end_time, entry_type, room_id, create_by, name, type, description, book_by FROM " . _tbl("entry");
-    if ($edit_series){
+    if ($edit_series) {
       $query_sql .= " WHERE repeat_id = ?";
-    }
-    else {
+    } else {
       $query_sql .= " WHERE id = ?";
     }
     $query_result = db()->query($query_sql, $entries_id);
