@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace MRBS;
 
 /*
- * get the status of initializing step
+ * Get the status of initializing step.
  */
 
 if (!checkAuth()) {
@@ -19,6 +19,6 @@ if (getLevel($_SESSION['user']) < 2) {
 }
 
 $result = db()->query("SELECT init_status FROM " . _tbl("system_variable"));
-$row = $result -> next_row_keyed();
+$row = $result->next_row_keyed();
 
 ApiHelper::success(["status" => $row['init_status']]);

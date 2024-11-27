@@ -7,7 +7,7 @@ include_once "defaultincludes.inc";
 include_once "functions_table.inc";
 include_once "mrbs_sql.inc";
 
-global $corpid, $secret, $call_back_domain, $agentid;
+global $corpid, $call_back_domain, $agentid;
 
 $config = DBHelper::one(_tbl("system_variable"), "1=1");
 

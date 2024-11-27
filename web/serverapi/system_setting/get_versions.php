@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace MRBS;
 
 /*
- * get all versions in the database and server
+ * Get all versions in the database and server.
  */
 
 if (!checkAuth()) {

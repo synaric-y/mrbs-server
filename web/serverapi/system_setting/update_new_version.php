@@ -8,7 +8,7 @@ namespace MRBS;
 use ZipArchive;
 
 /*
- * upload the device interface code with version
+ * Upload the device interface code with version.
  */
 
 if (!checkAuth()) {
@@ -68,7 +68,7 @@ if ($file['error'] === UPLOAD_ERR_OK) {
     ApiHelper::fail(get_vocab("fail_to_upload"), ApiHelper::FAIL_TO_UPLOAD);
   }
 
-  db()->command("DELETE * FROM " . _tbl("version") . " WHERE version = ?",array($version));
+  db()->command("DELETE * FROM " . _tbl("version") . " WHERE version = ?", array($version));
   db()->command("INSERT IGNORE INTO " . _tbl("version") . "(version, publish_time) VALUES (?, ?)", array($version, time()));
 
   ApiHelper::success(null);

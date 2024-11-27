@@ -4,15 +4,17 @@ use MRBS\CalendarServer\CalendarServerManager;
 use MRBS\DBHelper;
 
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
-
 require_once dirname(__DIR__) . "/defaultincludes.inc";
-
 require_once dirname(__DIR__) . "/functions_table.inc";
 require_once dirname(__DIR__) . "/mrbs_sql.inc";
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
+/*
+ * A script for synchronizing third calendar service (e.g. Exchange) data.
+ */
 
 global $thirdCalendarService, $exchange_server, $exchange_sync_interval;
 

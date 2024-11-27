@@ -2,6 +2,10 @@
 
 namespace MRBS;
 
+/*
+ * This is a setup script to insert init data into DB.
+ */
+
 require dirname(__DIR__, 2) . '/vendor/autoload.php';
 require_once dirname(__DIR__) . "/defaultincludes.inc";
 require_once dirname(__DIR__) . "/functions_table.inc";

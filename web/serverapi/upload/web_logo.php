@@ -4,8 +4,9 @@
 declare(strict_types=1);
 
 /*
- * upload the logo of website
+ * Upload the logo of website.
  */
+
 namespace MRBS;
 
 use ZipArchive;
@@ -21,10 +22,10 @@ if (getLevel($_SESSION['user']) < 2) {
 
 $file = $_FILES['logo'];
 
-if($file['error'] === UPLOAD_ERR_OK){
+if ($file['error'] === UPLOAD_ERR_OK) {
   $name = $file['name'];
   $fileInfo = pathinfo($name);
-  if (strtolower($fileInfo['extension']) !== 'jpg' && strtolower($fileInfo['extension']) !== 'png'){
+  if (strtolower($fileInfo['extension']) !== 'jpg' && strtolower($fileInfo['extension']) !== 'png') {
     ApiHelper::fail(get_vocab("unsupport_file_type"), ApiHelper::UNSUPPORT_FILE_TYPE);
   }
   $dir = dirname(__DIR__, 3) . "/logo/" . $_SESSION['user'];
@@ -32,10 +33,10 @@ if($file['error'] === UPLOAD_ERR_OK){
     mkdir($dir, 0755, TRUE);
   }
   $dir .= "/logo." . strtolower($fileInfo['extension']);
-  if (move_uploaded_file($file['tmp_name'], $dir)){
+  if (move_uploaded_file($file['tmp_name'], $dir)) {
     db()->command("UPDATE " . _tbl("system_variable") . " SET logo_dir = ?", array("/logo/" . $_SESSION['user'] . "/logo." . strtolower($fileInfo['extension'])));
     ApiHelper::success(null);
-  }else{
+  } else {
     ApiHelper::fail(get_vocab("fail_to_upload"), ApiHelper::FAIL_TO_UPLOAD);
   }
 }

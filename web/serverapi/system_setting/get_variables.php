@@ -81,22 +81,22 @@ $must_login_vars = array(
 );
 
 
-$result = db() -> query("SELECT * FROM " . _tbl("system_variable")) -> next_row_keyed();
+$result = db()->query("SELECT * FROM " . _tbl("system_variable"))->next_row_keyed();
 $must_login = false;
 foreach ($vars as $var) {
-  if (empty($_POST[$var])){
+  if (empty($_POST[$var])) {
     unset($result[$var]);
   } else if (in_array($var, $must_login_vars)) {
     $must_login = true;
   }
-  if (getLevel($_SESSION['user']) < 2){
+  if (getLevel($_SESSION['user']) < 2) {
     if (!in_array($var, ['logo_dir', 'app_logo_dir', 'company_name', 'server_address'])) {
       unset($result[$var]);
     }
   }
 }
 if ($must_login) {
-  if (!checkAuth()){
+  if (!checkAuth()) {
     setcookie("session_id", "", time() - 3600, "/web/");
     ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
   }

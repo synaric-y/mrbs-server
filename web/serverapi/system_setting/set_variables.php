@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace MRBS;
 
 /*
- * set the system variables when the variables is not null
+ * Set the system variables when the variables is not null.
  */
 
 if (!checkAuth()) {
@@ -52,7 +52,7 @@ $vars = array(
 );
 
 $params = array();
-$last_setting = db() -> query("SELECT * FROM " . _tbl("system_variable")) -> next_row_keyed();
+$last_setting = db()->query("SELECT * FROM " . _tbl("system_variable"))->next_row_keyed();
 
 foreach ($vars as $var) {
   if (isset($_POST[$var]) && $_POST[$var] !== '') {
