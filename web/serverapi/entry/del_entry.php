@@ -19,6 +19,7 @@ global $mail_settings;
 
 
 $id = $_POST["entry_id"];
+$note = $_POST["note"] ?: "";
 $series = boolval($_POST["entry_series"] ?? false);
 
 if (!$series){
