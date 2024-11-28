@@ -10,7 +10,21 @@ global $registration_opens_default, $registration_opens_enabled_default, $regist
 global $registration_closes_enabled_default, $temporary_meeting;
 
 
-//according to the device, book fast meeting to the room
+/*
+ * Book a fast meeting.
+ * This API should only allow requests on the tablet side.
+ * @Param
+ * device_id:         Device ID of the tablet.
+ * begin_time:        Start time of the entry.
+ * end_time:          End time of the entry.
+ * booker:            Booker of the entry.
+ * theme:             Theme of the entry.
+ * is_charge:
+ * battery_level:
+ *
+ * @Return
+ * None
+ */
 $device_id = $_POST['device_id'];
 $begin_time = $_POST['begin_time'];
 $end_time = $_POST['end_time'];
