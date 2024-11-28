@@ -26,7 +26,9 @@ $one = db() -> query1("SELECT * FROM " . _tbl("users") . " WHERE id = ?", array(
 if($one < 1){
   ApiHelper::fail(get_vocab("user_not_exist"), ApiHelper::USER_NOT_EXIST);
 }
-// TODO check if the password obey the rule
+if (strlen($password0) < 6) {
+  ApiHelper::fail(get_vocab("passwords_not_eq"), ApiHelper::INVALID_PASSWORD);
+}
 
 
 $password_hash = password_hash($password0, PASSWORD_DEFAULT);

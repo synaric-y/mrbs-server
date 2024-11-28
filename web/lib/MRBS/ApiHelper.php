@@ -81,6 +81,8 @@ class ApiHelper
   public const LDAP_CONNECT_ERROR = -65;
   public const NOT_SUPPORT_MULTI_DAY = -66;
 
+  public const INVALID_PASSWORD = -67;
+
 
   /*
    * User Group Start
