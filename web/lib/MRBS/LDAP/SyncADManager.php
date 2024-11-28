@@ -55,7 +55,8 @@ class SyncADManager
 
   private function _syncAD($sync_version)
   {
-    $CREATE_SOURCE = 'ad';
+    $CREATE_SOURCE_AD = CREATE_SOURCE_AD;
+    $CREATE_SOURCE_SYSTEM = CREATE_SOURCE_SYSTEM;
     $this->sync_version = $sync_version ?? md5(uniqid('', true));
     $TABLE_GROUP = "user_group";
     $TABLE_USER = "users";
@@ -162,11 +163,11 @@ class SyncADManager
         if (empty($thirdId)) {
           continue;
         }
-        $localGroup = DBHelper::one(_tbl($TABLE_GROUP), "third_id = '$thirdId' and source = '$CREATE_SOURCE'");
+        $localGroup = DBHelper::one(_tbl($TABLE_GROUP), "third_id = '$thirdId' and source = '$CREATE_SOURCE_AD'");
 
         $mergedGroup = array_merge($remoteGroup);
         unset($mergedGroup['_third_parent_id']);
-        $mergedGroup['source'] = $CREATE_SOURCE;
+        $mergedGroup['source'] = $CREATE_SOURCE_AD;
         $mergedGroup['sync_state'] = 1;
         $mergedGroup['last_sync_time'] = time();
         $mergedGroup['sync_version'] = $this->sync_version;
@@ -180,7 +181,7 @@ class SyncADManager
           $syncResult->group_insert += 1;
         } else {
           // Merge and update existing data
-          DBHelper::update(_tbl($TABLE_GROUP), $mergedGroup, "third_id = '$thirdId'  and source = '$CREATE_SOURCE'");
+          DBHelper::update(_tbl($TABLE_GROUP), $mergedGroup, "third_id = '$thirdId'  and source = '$CREATE_SOURCE_AD'");
           $localGroupList[$localGroup['third_id']] = $localGroup;
           if ($mergedGroup['disabled'] != $localGroup['disabled']) {
             $syncResult->group_delete += 1;
@@ -211,7 +212,7 @@ class SyncADManager
 
       $mergedUser = array_merge($remoteUser);
       unset($mergedUser['_third_parent_id']);
-      $mergedUser['source'] = $CREATE_SOURCE;
+      $mergedUser['source'] = $CREATE_SOURCE_AD;
       $mergedUser['sync_state'] = 1;
       $mergedUser['level'] = 1;
       $mergedUser['last_sync_time'] = time();
@@ -244,8 +245,8 @@ class SyncADManager
     log_ad("merge users: ", count($fmtUserList));
 
     // 6.Resolve user-group and group-group relationship
-    DBHelper::delete(_tbl($TABLE_G2G), "source = '$CREATE_SOURCE'");
-    DBHelper::delete(_tbl($TABLE_U2G), "source = '$CREATE_SOURCE'");
+    DBHelper::delete(_tbl($TABLE_G2G), "source = '$CREATE_SOURCE_AD'");
+    DBHelper::delete(_tbl($TABLE_U2G), "source = '$CREATE_SOURCE_AD'");
 
     db()->begin();
     $temp = 0;
@@ -263,7 +264,7 @@ class SyncADManager
           $insertG2G['group_id'] = $localGroup['id'];
           $insertG2G['parent_id'] = $pNode['node']['id'];
           $insertG2G['deep'] = $pNode['deep'];
-          $insertG2G['source'] = $CREATE_SOURCE;
+          $insertG2G['source'] = $CREATE_SOURCE_AD;
           DBHelper::insert(_tbl($TABLE_G2G), $insertG2G);
         }
       } catch (Error $e) {
@@ -291,7 +292,7 @@ class SyncADManager
           $insertU2G['user_id'] = $localUser['id'];
           $insertU2G['parent_id'] = $pNode['node']['id'];
           $insertU2G['deep'] = $pNode['deep'];
-          $insertU2G['source'] = $CREATE_SOURCE;
+          $insertU2G['source'] = $CREATE_SOURCE_AD;
           DBHelper::insert(_tbl($TABLE_U2G), $insertU2G);
         }
       } catch (Error $e) {
@@ -304,7 +305,7 @@ class SyncADManager
     log_ad("resolve u2g: ", count($localGroupList));
 
     // 7.Synchronize AD members into system-created groups
-    $sysRelatedGroups = DBHelper::query("SELECT id, third_id FROM " . _tbl($TABLE_GROUP) . " WHERE sync_state = 1 AND source = 'system'");
+    $sysRelatedGroups = DBHelper::query("SELECT id, third_id FROM " . _tbl($TABLE_GROUP) . " WHERE sync_state = 1 AND source = '$CREATE_SOURCE_SYSTEM'");
     db()->begin();
     $temp = 0;
     foreach ($sysRelatedGroups as $sysRelatedGroup) {
@@ -317,7 +318,7 @@ class SyncADManager
       db()->command("DELETE FROM " . _tbl("u2g_map") . " WHERE parent_id = ? AND deep = 1 ", array($sysRelatedGroup['id']));
       $sql = "
         INSERT INTO "._tbl("u2g_map")." (user_id, parent_id, deep, source)
-        SELECT DISTINCT user_id, ?, 1, 'system' FROM " . _tbl("u2g_map") . " WHERE parent_id = ?
+        SELECT DISTINCT user_id, ?, 1, '$CREATE_SOURCE_SYSTEM' FROM " . _tbl("u2g_map") . " WHERE parent_id = ?
       ";
       db()->command($sql, array($sysRelatedGroup['id'], $targetGroup['id']));
 
