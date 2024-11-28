@@ -55,7 +55,7 @@ class SyncADManager
 
   private function _syncAD($sync_version)
   {
-    $CREATE_SOURCE = "ad";
+    $CREATE_SOURCE = 'ad';
     $this->sync_version = $sync_version ?? md5(uniqid('', true));
     $TABLE_GROUP = "user_group";
     $TABLE_USER = "users";

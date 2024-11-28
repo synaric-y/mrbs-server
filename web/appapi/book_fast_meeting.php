@@ -45,7 +45,7 @@ if (!empty($is_charge) || !empty($battery_level)) {
 //}
 
 if ($end_time < $begin_time) {
-  ApiHelper::fail(get_vocab(), ApiHelper::INVALID_END_TIME);
+  ApiHelper::fail(get_vocab("invalid_end_time"), ApiHelper::INVALID_END_TIME);
 }
 
 $result = db() -> query("SELECT * FROM " . _tbl("device") . " WHERE device_id = ?", array($device_id));
@@ -104,7 +104,7 @@ $result["registration_opens"] = $registration_opens_default;
 $result["registration_opens_enabled"] = $registration_opens_enabled_default  ? 1 : 0;
 $result["registration_closes"] = $registration_closes_default;
 $result["registration_closes_enabled"] = $registration_closes_enabled_default  ? 1 : 0;
-$result["create_source"] = "system";
+$result["create_source"] = CREATE_SOURCE_SYSTEM;
 
 DBHelper::insert(\MRBS\_tbl("entry"), $result);
 $insertId = DBHelper::insert_id(_tbl("entry"), "id");

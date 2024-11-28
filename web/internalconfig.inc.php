@@ -309,6 +309,12 @@ define('REGEX_HHMM', '/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/');  // A time 
 
 
 /*************************************************
+ * CREATE SOURCE - internal use, do not change
+ *************************************************/
+define('CREATE_SOURCE_SYSTEM',        'system');  // Created by system
+define('CREATE_SOURCE_AD',            'ad');      // Created by AD
+
+/*************************************************
  * ENTRY STATUS CODES - internal use, do not change
  *************************************************/
 
