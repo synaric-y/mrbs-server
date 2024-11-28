@@ -6,12 +6,12 @@ namespace MRBS;
 
 
 $device_id = $_POST["device_id"];
-$room_id = $_POST["room_id"] ?? false;
+$room_id = $_POST["room_id"];
 $is_charging = $_POST["is_charging"];
 $battery_level = $_POST["battery_level"];
 
 
-if ($room_id === false){
+if (!isset($room_id)){
   ApiHelper::fail(get_vocab("invalid_room_id"), ApiHelper::INVALID_ROOM_ID);
 }
 

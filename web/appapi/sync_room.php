@@ -48,7 +48,7 @@ if (empty($row['room_id'])){
 }
 $timezone = getTimeZoneByRoom($row['room_id']);
 
-//Save the communication time into the zset of redis to facilitate querying to determine whether the device is disconnected.
+// Save the communication time into the zset of redis to facilitate querying to determine whether the device is disconnected.
 RedisConnect::zADD(RedisKeys::$HEART_BEAT, $device_id, time());
 
 if (!empty($timezone)) {
