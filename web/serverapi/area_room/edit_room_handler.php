@@ -18,7 +18,7 @@ $form_vars = array(
   'old_area'         => 'int',
   'room_name'        => 'string',
   'sort_key'         => 'string',
-  'room_disabled'    => 'string',
+  'disabled'         => 'string',
   'old_room_name'    => 'string',
   'description'      => 'string',
   'capacity'         => 'int',
@@ -194,7 +194,7 @@ if (empty($errors))
   else
   {
     // Convert booleans into 0/1 (necessary for PostgreSQL)
-    $room_disabled = (!empty($room_disabled)) ? 1 : 0;
+    $disabled = (!empty($disabled)) ? 1 : 0;
     $sql = "UPDATE " . _tbl('room') . " SET ";
     $sql_params = array();
     $assign_array = array();
@@ -211,7 +211,7 @@ if (empty($errors))
             break;
           case 'disabled':
             $assign_array[] = "disabled=?";
-            $sql_params[] = $room_disabled;
+            $sql_params[] = $disabled;
             break;
           case 'room_name':
             $assign_array[] = "room_name=?";
