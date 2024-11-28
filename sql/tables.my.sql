@@ -32,7 +32,7 @@ CREATE TABLE mrbs_area
   sort_key                    varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT ''  NOT NULL,
   timezone                    varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'time zone of this area',
   area_admin_email            text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  resolution                  int COMMENT 'minimum time interval',
+  resolution                  int DEFAULT 900 COMMENT 'minimum time interval',
   default_duration            int COMMENT 'default entry duration',
   default_duration_all_day    tinyint                                                      DEFAULT 0   NOT NULL COMMENT '"0" means by default, entry will last default_duration, and "1" means by default, entry will last all day.',
   morningstarts               int COMMENT 'the earliest booking hour of the day',
