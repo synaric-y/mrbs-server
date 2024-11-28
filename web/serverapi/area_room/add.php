@@ -191,6 +191,14 @@ elseif ($type == "area") {
   if ($one > 0) {
     ApiHelper::fail(get_vocab("invalid_room_name"), ApiHelper::INVALID_ROOM_NAME);
   }
+  // Follow global setting by default
+  $global_setting = get_global_setting();
+  if (!empty($global_setting)) {
+    $_POST['show_book'] = $global_setting['show_book'];
+    $_POST['show_meeting_name'] = $global_setting['show_meeting_name'];
+    $_POST['temporary_meeting'] = $global_setting['temporary_meeting'];
+  }
+
   $room_vars['room_name'] = $name;
   $sql = "INSERT INTO " . _tbl("room") . "(";
   $params = array();
