@@ -77,6 +77,9 @@ foreach($form_vars as $var => $var_type)
   }
 
 }
+if (isset($_POST['new_area'])) {
+  $_POST['area_id'] = $_POST['new_area'];
+}
 
 // Get the information about the fields in the room table
 $fields = db()->field_info(_tbl('room'));
@@ -200,7 +203,7 @@ if (empty($errors))
     $assign_array = array();
     foreach ($fields as $field)
     {
-      if ($field['name'] != 'id' && (isset($_POST[$field['name']]) || $field['name'] == 'area_id'))  // don't do anything with the id field
+      if ($field['name'] != 'id' && (isset($_POST[$field['name']])))  // don't do anything with the id field
       {
         switch ($field['name'])
         {
