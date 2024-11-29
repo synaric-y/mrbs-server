@@ -40,6 +40,9 @@ class ExchangeCalendarServerConnector implements AbstractCalendarServerConnector
     $this->password = $room["exchange_password"];
     $this->timezone = $timezone;
     $this->room = $room;
+    if (empty($this->account)) {
+      throw new \Exception("empty exchange account, skip");
+    }
   }
 
   private function getCalendar()
