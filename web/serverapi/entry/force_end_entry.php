@@ -15,6 +15,8 @@ namespace MRBS;
 
 global $min_booking_admin_level;
 
+use MRBS\CalendarServer\CalendarServerManager;
+
 $entry_id = $_POST['id'];
 
 $entry = get_entry_by_id($entry_id);
@@ -37,6 +39,16 @@ if ($entry['end_time'] > $now) {
   db()->command("UPDATE " . _tbl("entry") . " SET end_time = ? WHERE id = ?", array($now, $entry_id));
 } else {
   // Ignore and do not return an error
+}
+
+// Unsupportable for editing an exception in series
+if (empty($entry['repeat_id'])) {
+  try {
+    CalendarServerManager::updateMeeting($entry['id']);
+  } catch (\Exception $e) {
+    log_i($e->getMessage());
+    log_i($e->getTraceAsString());
+  }
 }
 
 ApiHelper::success(null);
