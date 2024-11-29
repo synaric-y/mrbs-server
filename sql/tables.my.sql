@@ -385,7 +385,9 @@ CREATE TABLE mrbs_a2g_map
   id       int NOT NULL auto_increment,
   area_id  int NOT NULL,
   group_id int NOT NULL,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  INDEX       `n_area_id`(`area_id` ASC) USING BTREE,
+  INDEX       `n_group_id`(`group_id` ASC) USING BTREE
 )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='table of the relation between area and group';
 
 
@@ -394,7 +396,9 @@ CREATE TABLE mrbs_r2g_map
   id       int NOT NULL auto_increment,
   room_id  int NOT NULL,
   group_id int NOT NULL,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  INDEX       `n_room_id`(`room_id` ASC) USING BTREE,
+  INDEX       `n_group_id`(`group_id` ASC) USING BTREE
 )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='table of the relation between room and group';
 
 -- User Group

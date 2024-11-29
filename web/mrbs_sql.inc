@@ -1880,8 +1880,8 @@ function get_area_by_user($user)
     $area_sql = "
       SELECT A.id, A.area_name, A.disabled, A.morningstarts, A.morningstarts_minutes, A.eveningends, A.eveningends_minutes, A.resolution, A.parent_id
       FROM " . _tbl('area') . " A
-      JOIN " . _tbl('a2g_map') . " A2G ON A.id = A2G.area_id
-      JOIN " . _tbl('u2g_map') . " U2G ON A2G.group_id = U2G.parent_id
+      JOIN " . _tbl('a2g_map') . " A2G ON A.id = A2G.area_id AND A2G.group_id != -1
+      JOIN " . _tbl('u2g_map') . " U2G ON A2G.group_id = U2G.parent_id  AND U2G.parent_id != -1
       WHERE U2G.user_id = ? AND A2G.group_id = U2G.parent_id
 
       UNION
@@ -1908,8 +1908,8 @@ function get_room_and_area_by_user($user)
 
         SELECT A.*
         FROM " . _tbl('area') . " A
-        JOIN " . _tbl('a2g_map') . " A2G ON A.id = A2G.area_id
-        JOIN " . _tbl('u2g_map') . " U2G ON A2G.group_id = U2G.parent_id
+        JOIN " . _tbl('a2g_map') . " A2G ON A.id = A2G.area_id AND A2G.group_id != -1
+        JOIN " . _tbl('u2g_map') . " U2G ON A2G.group_id = U2G.parent_id AND U2G.parent_id != -1
         WHERE U2G.user_id = 3 AND A2G.group_id = U2G.parent_id
 
         UNION
