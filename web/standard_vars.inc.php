@@ -6,6 +6,7 @@ namespace MRBS;
 // Checks that they are valid and assigns sensible defaults if not
 
 // Get the standard form variables
+// WARNING: some variables in systemdefaults.inc.php may be overwritten.
 
 require_once "defaultincludes.inc";
 
