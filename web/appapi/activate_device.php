@@ -35,7 +35,9 @@ if (empty($room_id)){
 
 $result = db()->query1("SELECT COUNT(*) FROM " . _tbl("device") . " WHERE device_id = ?", array($device_id));
 if ($result > 0){
-//  ApiHelper::fail(get_vocab("device_exists"), ApiHelper::DEVICE_EXISTS);
+  $sql = "UPDATE " . _tbl("device") .
+    " SET version = ?, description = ?, resolution = ?, is_charging = ?, battery_level = ?, is_set = ?, room_id = ?, set_time = ? WHERE device_id = ?";
+  db()->command($sql, array($version, $description, $resolution, $is_charge, $battery_level, $status, $room_id, time(), $device_id));
   ApiHelper::success(null);
 }
 
