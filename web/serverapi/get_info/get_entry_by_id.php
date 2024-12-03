@@ -55,7 +55,7 @@ $row['room_name'] = $room['room_name'];
 $result = db()->query("SELECT area_name, id as area_id FROM " . _tbl("area") . " WHERE id = ?", array($room['area_id']));
 $area = $result->next_row_keyed();
 $row['area_name'] = $area['area_name'];
-$row['end_date'] = date("Y-m-d", intval($row['end_date']));
+$row['end_date'] = date("Y-m-d", intval($row['end_time']));
 $row['area_id'] = $area['area_id'];
 if ($is_series) {
   for ($i = 0; $i < 7; $i++) {
