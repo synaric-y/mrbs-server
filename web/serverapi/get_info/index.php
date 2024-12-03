@@ -258,6 +258,12 @@ if ($type == 'all') {
     unset($area);
   }
 
+  foreach ($areas as &$area) {
+    $area['start_time'] = sprintf("%02d", $area['morningstarts'] > 12 ? $area['morningstarts'] - 12 : $area['morningstarts']) . ":" . sprintf("%02d", $area['morningstarts_minutes']) . ($area['morningstarts'] > 12 ? " PM" : " AM");
+    $area['end_time'] = sprintf("%02d", $area['eveningends'] > 12 ? $area['eveningends'] - 12 : $area['eveningends']) . ":" . sprintf("%02d", $area['eveningends_minutes']) . ($area['eveningends'] > 12 ? " PM" : " AM");
+    unset($area['id']);
+  }
+
 
   $min_time = 10000000;
   $max_time = -1;
