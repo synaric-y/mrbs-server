@@ -55,7 +55,7 @@ $params = array();
 $last_setting = db()->query("SELECT * FROM " . _tbl("system_variable"))->next_row_keyed();
 
 foreach ($vars as $var) {
-  if (isset($_POST[$var]) && $_POST[$var] !== '') {
+  if (isset($_POST[$var])) {
     if ($var === 'server_address') {
       $_POST[$var] = urldecode($_POST[$var]);
     } else if ($var === 'default_password_hash') {
