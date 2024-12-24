@@ -457,7 +457,7 @@ CREATE TABLE `mrbs_version`
   UNIQUE KEY (version)
 )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic COMMENT='table of all versions';
 
-INSERT INTO `mrbs_system_variable` VALUES (1, 0, 0, '', '', '', '$2y$10$SeZPxKE78o0MFMIdNxpD/uMS.fBudoEGfUBkujLAmImaLva1T4Zm6', '', 'localhost', 6379, '', '', NULL, '', '', '', 0, NULL, '', '', NULL, '', '', 24, '2.1', 1, 1, 1, 1800, '', 0, '', 1, 'zh');
+INSERT INTO `mrbs_system_variable` VALUES (1, 0, 0, '', '', '', '$2y$10$SeZPxKE78o0MFMIdNxpD/uMS.fBudoEGfUBkujLAmImaLva1T4Zm6', '', 'localhost', 6379, '', '', NULL, '', '', '', 0, NULL, '', '', NULL, '', '', 24, 'v2.1', 1, 1, 1, 1800, '', 0, '', 1, 'zh');
 
 
 
