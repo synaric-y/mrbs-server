@@ -21,16 +21,15 @@ if (!isset($_GET) || empty($code)) {
   log_wx(\MRBS\get_vocab("invalid_code"));
   \MRBS\ApiHelper::fail(\MRBS\get_vocab("invalid_code"), \MRBS\ApiHelper::INVALID_CODE);
 }
-
 $config = DBHelper::one(_tbl("system_variable"), "1=1");
 $wx_appid = $config["wx_appid"];
 $wx_secret = $config["wx_secret"];
 
 $url = "https://api.weixin.qq.com/sns/jscode2session?appid=$wx_appid&secret=$wx_secret&js_code=$code&grant_type=authorization_code";
 $result = get_url($url);
-$errcode = $result["errcode"];
 $openid = $result["openid"];
 if (empty($openid)) {
+  $errcode = $result["errcode"];
   ApiHelper::fail("wxwork errcode: $errcode", ApiHelper::INTERNAL_ERROR);
 }
 
@@ -62,13 +61,25 @@ try {
     $row = $result->next_row_keyed();
     log_wx("found user: id = {$row['id']} , name = {$row['name']}");
     $_SESSION['user'] = $row['name'];
-    setcookie("session_id", session_id(), time() + 365 * 24 * 60 * 60, "/web/", "", false, true);
+//    setcookie("session_id", session_id(), time() + 365 * 24 * 60 * 60, "/web/", "", false, true);
   }
 } catch (\Exception $e) {
   log_wx($e->getMessage());
   log_wx($e->getTraceAsString());
 }
-
+//setcookie("session_id", session_id(), [
+//  "expires" => time() + 15 * 24 * 60 * 60,
+//  "path" => "/web/",
+//  "domain" => null,
+//  // 域名访问
+//  "secure" => true,
+//  "httponly" => true,
+//  "samesite" => "None",
+//  // IP访问
+////  "secure" => false,
+////  "httponly" => true,
+////  "samesite" => "Strict"
+//]);
 session_write_close();
 log_wx("success");
 ApiHelper::success(null);
