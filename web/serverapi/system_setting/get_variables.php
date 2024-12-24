@@ -44,7 +44,9 @@ $vars = array(
   "company_name",
   "init_status",
   "server_address",
-  "theme_type"
+  "theme_type",
+  "wx_appid",
+  "wx_secret"
 );
 
 $must_login_vars = array(
@@ -77,7 +79,9 @@ $must_login_vars = array(
 //  "company_name",
 //  "init_status",
 //  "server_address",
-  "theme_type"
+  "theme_type",
+  "wx_appid",
+  "wx_secret"
 );
 
 

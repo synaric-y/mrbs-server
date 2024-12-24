@@ -48,7 +48,9 @@ $vars = array(
   "company_name",
   "init_status",
   "server_address",
-  "theme_type"
+  "theme_type",
+  "wx_appid",
+  "wx_secret"
 );
 
 $params = array();
