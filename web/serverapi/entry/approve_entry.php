@@ -12,18 +12,27 @@ require_once "functions_mail.inc";
 
 // Get non-standard form variables
 $action = get_form_var('action', 'string');
-$id = get_form_var('id', 'int');
-$series = get_form_var('series', 'bool');
-$returl = get_form_var('returl', 'string');
-$note = get_form_var('note', 'string');
+//$id = get_form_var('id', 'int');
+//$series = get_form_var('series', 'bool');
+//$returl = get_form_var('returl', 'string');
+//$note = get_form_var('note', 'string');
+
+if (!checkAuth()) {
+  setcookie("session_id", "", time() - 3600, "/web/");
+  ApiHelper::fail(get_vocab("please_login"), ApiHelper::PLEASE_LOGIN);
+}
+
+$action = $_POST["action"];
+$id = intval($_POST["id"]);
+$series = boolval($_POST["series"]);
+$note = $_POST["note"];
 
 // Check the CSRF token
-Form::checkToken();
+//Form::checkToken();
 
 // Check the user is authorised for this page
-checkAuthorised(this_page());
-$mrbs_user = session()->getCurrentUser();
-$mrbs_username = (isset($mrbs_user)) ? $mrbs_user->username : null;
+//checkAuthorised(this_page());
+$mrbs_user = $_SESSION['user'];
 
 // Retrieve the booking details
 $data = get_booking_info($id, $series);
@@ -34,10 +43,10 @@ $mail_previous = array();
 $start_times = array();
 
 // Give the return URL a query string if it doesn't already have one
-if (utf8_strpos($returl, '?') === false)
-{
-  $returl .= "?year=$year&month=$month&day=$day&area=$area&room=$room";
-}
+//if (utf8_strpos($returl, '?') === false)
+//{
+//  $returl .= "?year=$year&month=$month&day=$day&area=$area&room=$room";
+//}
 
 
 if (isset($action))
@@ -49,12 +58,12 @@ if (isset($action))
 
   // If we have to approve or reject a booking, check that we have rights to do so
   // for this room
-  if ((($action == "approve") || ($action == "reject"))
-       && !is_book_admin($room_id))
-  {
-    showAccessDenied($view, $view_all, $year, $month, $day, $area, isset($room) ? $room : null);
-    exit;
-  }
+//  if ((($action == "approve") || ($action == "reject"))
+//       && !is_book_admin($room_id))
+//  {
+//    showAccessDenied($view, $view_all, $year, $month, $day, $area, isset($room) ? $room : null);
+//    exit;
+//  }
 
   switch ($action)
   {
@@ -68,10 +77,10 @@ if (isset($action))
       }
       $start_times = mrbsApproveEntry($id, $series);
       $result = ($start_times !== FALSE);
-      if ($result === FALSE)
-      {
-        $returl .= "&error=approve_failed";
-      }
+//      if ($result === FALSE)
+//      {
+//        $returl .= "&error=approve_failed";
+//      }
       // Get the new data, which will have the status changed
       $data = get_booking_info($id, $series);
       break;
@@ -83,7 +92,7 @@ if (isset($action))
       // originator's court, so the clock gets reset)
       update_last_reminded($id, $series);
       // update the more info field
-      update_more_info($id, $series, $mrbs_user->username, $note);
+      update_more_info($id, $series, $mrbs_user, $note);
       $result = TRUE;  // We'll assume success and end an email anyway
       break;
 
@@ -115,4 +124,6 @@ if (isset($action))
 }
 
 // Now it's all done go back to the previous view
-location_header($returl);
+//location_header($returl);
+
+ApiHelper::success(array("status" => $result));

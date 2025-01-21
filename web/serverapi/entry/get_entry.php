@@ -59,7 +59,7 @@ if (!empty($vars)) {
       $params[] = $$var;
     } else if ($var === 'awaiting_approval') {
       $sql .= "E.status&" . STATUS_AWAITING_APPROVAL . " = ?";
-      $params[] = STATUS_AWAITING_APPROVAL;
+      $params[] = $$var;
     }
     if ($i != count($vars) - 1) {
       $sql .= " AND ";
@@ -99,6 +99,7 @@ while ($row = $result->next_row_keyed()) {
   $entry['area_name'] = $row['area_name'];
   $entry['start_time'] = $row['start_time'];
   $entry['end_time'] = $row['end_time'];
+  $entry['approval_status'] = $row['status'];
   $entry['is_repeat'] = 0;
   $entry['status'] = $entry['start_time'] > time() ? 0 : ($entry['end_time'] < time() ? 2 : 1);
   if ($time_type == 24)
@@ -126,6 +127,9 @@ if (!empty($vars)) {
       $params[] = $$var;
     } else if ($var === 'create_by') {
       $sql .= "E.create_by = ?";
+      $params[] = $$var;
+    } else if ($var === 'awaiting_approval') {
+      $sql .= "E.status&" . STATUS_AWAITING_APPROVAL . " = ?";
       $params[] = $$var;
     }
     if ($i != count($vars) - 1) {
