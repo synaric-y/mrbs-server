@@ -102,10 +102,11 @@ while ($row = $result->next_row_keyed()) {
   $entry['approval_status'] = $row['status'];
   $entry['is_repeat'] = 0;
   $entry['status'] = $entry['start_time'] > time() ? 0 : ($entry['end_time'] < time() ? 2 : 1);
-  if ($time_type == 24)
+  if ($time_type == 24) {
     $entry['duration'] = date("H:i:s", $row['start_time']) . " - " . date("H:i:s", $row['end_time']);
-  else if ($time_type == 12)
+  } else if ($time_type == 12) {
     $entry['duration'] = date("h:i:s A", $row['start_time']) . " - " . date("h:i:s A", $row['end_time']);
+  }
   $entry['create_by'] = $row['create_by'];
   $data[] = $entry;
 }
@@ -171,10 +172,12 @@ while ($row = $result->next_row_keyed()) {
   $entry['area_name'] = $repeat['area_name'];
   $entry['start_time'] = $repeat['start_time'];
   $entry['end_time'] = $repeat['end_time'];
-  if ($time_type == 24)
+  if ($time_type == 24) {
     $entry['duration'] = date("H:i:s", $repeat['start_time']) . " - " . date("H:i:s", $repeat['end_time']);
-  else if ($time_type == 12)
+  }
+  else if ($time_type == 12) {
     $entry['duration'] = date("h:i:s A", $repeat['start_time']) . " - " . date("h:i:s A", $repeat['end_time']);
+  }
   $entry['duration'] .= " 每";
   for ($i = 0; $i < 7; $i++) {
     if ($repeat['rep_opt'][$i] == '1') {
